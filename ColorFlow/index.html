@@ -1,0 +1,168 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>PowerPaint</title>
+<link href="style.css" rel="stylesheet">
+<!-- <script type="text/javascript" src="./DreamBooth_files/jquery.js"></script> -->
+</head>
+
+<body>
+<div class="content">
+  <h1><strong><img src="fig/logo.jpg" style="height: 60px;"><img src="fig/colorflow.jpg" style="height: 60px;">: <br>Retrieval-Augmented Image Sequence Colorization</strong> </h1>
+  <!-- <h1><span><img src="src/img/pia.png" style="height: 72px;"></span><strong> :Your Personalized Image Animator <br> via Plug-and-Play Modules in Text-to-Image Models</strong></h1> -->
+  <p id="authors"><a href="https://github.com/zhuang2002">Junhao Zhuang<sup>* 1 2</sup></a> <a href="https://juxuan27.github.io/">Xuan Ju<sup>* 2</sup></a> <a href="https://zzyfd.github.io/#/">Zhaoyang Zhang<sup>2</sup></a> <a href="https://scholar.google.com.hk/citations?user=i9keb3IAAAAJ&hl=zh-CN">Yong Liu<sup> 1</sup></a> <a href="https://github.com/shiyi-zh0408">Shiyi Zhang<sup> 1</sup></a>  <a href="https://scholar.google.com/citations?hl=en&amp;user=fYdxi2sAAAAJ">Chun Yuan<sup>† 1</sup></a> <a href="https://scholar.google.com/citations?user=4oXBp9UAAAAJ&hl=en">Ying Shan<sup>† 2</sup></a><br>
+
+    
+    <span style="font-size: 16px"><br>
+        <sup>1</sup> Tsinghua University, <sup>2</sup> Tencent ARC Lab <br>
+        <sup>*</sup>Equal Contribution</span> <sup>†</sup>Corresponding Author</span>
+        </p>
+
+        <!-- <div style="text-align: center;">
+          <a target="_blank" href="https://www.tsinghua.edu.cn/">
+          <img src="fig/thu.png" alt="Institution 1" style="width: auto; height: 70px; margin-right: 20px;"></a>
+          <a target="_blank" href="https://arc.tencent.com/zh/index">
+          <img src="fig/ARC.png" alt="Institution 2" style="width: auto; height: 70px;"></a>
+        </div> -->
+
+        <style>
+          /* 定义一个名为.link-button的类，用于样式化链接按钮 */
+          .link-button {
+            display: inline-block; /* 使元素以内联块的形式显示 */
+            padding: 6px 10px; /* 内边距，垂直8px，水平16px */
+            margin: 8px; /* 外边距，四周均为4px */
+            border: 2px solid #007bff; /* 边框，宽度1px，样式实线，颜色#007bff */
+            border-radius: 7px; /* 边框圆角，半径5px */
+            text-decoration: none; /* 移除文本装饰（如下划线） */
+            font-weight: bold; /* 字体加粗 */
+            color: #007bff; /* 文字颜色 */
+            transition: background-color 0.3s, color 0.3s; /* 背景颜色和文字颜色的过渡效果，持续时间0.3秒 */
+          }
+          /* 当鼠标悬停在.link-button上时的样式 */
+          .link-button:hover {
+            background-color: #007bff; /* 背景颜色 */
+            color: white; /* 文字颜色 */
+          }
+          /* 定义.link-button内部的i标签样式 */
+          .link-button i {
+            margin-right: 8px; /* 右外边距，8px */
+          }
+        </style>
+        
+        <div style="text-align: center;">
+          <a href="https://arxiv.org/abs/2312.03594" target="_blank" class="link-button">
+            <i class="fas fa-file-alt"></i> <img src="fig/arxiv.png" alt="arxiv", style="width: 16px;">Paper</a>
+          <a href="https://github.com/open-mmlab/PowerPaint" target="_blank" class="link-button">
+            <i class="fab fa-github"></i> <img src="fig/github.png" alt="github", style="width: 16px;">Code</a>
+          <a href="https://openxlab.org.cn/apps/detail/rangoliu/PowerPaint" target="_blank" class="link-button">
+            <i class="fas fa-eye"></i> <img src="fig/huggingface_logo-noborder.svg" alt="demo", style="width: 16px;">Online Demo</a>
+          <a href="https://www.bilibili.com/video/BV1jw41187od/" target="_blank" class="link-button">
+            <i class="fab fa-bilibili"></i> <img src="fig/youtube.png" alt="bilibili", style="width: 16px;">YouTube</a>
+        </div>
+
+    
+    <!-- <font size="+2">
+      <div style="text-align: center; display: flex; justify-content: space-between; margin: 20px 100px;">
+        <a target="_blank", href="https://arxiv.org/abs/2312.13964">
+          <img src="src/img/th.png" alt="arxiv", style="width: 21px;">[Paper]
+        </a>
+        <a target="_blank", href="https://github.com/open-mmlab/PIA">
+          <img src="src/img/github.png" alt="github", style="width: 21px;">[Code]
+        </a>
+        <a target="_blank", href="https://openxlab.org.cn/apps/detail/zhangyiming/PiaPia/">
+          <img src="src/img/demo.ico" alt="openxlab", style="width: 21px;">[Demo]
+        </a>
+        <a target="_blank", href="https://www.bilibili.com/video/BV12a4y1z7V8/?share_source=copy_web&vd_source=fcd04e957f24a174ed4ecd28c3e9776f">
+          <img src="src/img/bilibili.ico" alt="bilibili", style="width: 21px;">[Bilibili]
+        </a>
+        <a target="_blank", href="https://youtu.be/A7EsYGSLpYA">
+          <img src="src/img/youtube.png" alt="YouTube", style="width: 21px;">[YouTube]
+        </a>
+      </div>
+    </font> -->
+    <p> <b>ColorFlow</b> is the first model designed for fine-grained ID preservation in image sequence colorization, utilizing contextual
+information. Given a reference image pool, <b>ColorFlow</b> accurately generates colors for various elements in black and white image sequences,
+including the hair color and attire of characters, ensuring color consistency with the reference images.</p>
+        <!-- <p><b>PowerPaint</b> is the first versatile image inpainting model that simultaneously achieves state-of-the-art results in various inpainting tasks such as text-guided object inpainting, context-aware image inpainting, shape-guided object inpainting with controllable shape-fitting, and outpainting.</p> -->
+	<video width="640" height="480" controls>
+          <source src="./fig/youtube.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+      </video>
+</div>
+
+
+<div class="content">
+  <h2 style="text-align:center;"><strong>Abstract</strong></h2>
+  <p>Automatic black-and-white image sequence colorization while preserving character and object identity (ID) is a complex task with significant market demand, such as in cartoon or comic series colorization. Despite advancements in visual colorization using large-scale generative models like diffusion models, challenges with controllability and identity consistency persist, making current solutions unsuitable for industrial application. To address this, we propose <b>ColorFlow</b>, a three-stage diffusion-based framework tailored for image sequence colorization in industrial applications. Unlike existing methods that require per-ID finetuning or explicit ID embedding extraction, we propose a novel robust and generalizable Retrieval Augmented Colorization pipeline for colorizing images with relevant color references. Our pipeline also features a dual-branch design: one branch for color identity extraction and the other for colorization, leveraging the strengths of diffusion models. We utilize the self-attention mechanism in diffusion models for strong in-context learning and color identity matching. To evaluate our model, we introduce <b>ColorFlow-Bench</b>, a comprehensive benchmark for reference-based colorization. Results show that ColorFlow outperforms existing models across multiple metrics, setting a new standard in sequential image colorization and potentially benefiting the art industry.</p>
+    <img src="fig/teaser.png" class="teaser-gif" style="width:100%;">
+  </div>
+
+
+<div class="content">
+    <h2 style="text-align:center;"><strong>Method</strong></h2>
+    <p> <b>The overview of ColorFlow</b>. This figure presents the three primary components of our framework: the <b>Retrieval-Augmented
+      Pipeline (RAP)</b>, the <b>In-context Colorization Pipeline (ICP)</b>, and the <b>Guided Super-Resolution Pipeline (GSRP)</b> . Each component is essential
+      for maintaining the color identity of instances across black-and-white image sequences while ensuring high-quality colorization.</p>
+    <br>
+    <img class="summary-img" src="fig/flowchart.png" style="width:100%;"> <br>
+    <p> <b>Patch-Wise training strategy</b>. This strategy is designed to reduce the computational demands of training on high-resolution stitched images.
+      The left box displays segmented stitched images from the training phase, with the corresponding masks also segmented accordingly. The
+      right box presents the complete stitched image and masks for the inference phase.</p>
+    <img class="summary-img" src="fig/patch.png" style="width:90%;"> <br>
+  </div>
+
+<div class="content">
+  <h2 style="text-align:center;"><strong>Compare ColorFlow with Previous Works</strong></h2>
+  
+  <p> <b>Comparison of our method with SOTA approaches in the manga colorization</b>. Our method exhibits superior aesthetic quality,
+    producing colors that more closely match the original image.</p>
+    <img src="fig/compare.png" class="teaser-gif" style="width:100%;">
+  <p> <b>Comparison of ColorFlow with other approaches in the animation storyboard colorization</b>. Our method exhibits superior
+    aesthetic quality, producing colors that more closely match the original image.</p>
+    <img src="fig/compare_cartoon.png" class="teaser-gif" style="width:100%;">
+  <!-- <img src="fig/Inpainting.png" class="teaser-gif" style="width:100%;">
+  <img src="fig/outpaint.png" class="teaser-gif" style="width:100%;"> -->
+</div>
+
+<div class="content">
+  <h2 style="text-align:center;"><strong>Qualitative Results</strong></h2>
+  
+  <p> <b>Quantitative comparisons with state-of-the-art models for Reference Image-based Colorization.</b> We compare two models without reference image input: Manga Colorization V2 (MC-v2) and AnimeColorDeOldify (ACDO), alongside two reference image-based colorization models: Example Based Manga Colorization (EBMC) and ScreenVAE. The best results are in bold.</p>
+    <img src="fig/table1.png" class="teaser-gif" style="width:100%;">
+  <p> <b>More qualitative results are shown in the paper.</b></p>
+  <!-- <img src="fig/Inpainting.png" class="teaser-gif" style="width:100%;">
+  <img src="fig/outpaint.png" class="teaser-gif" style="width:100%;"> -->
+</div>
+
+
+
+<div id="results2" class="content">
+  <h2 style="text-align:center;"><strong>Various Artistic Contexts </a></strong></h2>
+    <h4><b>A.</b> Black-and-White Manga</h4>
+    <img class="summary-img" src="fig/sup_manga.png" style="width:100%;">
+    <h4><b>B.</b> Line Art</h4>
+    <img class="summary-img" src="fig/sup_line.png" style="width:100%;">
+    <h4><b>C.</b> Real-World Photo</h4>
+    <img class="summary-img" src="fig/sup_real.png" style="width:100%;">
+    <h4><b>D.</b> Cartoon Storyboard</h4>
+    <img class="summary-img" src="fig/sup_cartoon.png" style="width:100%;">
+</div>
+
+
+<div class="content">
+  <h2 style="text-align:center;"><strong>BibTex</strong></h2>
+  <code> <br>@misc{zhuang2023task,<br>
+      title={A Task is Worth One Word: Learning with Task Prompts for High-Quality Versatile Image Inpainting}, <br>
+      author={Junhao Zhuang and Yanhong Zeng and Wenran Liu and Chun Yuan and Kai Chen},<br>
+      year={2023},<br>
+      eprint={2312.03594},<br>
+      archivePrefix={arXiv},<br>
+      primaryClass={cs.CV}
+}
+   </code> 
+</div>
+
+</body>
+
+
+</html>
