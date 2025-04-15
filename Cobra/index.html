@@ -1,0 +1,174 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Cobra</title>
+<link href="style.css" rel="stylesheet">
+<!-- <script type="text/javascript" src="./DreamBooth_files/jquery.js"></script> -->
+</head>
+
+<body>
+<div class="content">
+  <h5 style="margin-bottom: 0;"><img src="fig/logo.png" style="height: 100px; vertical-align: middle;"><span>Cobra:</span></h5> 
+  <h1 style="margin-top: -5px;"><strong>Efficient Line Art <span style="text-decoration: underline">CO</span>lorization with <span style="text-decoration: underline">BR</span>o<span style="text-decoration: underline">A</span>der References</strong></h1>
+  <p id="authors"><a href="https://github.com/zhuang2002">Junhao Zhuang<sup>1 2</sup></a> <a href="https://github.com/lg-li">Lingen Li<sup>2</sup></a> <a href="https://juxuan27.github.io/">Xuan Ju<sup>2</sup></a> <a href="https://zzyfd.github.io/#/">Zhaoyang Zhang<sup>‡ 3</sup></a> <a href="https://scholar.google.com/citations?hl=en&amp;user=fYdxi2sAAAAJ">Chun Yuan<sup>† 1</sup></a> <a href="https://scholar.google.com/citations?user=4oXBp9UAAAAJ&hl=en">Ying Shan<sup>† 3</sup></a><br>
+
+
+    
+    <span style="font-size: 16px"><br>
+        <sup>1</sup> Tsinghua University, <sup>2</sup> The Chinese University of Hong Kong, <sup>3</sup> Tencent ARC Lab <br>
+        <sup>‡</sup>Project Leader, <sup>†</sup>Corresponding Author</span>
+        </p>
+        <p class="center-text" style="font-size: 24px;"><b>SIGGRAPH 2025</b></p>
+
+        <style>
+          /* 定义一个名为.link-button的类，用于样式化链接按钮 */
+          .link-button {
+            display: inline-block; /* 使元素以内联块的形式显示 */
+            padding: 6px 10px; /* 内边距，垂直8px，水平16px */
+            margin: 8px; /* 外边距，四周均为4px */
+            border: 2px solid #007bff; /* 边框，宽度1px，样式实线，颜色#007bff */
+            border-radius: 7px; /* 边框圆角，半径5px */
+            text-decoration: none; /* 移除文本装饰（如下划线） */
+            font-weight: bold; /* 字体加粗 */
+            color: #007bff; /* 文字颜色 */
+            transition: background-color 0.3s, color 0.3s; /* 背景颜色和文字颜色的过渡效果，持续时间0.3秒 */
+          }
+          /* 当鼠标悬停在.link-button上时的样式 */
+          .link-button:hover {
+            background-color: #007bff; /* 背景颜色 */
+            color: white; /* 文字颜色 */
+          }
+          /* 定义.link-button内部的i标签样式 */
+          .link-button i {
+            margin-right: 8px; /* 右外边距，8px */
+          }
+          .center-text {
+            text-align: center;
+          }
+        </style>
+        
+        <div style="text-align: center;">
+          <a href="https://arxiv.org/abs/2412.11815" target="_blank" class="link-button">
+            <i class="fas fa-file-alt"></i> <img src="fig/arxiv.png" alt="arxiv", style="width: 16px;"> Paper</a>
+          <a href="https://github.com/TencentARC/ColorFlow" target="_blank" class="link-button">
+            <i class="fab fa-github"></i> <img src="fig/github.png" alt="github", style="width: 16px;"> Code</a>
+          <a href="https://huggingface.co/spaces/TencentARC/ColorFlow" target="_blank" class="link-button">
+            <i class="fas fa-eye"></i> <img src="fig/huggingface_logo-noborder.svg" alt="demo", style="width: 16px;"> Online Demo</a>
+           <a href="https://huggingface.co/TencentARC/ColorFlow" target="_blank" class="link-button">
+            <i class="fas fa-eye"></i> <img src="fig/huggingface_logo-noborder.svg" alt="model", style="width: 16px;"> Model</a>
+          <a href="https://www.youtube.com/watch?v=zvromeu8xtA" target="_blank" class="link-button">
+            <i class="fab fa-bilibili"></i> <img src="fig/youtube.png" alt="bilibili", style="width: 16px;"> YouTube</a>
+        </div>
+
+    
+
+<div style="text-align: center;">
+  <p>
+    <b>Cobra</b> is a novel efficient long-context fine-grained ID preservation framework for line art colorization, achieving high precision, efficiency, and flexible usability for comic colorization. By effectively integrating extensive contextual references, it transforms black-and-white line art into vibrant illustrations.
+  </p>
+  <!-- <iframe
+    width="960"
+    height="540"
+    src="https://www.youtube.com/embed/zvromeu8xtA"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+  ></iframe> -->
+  <img src="fig/teaser.png" class="teaser-gif" style="width:100%;">
+</div>
+</div>
+
+
+<div class="content">
+  <h2 style="text-align:center;"><strong>Abstract</strong></h2>
+  <p>The comic production industry requires reference-based line art colorization with high accuracy, efficiency, contextual consistency, and flexible control.
+    A comic page often involves diverse characters, objects, and backgrounds, which complicates the coloring process.
+    Despite advancements in diffusion models for image generation, their application in line art colorization remains limited, facing challenges related to handling extensive reference images, time-consuming inference, and flexible control.
+    We investigate the necessity of extensive contextual image guidance on the quality of line art colorization. To address these challenges, we introduce <b>Cobra</b>, an efficient and versatile method that supports color hints and utilizes <b>over 200 reference images</b> while maintaining low latency. 
+    Central to Cobra is a Causal Sparse DiT architecture, which leverages specially designed positional encodings, causal sparse attention, and Key-Value Cache to effectively manage long-context references and ensure color identity consistency.
+    Results demonstrate that Cobra achieves accurate line art colorization through extensive contextual reference, significantly enhancing inference speed and interactivity, thereby meeting critical industrial demands. Code and model will be released.</p>
+  </div>
+
+
+<div class="content">
+    <h2 style="text-align:center;"><strong>Method</strong></h2>
+    <p> <b>A. The overview of Cobra.</b>
+      This figure depicts the framework of Cobra, which utilizes a large collection of retrieved reference images to guide the colorization of comic line art. The framework effectively manages an arbitrary number of contextual image references through <b>localized reusable positional encoding</b>, ensuring appropriate aspect ratios and resolutions. Additionally, the <b>causal sparse DiT architecture</b> processes long contextual references, enhancing identity preservation and color accuracy while reducing computational complexity. The integration of <b>optional color hints</b> further ensures user flexibility, culminating in high-quality coloring that is highly suitable for industrial applications.</p>
+    <br>
+    <img class="summary-img" src="fig/flowchart.png" style="width:100%;"> <br>
+    <p> <b>B. Illustration of the transition from Full Attention to Causal Sparse Attention.</b> This figure highlights the reduction in computational complexity achieved by excluding pairwise calculations among reference images. Additionally, the application of unidirectional causal attention, along with the use of KV-Cache, further enhances computational efficiency while ensuring effective transmission of essential color ID information.</p>
+    <img class="summary-img" src="fig/attention.png" style="width:60%;"> <br>
+  </div>
+
+<div class="content">
+  <h2 style="text-align:center;"><strong>Compare Cobra with Previous Works</strong></h2>
+  
+  <p> <b>A. Qualitative results of line art colorization</b>, highlighting how Cobra outperforms other methods by accurately preserving color IDs and providing high-quality results, even in complex scenarios.</p>
+    <img src="fig/exp_line.png" class="teaser-gif" style="width:100%;">
+  <p> <b>B. Qualitative results of line art with shadows</b>, showcasing Cobra's superior ability to maintain color fidelity and enhance detail, demonstrating its robustness and effectiveness in real-world applications.</p>
+    <img src="fig/exp_bwg.png" class="teaser-gif" style="width:100%;">
+  <!-- <p> <b>Interactive line art colorization using color hints</b>, demonstrating how Cobra allows users to specify color adjustments in designated areas, enhancing control over the colorization process while maintaining overall stability.</p>
+    <img src="fig/exp_hint.png" class="teaser-gif" style="width:100%;"> -->
+</div>
+
+<div class="content">
+  <h2 style="text-align:center;"><strong>Qualitative Results</strong></h2>
+  
+  <p> <b>A. Quantitative comparison</b> of Cobra with state-of-the-art comic colorization methods, including CLIP-IS, FID, PSNR, SSIM, and AS metrics for both line art and line art with shadows.</p>
+    <img src="fig/table0.png" class="teaser-gif" style="width:100%;">
+    <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+      <div style="flex: 1;">
+        <p><b>B. Impact of reference image count</b> on the performance of Cobra in line art colorization, demonstrating consistent improvements as the number of reference images increases.</p>
+        <img src="fig/table1.png" class="teaser-gif" style="width:100%;">
+      </div>
+
+      <div style="flex: 1;">
+        <p><b>C. Evaluation of inference time efficiency</b> for Full Attention, Sparse Attention, and Causal Sparse Attention (with KV-Cache) across different counts of reference images.</p>
+        <img src="fig/plot.png" class="teaser-gif" style="width:70%;">
+      </div>
+    </div>
+    <p> <b>More qualitative results are shown in the paper.</b></p>
+</div>
+
+
+<div id="results2" class="content">
+  <h2 style="text-align:center;"><strong>Additional results </a></strong></h2>
+<!-- <p> <b>Interactive line art colorization using color hints</b>, demonstrating how Cobra allows users to specify color adjustments in designated areas, enhancing control over the colorization process while maintaining overall stability.</p>
+    <img src="fig/exp_hint.png" class="teaser-gif" style="width:100%;"> -->
+    <h4><b>A. Interactive line art colorization</b></h4>
+    <img class="summary-img" src="fig/exp_hint.png" style="width:100%;">
+    <h4><b>B. Line Art Colorization</b></h4>
+    <img class="summary-img" src="fig/supp_line.png" style="width:100%;">
+    <h4><b>C. Line Art with Shadows Colorization</b></h4>
+    <img class="summary-img" src="fig/supp_bwg.png" style="width:100%;">
+    <h4><b>D. Line Art Video Colorization</b></h4>
+    <img class="summary-img" src="fig/supp_video.png" style="width:100%;">
+</div>
+
+
+<div class="content">
+  <h2 style="text-align:center;"><strong>BibTex</strong></h2>
+  <code> <br>@misc{zhuang2024cobra,<br>
+      title={Cobra:
+        Efficient Line Art COlorization with BRoAder References}, <br>
+      author={Junhao Zhuang and Lingen Li and Xuan Ju and Zhaoyang Zhang and Chun Yuan and Ying Shan},<br>
+      year={2025},<br>
+      eprint={****},<br>
+      archivePrefix={arXiv},<br>
+      primaryClass={cs.CV},<br>
+      url={***}, <br>
+}
+   </code> 
+</div>
+
+<div class="content">
+  <h2 style="text-align:center;"><strong>DISCLAIMER</strong></h2>
+  <p style="text-align: center;">ALL IMAGES, VIDEOS, AND OTHER MATERIALS PRESENTED ON THIS PAGE ARE USED SOLELY FOR ACADEMIC AND RESEARCH PURPOSES.
+  </p>
+</div>
+
+</body>
+
+
+</html>
