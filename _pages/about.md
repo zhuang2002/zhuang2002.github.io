@@ -23,7 +23,7 @@ My research interests lie in Computer Vision, particularly in image and video ge
 ---
 # 🔬 Research
 ---
-* indicates equal contribution
+\* indicates equal contribution
 <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>	
 
   <!--Cobra-->
@@ -147,9 +147,9 @@ My research interests lie in Computer Vision, particularly in image and video ge
     <td width="75%" valign="center">
       <papertitle>ColorFlow: Retrieval-Augmented Image Sequence Colorization</papertitle>
       <br>
-      <b>Junhao Zhuang</b>, Xuan Ju, Zhaoyang Zhang, Yong Liu, Shiyi Zhang, Chun Yuan, Ying Shan
+      <b>Junhao Zhuang*</b>, Xuan Ju*, Zhaoyang Zhang, Yong Liu, Shiyi Zhang, Chun Yuan, Ying Shan
       <br>
-      <em>International Conference on Acoustics, Speech, and Signal Processing (<strong>ICASSP</strong>), 2024, Oral</em>
+      <em>arXiv preprint arXiv:2412.11815, 2024</em>
       <br>
       <a href="https://arxiv.org/abs/2412.11815">[PDF]</a>
       <a href="https://zhuang2002.github.io/ColorFlow/">[Project Page]</a> 
