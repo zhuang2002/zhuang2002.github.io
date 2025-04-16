@@ -17,8 +17,9 @@ My research interests lie in Computer Vision, particularly in image and video ge
 # ✨ News
 ---
 * <span style="font-size: smaller;">2025-04: Two papers are accepted to [SIGGRAPH 2025](https://www.siggraph.org/siggraph-events/conferences/)</span>
+* <span style="font-size: smaller;">2024-12: One paper is accepted to [ICASSP 2025](https://2025.ieeeicassp.org/important-dates/)</span>
 * <span style="font-size: smaller;">2024-07: One paper is accepted to [ECCV 2024](https://eccv.ecva.net/)</span>
-* <span style="font-size: smaller;">2024-03: One paper is accepted to [ACM MM 2022](https://2022.acmmm.org/)</span>
+* <span style="font-size: smaller;">2022-06: One paper is accepted to [ACM MM 2022](https://2022.acmmm.org/)</span>
 
 ---
 # 🔬 Research
