@@ -11,7 +11,7 @@ I am currently a second-year Master's student in Computer Technology at Tsinghua
 
 My research interests lie in Computer Vision, particularly in image and video generation.
 
-[Email](mailto:zhuangjh23@mails.tsinghua.edu.cn) / [Github](https://github.com/zhuang2002)
+[Email](mailto:zhuangjh23@mails.tsinghua.edu.cn) / [GitHub](https://github.com/zhuang2002)
 
 ---
 # ✨ News
