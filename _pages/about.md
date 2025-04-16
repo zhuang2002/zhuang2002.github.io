@@ -9,7 +9,7 @@ redirect_from:
 
 I am currently a second-year Master's student in Computer Technology at Tsinghua University, under the supervision of Prof. [Chun Yuan](https://scholar.google.com/citations?user=fYdxi2sAAAAJ&hl=en). I obtained my Bachelor's degree in Computer Science and Technology from the Yingcai Honors College at the University of Electronic Science and Technology of China in 2023.
 
-My research interests lie in Computer Vision, particularly in video generation and editing.
+My research interests lie in Computer Vision, particularly in image and video generation.
 
 [Email](mailto:zhuangjh23@mails.tsinghua.edu.cn) / [Github](https://github.com/zhuang2002)
 
