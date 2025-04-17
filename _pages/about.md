@@ -39,8 +39,8 @@ My research interests lie in Computer Vision, particularly in image and video ge
       <br>
       <em>ACM SIGGRAPH (<strong>SIGGRAPH</strong>), 2025</em>
       <br>
+      <a href="https://arxiv.org/abs/2504.12240">[PDF]</a> 
       <a href="https://zhuang2002.github.io/Cobra/">[Project Page]</a>
-      <a href="https://github.com/zhuang2002/Cobra">[Code]</a> 
       <br>
       <p> Cobra is a novel efficient long-context fine-grained ID preservation framework for line art colorization, achieving high precision, efficiency, and flexible usability for comic colorization. By effectively integrating extensive contextual references, it transforms black-and-white line art into vibrant illustrations.</p>
     </td>
