@@ -164,4 +164,8 @@ My research interests lie in Computer Vision, particularly in image and video ge
 
 ---
 # 🌎 Visitor Map
-<script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=YcEGNdlapjfGw9-NBcj1CQW4sNbZoUSTRXAL3tOqhSM"></script>
+<div style="display: flex; justify-content: center; margin: 20px 0;">
+  <div style="width: 300px; height: 300px;">
+    <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=YcEGNdlapjfGw9-NBcj1CQW4sNbZoUSTRXAL3tOqhSM"></script>
+  </div>
+</div>
