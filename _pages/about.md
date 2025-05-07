@@ -57,10 +57,10 @@ My research interests lie in Computer Vision, particularly in image and video ge
       Shiyi Zhang*, <b>Junhao Zhuang*</b>, Zhaoyang Zhang, Yansong Tang
       <br>
       <em>ACM SIGGRAPH (<strong>SIGGRAPH</strong>), 2025</em>
-<!--       <br>
-      <a href="">[PDF]</a>
-      <a href="https://github.com/shiyi-zh0408/NAE_CVPR2024">[Project Page]</a> 
-      <br> -->
+      <br>
+      <a href="https://arxiv.org/abs/2505.03730">[PDF]</a> 
+      <a href="https://shiyi-zh0408.github.io/projectpages/FlexiAct/">[Project Page]</a>
+      <br>
       <p> We achieve action transfer in heterogeneous scenarios with varying spatial structures or cross-domain subjects.</p>
     </td>
   </tr>	
