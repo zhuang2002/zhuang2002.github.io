@@ -134,7 +134,7 @@ My research interests lie in Computer Vision, particularly in image and video ge
       <em>International Conference on Acoustics, Speech, and Signal Processing (<strong>ICASSP</strong>), 2024, Oral</em>
       <br>
       <a href="https://arxiv.org/pdf/2409.09610">[PDF]</a>
-      <a href="https://github.com/THU-CVML/TextureDiffusion">[Project Page]</a> 
+      <a href="https://github.com/THU-CVML/TextureDiffusion">[Code]</a> 
       <br>
       <p> We proposed TextureDiffusion, a tuning-free image editing method applied to various texture transfer. </p>
     </td>
