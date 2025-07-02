@@ -2,43 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Robot Video Showcase</title>
+  <title>Video Showcase</title>
   <style>
     body { font-family: Arial, sans-serif; text-align: center; background: #f0f0f0; padding: 20px; }
     h1 { margin-bottom: 40px; }
     video { width: 80%; max-width: 600px; margin: 20px 0; border: 2px solid #ccc; border-radius: 10px; }
+    .caption { font-size: 14px; margin-bottom: 10px; color: #555; }
   </style>
 </head>
 <body>
   <h1>🤖 Robot Video Showcase</h1>
+  <div id="video-container">Loading...</div>
 
-  <video controls>
-    <source src="https://cdn.pixabay.com/video/2023/06/23/168502-839220724_small.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
+  <script>
+    // 简单 CSV 解析器
+    function parseCSV(text) {
+      const lines = text.trim().split('\n').slice(1); // 去除 header
+      return lines.map(line => {
+        const [url, path] = line.split(',');
+        return { url: url.split('?')[0], path };
+      });
+    }
 
-  <video controls>
-    <source src="https://cdn.pixabay.com/video/2024/08/13/226180_small.mp4" type="video/mp4">
-  </video>
+    // Fisher-Yates 洗牌算法
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
 
-  <video controls>
-    <source src="https://cdn.pixabay.com/video/2023/06/12/166965-835670925_small.mp4" type="video/mp4">
-  </video>
+    async function loadVideosFromCSV() {
+      try {
+        const response = await fetch('video_info.csv');
+        const text = await response.text();
+        const allVideos = parseCSV(text);
+        const selectedVideos = shuffle(allVideos).slice(0, 6);
 
-  <video controls>
-    <source src="https://cdn.pixabay.com/video/2021/09/11/88223-606079076_small.mp4" type="video/mp4">
-  </video>
+        const container = document.getElementById('video-container');
+        container.innerHTML = ''; // 清空加载中提示
 
-  <video controls>
-    <source src="https://cdn.pixabay.com/video/2022/11/23/140210-774522036_small.mp4" type="video/mp4">
-  </video>
+        selectedVideos.forEach(({ url, path }) => {
+          const caption = document.createElement('div');
+          caption.className = 'caption';
+          caption.innerText = path;
 
-  <video controls>
-    <source src="https://cdn.pixabay.com/video/2023/07/04/170082-842720202_small.mp4" type="video/mp4">
-  </video>
+          const video = document.createElement('video');
+          video.controls = true;
+          video.src = url;
 
-  <video controls>
-    <source src="https://cdn.pixabay.com/video/2023/06/16/167508-837077528_small.mp4" type="video/mp4">
-  </video>
+          container.appendChild(caption);
+          container.appendChild(video);
+        });
+
+      } catch (error) {
+        document.getElementById('video-container').innerText = 'Failed to load video_info.csv';
+        console.error(error);
+      }
+    }
+
+    loadVideosFromCSV();
+  </script>
 </body>
 </html>
