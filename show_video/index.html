@@ -4,27 +4,62 @@
   <meta charset="UTF-8">
   <title>Video Showcase</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; background: #f0f0f0; padding: 20px; }
-    h1 { margin-bottom: 40px; }
-    video { width: 80%; max-width: 600px; margin: 20px 0; border: 2px solid #ccc; border-radius: 10px; }
-    .caption { font-size: 14px; margin-bottom: 10px; color: #555; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      justify-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .video-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    video {
+      width: 100%;
+      max-width: 500px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+    }
+
+    .caption {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #555;
+      word-break: break-word;
+      max-width: 500px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
   <h1>Video Showcase</h1>
-  <div id="video-container">Loading...</div>
+  <div id="video-grid" class="grid">Loading...</div>
 
   <script>
-    // 简单 CSV 解析器
     function parseCSV(text) {
-      const lines = text.trim().split('\n').slice(1); // 去除 header
+      const lines = text.trim().split('\n').slice(1);
       return lines.map(line => {
         const [url, path] = line.split(',');
         return { url: url.split('?')[0], path };
       });
     }
 
-    // Fisher-Yates 洗牌算法
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -40,24 +75,27 @@
         const allVideos = parseCSV(text);
         const selectedVideos = shuffle(allVideos).slice(0, 6);
 
-        const container = document.getElementById('video-container');
-        container.innerHTML = ''; // 清空加载中提示
+        const grid = document.getElementById('video-grid');
+        grid.innerHTML = ''; // Clear "Loading..."
 
         selectedVideos.forEach(({ url, path }) => {
-          const caption = document.createElement('div');
-          caption.className = 'caption';
-          caption.innerText = path;
+          const block = document.createElement('div');
+          block.className = 'video-block';
 
           const video = document.createElement('video');
           video.controls = true;
           video.src = url;
 
-          container.appendChild(caption);
-          container.appendChild(video);
-        });
+          const caption = document.createElement('div');
+          caption.className = 'caption';
+          caption.innerText = path;
 
+          block.appendChild(video);
+          block.appendChild(caption);
+          grid.appendChild(block);
+        });
       } catch (error) {
-        document.getElementById('video-container').innerText = 'Failed to load video_info.csv';
+        document.getElementById('video-grid').innerText = 'Failed to load video_info.csv';
         console.error(error);
       }
     }
