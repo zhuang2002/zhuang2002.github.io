@@ -44,6 +44,7 @@ My research interests lie in **Computer Vision**, particularly in **image and vi
       <br>
       <a href="https://arxiv.org/abs/2504.12240">[PDF]</a> 
       <a href="https://zhuang2002.github.io/Cobra/">[Project Page]</a>
+      <a href="https://github.com/Zhuang2002/Cobra">[Code]</a>
       <br>
       <p> Cobra is a novel efficient long-context fine-grained ID preservation framework for line art colorization, achieving high precision, efficiency, and flexible usability for comic colorization. By effectively integrating extensive contextual references, it transforms black-and-white line art into vibrant illustrations.</p>
     </td>
@@ -63,6 +64,7 @@ My research interests lie in **Computer Vision**, particularly in **image and vi
       <br>
       <a href="https://arxiv.org/abs/2505.03730">[PDF]</a> 
       <a href="https://shiyi-zh0408.github.io/projectpages/FlexiAct/">[Project Page]</a>
+      <a href="https://github.com/shiyi-zh0408/FlexiAct">[Code]</a>
       <br>
       <p> We achieve action transfer in heterogeneous scenarios with varying spatial structures or cross-domain subjects.</p>
     </td>
@@ -82,6 +84,7 @@ My research interests lie in **Computer Vision**, particularly in **image and vi
       <br>
       <a href="https://arxiv.org/abs/2312.03594">[PDF]</a>
       <a href="https://powerpaint.github.io/">[Project Page]</a> 
+      <a href="https://github.com/open-mmlab/PowerPaint">[Code]</a>
       <br>
       <p> PowerPaint is the first versatile image inpainting model that simultaneously achieves state-of-the-art results in various inpainting tasks such as text-guided object inpainting, context-aware image inpainting, shape-guided object inpainting with controllable shape-fitting, and outpainting.</p>
     </td>
@@ -157,6 +160,7 @@ My research interests lie in **Computer Vision**, particularly in **image and vi
       <br>
       <a href="https://arxiv.org/abs/2412.11815">[PDF]</a>
       <a href="https://zhuang2002.github.io/ColorFlow/">[Project Page]</a> 
+      <a href="https://github.com/TencentARC/ColorFlow">[Code]</a>
       <br>
       <p> ColorFlow is the first model designed for fine-grained ID preservation in image sequence colorization, utilizing contextual information. Given a reference image pool, ColorFlow accurately generates colors for various elements in black and white image sequences, including the hair color and attire of characters, ensuring color consistency with the reference images.  </p>
     </td>
