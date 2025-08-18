@@ -9,7 +9,7 @@ redirect_from:
 
 I am currently a second-year Master's student in Computer Technology at **Tsinghua University**, under the supervision of **Prof. Chun Yuan**. I obtained my Bachelor's degree in Computer Science and Technology from the **Yingcai Honors College at the University of Electronic Science and Technology of China** in 2023, where I was fortunate to be advised by **Prof. Xile Zhao**.  
 
-I also worked as a **Research Assistant** at **MMLab, The Chinese University of Hong Kong (CUHK)**, under the supervision of **Prof. Tianfan Xue**.  
+I am currently working as a **Research Assistant** at **MMLab, The Chinese University of Hong Kong (CUHK)**, under the supervision of **Prof. Tianfan Xue**.
 
 My research interests lie in **Computer Vision**, particularly in **image and video generation**.
 
