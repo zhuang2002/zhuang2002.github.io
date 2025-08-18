@@ -7,7 +7,7 @@ redirect_from:
   - /about.html
 ---
 
-I am currently a second-year Master's student in Computer Technology at Tsinghua University, under the supervision of **Prof. Chun Yuan**. I obtained my Bachelor's degree in Computer Science and Technology from the **Yingcai Honors College at the University of Electronic Science and Technology of China** in 2023, where I was fortunate to be advised by **Prof. Xile Zhao**.  
+I am currently a second-year Master's student in Computer Technology at **Tsinghua University**, under the supervision of **Prof. Chun Yuan**. I obtained my Bachelor's degree in Computer Science and Technology from the **Yingcai Honors College at the University of Electronic Science and Technology of China** in 2023, where I was fortunate to be advised by **Prof. Xile Zhao**.  
 
 I also worked as a **Research Assistant** at **MMLab, The Chinese University of Hong Kong (CUHK)**, under the supervision of **Prof. Tianfan Xue**.  
 
