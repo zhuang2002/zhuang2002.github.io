@@ -19,6 +19,7 @@ My research interests lie in **Computer Vision**, particularly in **image and vi
 ---
 # ✨ News
 ---
+* <span style="font-size: smaller;">2025-09: One paper is accepted to [NeurIPS 2025](https://neurips.cc/)</span>
 * <span style="font-size: smaller;">2025-04: Two papers are accepted to [SIGGRAPH 2025](https://www.siggraph.org/siggraph-events/conferences/)</span>
 * <span style="font-size: smaller;">2024-12: One paper is accepted to [ICASSP 2025](https://2025.ieeeicassp.org/important-dates/)</span>
 * <span style="font-size: smaller;">2024-07: One paper is accepted to [ECCV 2024](https://eccv.ecva.net/)</span>
@@ -163,6 +164,27 @@ My research interests lie in **Computer Vision**, particularly in **image and vi
       <a href="https://github.com/TencentARC/ColorFlow">[Code]</a>
       <br>
       <p> ColorFlow is the first model designed for fine-grained ID preservation in image sequence colorization, utilizing contextual information. Given a reference image pool, ColorFlow accurately generates colors for various elements in black and white image sequences, including the hair color and attire of characters, ensuring color consistency with the reference images.  </p>
+    </td>
+  </tr>	
+
+  <!--Safe-Sora-->
+  <tr>
+    <td style="padding:20px;width:30%;max-width:30%" align="center">
+      <img style="width:100%;max-width:100%" src="../images/safesora.png" alt="dise">
+    </td>
+    <td width="75%" valign="center">
+      <papertitle>Safe-Sora: Safe Text-to-Video Generation via Graphical Watermarking</papertitle>
+      <br>
+      Zihan Su, Xuerui Qiu, Hongbin Xu, Tangyu Jiang, <b>Junhao Zhuang</b>,
+Chun Yuan, Ming Li, Shengfeng He, Fei Richard Yu,
+      <br>
+      <em>Neural Information Processing Systems (<strong>NeurIPS</strong>), 2025</em>
+      <br>
+      <a href="https://arxiv.org/pdf/2505.12667">[PDF]</a> 
+      <a href="https://sugewud.github.io/Safe-Sora-project/">[Project Page]</a>
+      <a href="https://github.com/Sugewud/Safe-Sora">[Code]</a>
+      <br>
+      <p> Safe-Sora: a framework for embedding graphical watermarks into video generation, achieving state-of-the-art quality, fidelity, and robustness through hierarchical adaptive matching and a 3D wavelet-enhanced Mamba architecture.</p>
     </td>
   </tr>	
 
