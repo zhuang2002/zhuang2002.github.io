@@ -10,10 +10,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <!-- Artistic title font -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
-    <!-- Favicon -->
-    <link rel="icon" href="./logo.png" sizes="32x32">
-    <link rel="icon" href="./logo.png" sizes="192x192">
-    <link rel="apple-touch-icon" href="./logo.png">
+  <!-- Favicon -->
+  <link rel="icon" href="./logo.png" sizes="32x32">
+  <link rel="icon" href="./logo.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="./logo.png">
   
   <style>
     :root{
@@ -27,8 +27,8 @@
       --danger:#ff6b6b; --good:#32d296;
       --radius:20px;
       --ring: 0 0 0 2px rgba(124,92,255,.35), 0 0 40px rgba(38,230,164,.15);
-      --secGap: 56px;                               /* 每个 section 的上下间隔 */
-      --secTitleSize: clamp(22px, 28px * var(--scale), 36px); /* section 标题字号 */
+      --secGap: 56px;
+      --secTitleSize: clamp(22px, 28px * var(--scale), 36px);
     }
     *{box-sizing:border-box}
     html,body{
@@ -52,60 +52,21 @@
     .chip{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02))}
     .top-actions{display:flex;gap:8px}
 
-    .authors sup {
-      font-size: 0.7em;
-      vertical-align: super;
-      opacity: 0.8;
-    }
-    .authors a {
-      color: var(--text);
-      text-decoration: none;
-      border-bottom: 1px dotted rgba(255,255,255,.2);
-    }
-    .authors a:hover {
-      color: #fff;
-      border-bottom-color: #fff;
-    }
+    .authors sup { font-size: 0.7em; vertical-align: super; opacity: 0.8; }
+    .authors a { color: var(--text); text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,.2); }
+    .authors a:hover { color: #fff; border-bottom-color: #fff; }
 
     /* 仅“Ours vs. Others”区块使用 scale = 1.0 */
     section[aria-labelledby="s4"] { --scale: 1 !important; }
-    /* 保险起见，也给容器打一层（比较区视频是动态插入 #compareHost 的） */
     #compareHost { --scale: 1 !important; }
-
-
-
 
     /* Header */
     header.hero{position:relative;display:grid;grid-template-columns:1fr;gap:12px;align-items:center}
     .title-wrap{position:relative;padding:6px 0 2px 0;background:none;border:none;box-shadow:none;overflow:visible}
-    :root{
-      /* 新增两个变量 */
-      --titleGap: 6px;   /* 标题与logo间距 */
-      --logoH: 72px;     /* logo 基础高度 */
-    }
-
-    .title-row{
-      display:flex;
-      align-items:center;
-      justify-content:center;   /* 居中 */
-      gap: var(--titleGap);     /* 间距可调 */
-    }
-
-    .title-row img.logo{
-      height: calc(var(--logoH) * var(--scale));
-      width:auto;
-      display:block;
-      flex:0 0 auto;
-      border-radius:12px;
-      margin:0;
-    }
-
-    .title-text{
-      display:flex;
-      align-items:center;
-      letter-spacing:.01em;
-    }
-
+    :root{ --titleGap: 6px; --logoH: 72px; }
+    .title-row{ display:flex; align-items:center; justify-content:center; gap: var(--titleGap); }
+    .title-row img.logo{ height: calc(var(--logoH) * var(--scale)); width:auto; display:block; flex:0 0 auto; border-radius:12px; margin:0; }
+    .title-text{ display:flex; align-items:center; letter-spacing:.01em; }
     .title-text{
       font-family:Orbitron, "Space Grotesk", Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
       font-weight:900; letter-spacing:.02em; line-height:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
@@ -115,11 +76,6 @@
       text-shadow:0 0 24px rgba(124,92,255,.18);
       text-align:center;
     }
-    /* .title-sub{
-      margin-top:6px; font-family:"Space Grotesk", Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
-      font-weight:800; letter-spacing:.01em; line-height:1.1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      font-size:clamp(18px, calc(26px * var(--scale)), 32px); color:var(--text); opacity:.95; text-align:center;
-    } */
     .title-sub{
       margin-top:8px;
       font-family:"Space Grotesk", Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
@@ -127,8 +83,6 @@
       font-size:clamp(24px, calc(36px * var(--scale)), 44px);
       color:var(--text); opacity:.95; text-align:center;
     }
-
-
 
     /* Sparks */
     .sparks{position:absolute;inset:0;pointer-events:none;opacity:.7}
@@ -139,14 +93,13 @@
     .section-title{
       display:flex; align-items:center; gap:10px;
       font-family:"Space Grotesk"; font-weight:800;
-      font-size: var(--secTitleSize);              /* ← 用变量控制字号 */
+      font-size: var(--secTitleSize);
       letter-spacing:.02em;
       justify-content:center;
       text-align:center;
     }
     .section-title .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg, var(--brand-1), var(--brand-2)); box-shadow:0 0 18px rgba(124,92,255,.35)}
-    .note{color:var(--muted);font-size:.95rem;margin-top:6px;text-align:center} /* 摘要/方法文字居中 */
-
+    .note{color:var(--muted);font-size:.95rem;margin-top:6px;text-align:center}
 
     .teaser{
       display:grid; gap:14px; align-items:center; justify-items:center;
@@ -154,25 +107,20 @@
       background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
       border-radius:16px; padding:14px;
       text-align:center;
-      width:100%;                            /* 与 .fig 一样 */
-      max-width: calc(1120px * var(--scale));/* 与 .fig 一样 */
+      width:100%;
+      max-width: calc(1120px * var(--scale));
       margin:0 auto;
     }
-
-    /* 让 teaser 里的主图充满这个 90% 宽度的卡片 */
     .teaser img.scale-90{ width:90% !important; height:auto; }
 
-    /* 全局让 PNG/JPG 居中 */
     img[src$=".png"], img[src$=".jpg"], img[src$=".jpeg"]{display:block;margin:0 auto}
-
-    /* Specific scaling helpers */
     .scale-90{width:90% !important; height:auto}
     .scale-40{width:40% !important; height:auto}
 
     .fig{
       width:100%; max-width: calc(1120px * var(--scale));
       border:1px solid rgba(255,255,255,.1); border-radius:12px; overflow:hidden;
-      background:#0d0f17; display:block; padding:10px; margin:0 auto; /* 居中容器 */
+      background:#0d0f17; display:block; padding:10px; margin:0 auto;
       text-align:center;
     }
     .fig img{display:block; height:auto; max-width:100%; margin:0 auto}
@@ -205,7 +153,7 @@
     .cmp .labels{position:absolute;left:10px;right:10px;top:10px;display:flex;justify-content:space-between;pointer-events:none}
     .pill{pointer-events:auto;display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(16,18,28,.7);border:1px solid rgba(255,255,255,.12);backdrop-filter: blur(8px); font-weight:700; font-size:.82rem}
 
-    /* Speedup badge (two-line) */
+    /* Speedup badge */
     .badge{
       position:absolute; top:45px; right:10px; z-index:2;
       padding:6px 10px; border-radius:999px;
@@ -219,21 +167,11 @@
       white-space: pre-line;
       text-align: center;
     }
-    @keyframes breath{
-      0%,100%{ transform:translateY(0); opacity:.98 }
-      50%{ transform:translateY(-1px); opacity:1 }
-    }
+    @keyframes breath{ 0%,100%{ transform:translateY(0); opacity:.98 } 50%{ transform:translateY(-1px); opacity:1 } }
+
     /* 仅影响轮播里的左右箭头按钮 */
-    .iconbtn.nav{
-      color:#fff;                 /* 箭头字符 ◀ ▶ 显示为白色 */
-      border-color:rgba(255,255,255,.4);
-    }
-
-    /* 若后续把箭头改成 SVG，这条会让 SVG 也变白 */
-    .iconbtn.nav svg path{
-      fill:#fff;
-    }
-
+    .iconbtn.nav{ color:#fff; border-color:rgba(255,255,255,.4); }
+    .iconbtn.nav svg path{ fill:#fff; }
 
     .caption{margin-top:8px;color:var(--muted);font-size:.92rem;text-align:center}
 
@@ -250,8 +188,6 @@
 
     /* Tabs (only for Comparisons) */
     .compare-switch{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0}
-    /* .compare-tab{padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));cursor:pointer;font-weight:800}
-    .compare-tab.active{box-shadow:var(--ring)} */
     .compare-tab{
       padding:8px 14px;
       border-radius:999px;
@@ -259,60 +195,35 @@
       background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
       cursor:pointer;
       font-weight:800;
-      color:#fff;                 /* 新增：文字白色 */
+      color:#fff;
       transition:color .2s, box-shadow .2s;
     }
-    .compare-tab:hover{
-      box-shadow:var(--ring);
-      color:#fff;                 /* hover 保持白色 */
-    }
-    .compare-tab.active{
-      box-shadow:var(--ring);
-      color:#fff;                 /* active 状态保持白色 */
-    }
-
+    .compare-tab:hover{ box-shadow:var(--ring); color:#fff; }
+    .compare-tab.active{ box-shadow:var(--ring); color:#fff; }
 
     pre.bib{background:#0d0f17;color:#dbe1ff;padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,.08); overflow:auto}
     .cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
     .cta{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.18);font-weight:700}
     footer{margin:64px 0 28px; color:var(--muted); font-size:.9rem; display:flex; align-items:center; justify-content:center}
 
-    /* Reuse iconbtn for carousel nav only */
     .iconbtn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));cursor:pointer}
     .iconbtn:hover{box-shadow:var(--ring)}
     .subsec{max-width:1000px;margin:0 auto;}
-    .subsec h4{
-      margin:10px 0 6px 0;
-      font-family:'Space Grotesk';
-      font-weight:800;
-      text-align:center;   /* 标题居中 */
-    }
-    .subsec .note{ text-align:left; } /* 段落左对齐 */
+    .subsec h4{ margin:10px 0 6px 0; font-family:'Space Grotesk'; font-weight:800; text-align:center; }
+    .subsec .note{ text-align:left; }
 
     @media (min-width: 1280px){
       .slide{ flex-basis: min(96vw, calc(1120px * var(--scale))); }
       .cmp{ max-width: calc(1120px * var(--scale)); }
     }
+
     /* ===== Light Theme Overrides ===== */
     html[data-theme="light"]{
-      /* 变量换成亮色系 */
-      --bg:#fafbff;
-      --panel:#ffffff; 
-      --panel-2:#f5f7ff;
-      --text:#0f1222; 
-      --muted:#606575;
-
-      --brand-1:#7c5cff; 
-      --brand-2:#26bfa4;  /* 略收饱和，适配浅底 */
-      --accent:#ffb020;
-
-      --danger:#e74a4a; 
-      --good:#1ea86f;
-
+      --bg:#fafbff; --panel:#ffffff; --panel-2:#f5f7ff; --text:#0f1222; --muted:#606575;
+      --brand-1:#7c5cff; --brand-2:#26bfa4; --accent:#ffb020;
+      --danger:#e74a4a; --good:#1ea86f;
       --ring: 0 0 0 2px rgba(124,92,255,.25), 0 0 30px rgba(38,191,164,.12);
     }
-
-    /* 页面背景从深色改为浅底+淡色渐变光斑 */
     html[data-theme="light"] body{
       background:
         radial-gradient(1200px 600px at 10% -10%, rgba(124,92,255,.18), transparent 60%),
@@ -320,8 +231,6 @@
         var(--bg);
       color:var(--text);
     }
-
-    /* 顶部导航浅底边框 */
     html[data-theme="light"] .topnav{
       background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,0));
       border-bottom:1px solid rgba(0,0,0,.08);
@@ -332,39 +241,18 @@
       border:1px solid rgba(0,0,0,.12);
       background:linear-gradient(180deg, rgba(0,0,0,.03), rgba(0,0,0,.01));
     }
-
-    /* 标题渐变在浅底更清晰，文本阴影减弱 */
-    html[data-theme="light"] .title-text{
-      text-shadow:0 0 16px rgba(124,92,255,.14);
-    }
+    html[data-theme="light"] .title-text{ text-shadow:0 0 16px rgba(124,92,255,.14); }
     html[data-theme="light"] .title-sub{ color:var(--text); opacity:.9; }
-
-    /* 卡片与图注 */
     html[data-theme="light"] .teaser,
-    html[data-theme="light"] .fig{
-      background:#ffffff; 
-      border:1px solid rgba(0,0,0,.08);
-    }
+    html[data-theme="light"] .fig{ background:#ffffff; border:1px solid rgba(0,0,0,.08); }
     html[data-theme="light"] .fig-caption{ color:var(--muted); }
-
-    /* 轮播滚动条与圆点 */
     html[data-theme="light"] .carousel .track::-webkit-scrollbar-thumb{
       background:linear-gradient(90deg,var(--brand-1),var(--brand-2));
     }
-    html[data-theme="light"] .carousel .dot{ 
-      background:rgba(0,0,0,.18); 
-      border:1px solid rgba(0,0,0,.25);
-    }
-
-    /* 左右对比容器浅底、边框变暗色 */
-    html[data-theme="light"] .cmp{
-      background:#fff;
-      border:1px solid rgba(0,0,0,.08);
-    }
+    html[data-theme="light"] .carousel .dot{ background:rgba(0,0,0,.18); border:1px solid rgba(0,0,0,.25); }
+    html[data-theme="light"] .cmp{ background:#fff; border:1px solid rgba(0,0,0,.08); }
     html[data-theme="light"] .cmp .handle{ background:#111; }
     html[data-theme="light"] .cmp .knob{ border-color:#e5e7ef; }
-
-    /* 角标 pill & 速度徽章在浅底的样式 */
     html[data-theme="light"] .pill{
       background:rgba(255,255,255,.85);
       border:1px solid rgba(0,0,0,.12);
@@ -376,36 +264,17 @@
       border:1px solid rgba(0,0,0,.12);
       color:#222;
     }
-
-    /* 比较方法切换按钮（保持可见对比） */
     html[data-theme="light"] .compare-tab{
       color:#111;
       border:1px solid rgba(0,0,0,.12);
       background:linear-gradient(180deg, rgba(0,0,0,.03), rgba(0,0,0,.01));
     }
     html[data-theme="light"] .compare-tab:hover,
-    html[data-theme="light"] .compare-tab.active{
-      box-shadow:var(--ring);
-      color:#111;
-    }
-
-    /* 轮播左右箭头在浅底用深色 */
-    html[data-theme="light"] .iconbtn.nav{
-      color:#111; 
-      border-color:rgba(0,0,0,.3);
-    }
+    html[data-theme="light"] .compare-tab.active{ box-shadow:var(--ring); color:#111; }
+    html[data-theme="light"] .iconbtn.nav{ color:#111; border-color:rgba(0,0,0,.3); }
     html[data-theme="light"] .iconbtn.nav svg path{ fill:#111; }
-
-    /* 代码块（BibTeX）浅底样式 */
-    html[data-theme="light"] pre.bib{
-      background:#f6f7fb;
-      color:#2b2f42;
-      border:1px solid rgba(0,0,0,.08);
-    }
-
-    /* 页脚颜色 */
+    html[data-theme="light"] pre.bib{ background:#f6f7fb; color:#2b2f42; border:1px solid rgba(0,0,0,.08); }
     html[data-theme="light"] footer{ color:#6b7184; }
-
 
     .hl{
       display:inline-block;
@@ -423,7 +292,36 @@
       border:1px solid rgba(0,0,0,.12);
     }
 
+    /* ====== 新增：视频加载状态 UI（pill 内部） ====== */
+    .pill .vstat{
+      display:inline-flex; align-items:center; gap:6px; margin-left:8px; font-weight:700;
+      opacity:.95;
+    }
+    .pill .vstat .dot{
+      width:8px; height:8px; border-radius:50%;
+      background:rgba(255,255,255,.35);
+      box-shadow:0 0 8px rgba(0,0,0,.25);
+    }
+    .pill .vstat.loading .dot{ background: #aaa; }
+    .pill .vstat.ready   .dot{ background: var(--good); }
+    .pill .vstat.error   .dot{ background: var(--danger); }
 
+    .pill .retry{
+      margin-left:8px; padding:4px 8px; border-radius:8px; cursor:pointer;
+      border:1px solid rgba(255,255,255,.2);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      font-weight:800; font-size:.8rem;
+      display:none;
+    }
+    .pill .retry:hover{ box-shadow: var(--ring); }
+
+    .pill .spinner{
+      width:12px; height:12px; border-radius:50%;
+      border:2px solid rgba(255,255,255,.25);
+      border-top-color:#fff;
+      animation:spin 0.8s linear infinite;
+    }
+    @keyframes spin{ to{ transform:rotate(360deg); } }
   </style>
 </head>
 
@@ -438,7 +336,7 @@
       <nav>
         <a class="chip" href="#abs">Abstract</a>
         <a class="chip" href="#method">Method</a>
-        <a class="chip" href="#vsr120k">VSR-120K Datasets</a> <!-- ← add this line here -->
+        <a class="chip" href="#vsr120k">VSR-120K Datasets</a>
         <a class="chip" href="#s1">Real</a>
         <a class="chip" href="#s2">AIGC</a>
         <a class="chip" href="#s3">Long Video</a>
@@ -446,7 +344,7 @@
         <a class="chip" href="#s5">Ablations</a>
         <a class="chip" href="#bib">BibTeX</a>
       </nav>
-      <div class="top-actions"><!-- empty --></div>
+      <div class="top-actions"></div>
     </div>
   </div>
 
@@ -462,10 +360,6 @@
       </div>
 
       <div class="paper-meta">
-        <!-- <h3 style="margin:0 0 8px 0;font-family:Space Grotesk;font-weight:800;text-align:center">Authors & Affiliations</h3> -->
-        <!-- <div class="authors" style="text-align:center">
-          Junhao Zhuang<sup>1</sup> · Shi Guo<sup>2</sup> · Xin Cai<sup>3</sup> · Xiaohui Li<sup>4</sup> · Yihao Liu<sup>2</sup> · Chun Yuan<sup>1</sup><span title="Corresponding author">*</span> · Tianfan Xue<sup>3</sup>*
-        </div> -->
         <div class="authors" style="text-align:center">
           <a href="https://zhuang2002.github.io/" target="_blank" rel="noopener noreferrer">Junhao Zhuang</a><sup>1, 2</sup> ·
           <a href="https://guoshi28.github.io/" target="_blank" rel="noopener noreferrer">Shi Guo</a><sup>2</sup><sup>‡</sup> ·
@@ -475,12 +369,10 @@
           <a href="https://scholar.google.com.hk/citations?user=fYdxi2sAAAAJ&hl=en" target="_blank" rel="noopener noreferrer">Chun Yuan</a><sup>1</sup><sup>†</sup> ·
           <a href="https://tianfan.info/" target="_blank" rel="noopener noreferrer">Tianfan Xue</a><sup>2, 3</sup><sup>†</sup>
         </div>
-        
         <div class="affils" style="margin-top:6px;text-align:center">
           <sup>1</sup>Tsinghua University · <sup>2</sup>Shanghai Artificial Intelligence Laboratory · 
           <sup>3</sup>The Chinese University of Hong Kong · <sup>4</sup>Shanghai Jiao Tong University
         </div>
-        
         <div class="note" style="margin-top:4px;text-align:center;opacity:.85">
           † Corresponding author &nbsp;&nbsp; ‡ Project Lead
         </div>
@@ -518,17 +410,6 @@
       </div>
       <div class="fig-caption">Figure: Three-stage distillation → Sparse-causal one-step VSR with streaming inference.</div>
 
-      <!-- Sub: Locality-Constrained Sparse Attention -->
-      <!-- <div style="margin-top:22px">
-        <h4 style="margin:10px 0 6px 0;font-family:'Space Grotesk';font-weight:800;text-align:left">Locality-Constrained Sparse Attention</h4>
-        <p class="note" style="max-width:1000px;margin-left:auto;margin-right:auto;">
-          Models trained on medium-resolution data often fail to generalize to ultra-high resolutions, exhibiting repeated textures and blurring. This stems from the periodicity of positional encodings, where inference ranges exceed those observed during training, causing pattern repetition across dimensions. We address this by constraining each query to attend within a local spatial window, aligning the positional range between training and inference. Built upon this locality constraint, we further apply <em>sparse attention</em> that focuses computation on the top-k most relevant regions rather than the full feature space, improving both efficiency and visual consistency at high resolutions.
-        </p>              
-        <div class="fig" aria-label="Local attention illustration">
-          <img src="./LocalAttn.jpg" alt="Local window mask with block selection" class="scale-90">
-        </div>
-        <div class="fig-caption">Figure: Local windows align positional ranges between training and inference to avoid artifacts.</div>
-      </div> -->
       <div class="subsec" style="margin-top:22px">
         <h4>Locality-Constrained Sparse Attention</h4>
         <p class="note">
@@ -547,7 +428,6 @@
         <div class="fig-caption">Figure: Local windows align positional ranges between training and inference to avoid artifacts.</div>
       </div>
       
-
       <div class="subsec" style="margin-top:22px">
         <h4>Tiny Conditional Decoder (TC Decoder)</h4>
         <p class="note">
@@ -560,7 +440,6 @@
         </div>
         <div class="fig-caption">Figure: Training pipeline of the TC Decoder.</div>
       </div>
-      
     </section>
 
     <section id="vsr120k" aria-labelledby="vsr120k-title">
@@ -576,7 +455,6 @@
       </p>
     </section>
     
-
     <!-- Real -->
     <section aria-labelledby="s1">
       <div class="section-title" id="s1"><span class="dot"></span> Real-World Videos Super-Resolution </div>
@@ -669,7 +547,7 @@
   <div class="tip" id="tip" role="tooltip" style="display:none"></div>
 
   <script>
-    // scale via URL param
+    /* ===== URL scale param ===== */
     (function applyScaleFromQuery(){
       const sp = new URLSearchParams(location.search).get('scale');
       if(!sp) return;
@@ -680,7 +558,7 @@
     const $  = (s, r=document) => r.querySelector(s);
     const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
 
-    // sparks
+    /* ===== sparks ===== */
     const sparksWrap = document.createElement('div');
     sparksWrap.className='sparks';
     $('.title-wrap').prepend(sparksWrap);
@@ -692,6 +570,61 @@
       s.style.animationDelay=(Math.random()*6)+'s';
       s.style.opacity=Math.random()*0.9+0.2;
       sparksWrap.appendChild(s);
+    }
+
+    /* ===== 新增：状态 UI 构建 & 绑定 ===== */
+    function buildStatusInsidePill(pillEl, initialText='Loading…'){
+      // <span class="vstat loading"><span class="spinner"></span><span class="dot"></span><em>Loading…</em></span><button class="retry">↻</button>
+      const stat = document.createElement('span');
+      stat.className = 'vstat loading';
+      const spin = document.createElement('span'); spin.className='spinner';
+      const dot  = document.createElement('span'); dot.className='dot';
+      const txt  = document.createElement('em');  txt.textContent = initialText;
+      stat.appendChild(spin); stat.appendChild(dot); stat.appendChild(txt);
+
+      const retry = document.createElement('button');
+      retry.className = 'retry';
+      retry.type = 'button';
+      retry.textContent = '↻';
+
+      pillEl.appendChild(stat);
+      pillEl.appendChild(retry);
+
+      const setState = (state, text) => {
+        stat.classList.remove('loading','ready','error');
+        stat.classList.add(state);
+        if (text) txt.textContent = text;
+        spin.style.display = (state === 'loading') ? 'inline-block' : 'none';
+        retry.style.display = (state === 'error') ? 'inline-flex' : 'none';
+      };
+
+      return { stat, setState, retry };
+    }
+
+    function wireVideoStatus(videoEl, ui){
+      ui.setState('loading', 'Loading…');
+
+      const toReady = () => ui.setState('ready', 'Ready');
+      const toPlaying = () => ui.setState('ready', 'Playing');
+      const toLoading = () => ui.setState('loading', 'Buffering…');
+      const toError = () => ui.setState('error', 'Failed');
+
+      videoEl.addEventListener('loadstart',   () => ui.setState('loading', 'Loading…'));
+      videoEl.addEventListener('waiting',     toLoading);
+      videoEl.addEventListener('stalled',     toLoading);
+      videoEl.addEventListener('loadeddata',  toReady);
+      videoEl.addEventListener('canplay',     toReady);
+      videoEl.addEventListener('playing',     toPlaying);
+      videoEl.addEventListener('error',       toError);
+
+      ui.retry.addEventListener('click', () => {
+        ui.setState('loading', 'Reloading…');
+        const src = videoEl.currentSrc || videoEl.src;
+        videoEl.src = '';
+        setTimeout(()=>{ videoEl.src = src; videoEl.load(); videoEl.play().catch(()=>{}); }, 30);
+      });
+
+      if (videoEl.readyState >= 2) { toReady(); }
     }
 
     /* ===== vertical split builder ===== */
@@ -735,6 +668,12 @@
       rightP.textContent = rightLabel;
       labels.appendChild(leftP);
       labels.appendChild(rightP);
+
+      // ===== 新增：状态点/文字/重试 与视频绑定 =====
+      const uiLeft  = buildStatusInsidePill(leftP,  'Loading…');
+      const uiRight = buildStatusInsidePill(rightP, 'Loading…');
+      wireVideoStatus(vTop,  uiLeft);
+      wireVideoStatus(base,  uiRight);
 
       // optional badge
       let badge = null;
@@ -1026,8 +965,6 @@
 
     // init carousels already in DOM
     document.querySelectorAll('[data-carousel]').forEach(initCarousel);
-
-    // 已移除：全局同步/重置按钮与相关逻辑
   </script>
 </body>
 </html>
