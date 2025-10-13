@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FLASHVSR: Towards Real-Time Diffusion-Based Streaming Video Super-Resolution</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Base UI fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Artistic title font -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="icon" href="./logo.png" sizes="32x32">
+    <link rel="icon" href="./logo.png" sizes="192x192">
+    <link rel="apple-touch-icon" href="./logo.png">
+  
+  <style>
+    :root{
+      --scale: 0.9;
+      --cropH: 85;
+
+      --bg:#0a0b10;
+      --panel:#12131b; --panel-2:#0e0f16;
+      --text:#eaeaf2; --muted:#aeb2c7;
+      --brand-1:#7c5cff; --brand-2:#26e6a4; --accent:#ffd33d;
+      --danger:#ff6b6b; --good:#32d296;
+      --radius:20px;
+      --ring: 0 0 0 2px rgba(124,92,255,.35), 0 0 40px rgba(38,230,164,.15);
+      --secGap: 56px;                               /* 每个 section 的上下间隔 */
+      --secTitleSize: clamp(22px, 28px * var(--scale), 36px); /* section 标题字号 */
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(124,92,255,.25), transparent 60%),
+        radial-gradient(900px 600px at 110% 10%, rgba(38,230,164,.18), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width: calc(1440px * var(--scale)); margin:0 auto; padding:28px}
+
+    /* Sticky Nav (dark-only) */
+    .topnav{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,var(--bg),rgba(0,0,0,0));backdrop-filter:saturate(150%) blur(8px);border-bottom:1px solid rgba(255,255,255,.08)}
+    .topnav .inner{max-width: calc(1440px * var(--scale)); margin:0 auto; padding:12px 28px; display:flex; align-items:center; gap:16px}
+    .topnav a.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-family:Space Grotesk}
+    .topnav a.logo img{height:24px;width:auto;display:block}
+    .topnav nav{display:flex;gap:14px;flex:1;flex-wrap:wrap;justify-content:center}
+    .chip{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02))}
+    .top-actions{display:flex;gap:8px}
+
+    .authors sup {
+      font-size: 0.7em;
+      vertical-align: super;
+      opacity: 0.8;
+    }
+    .authors a {
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(255,255,255,.2);
+    }
+    .authors a:hover {
+      color: #fff;
+      border-bottom-color: #fff;
+    }
+
+    /* 仅“Ours vs. Others”区块使用 scale = 1.0 */
+    section[aria-labelledby="s4"] { --scale: 1 !important; }
+    /* 保险起见，也给容器打一层（比较区视频是动态插入 #compareHost 的） */
+    #compareHost { --scale: 1 !important; }
+
+
+
+
+    /* Header */
+    header.hero{position:relative;display:grid;grid-template-columns:1fr;gap:12px;align-items:center}
+    .title-wrap{position:relative;padding:6px 0 2px 0;background:none;border:none;box-shadow:none;overflow:visible}
+    :root{
+      /* 新增两个变量 */
+      --titleGap: 6px;   /* 标题与logo间距 */
+      --logoH: 72px;     /* logo 基础高度 */
+    }
+
+    .title-row{
+      display:flex;
+      align-items:center;
+      justify-content:center;   /* 居中 */
+      gap: var(--titleGap);     /* 间距可调 */
+    }
+
+    .title-row img.logo{
+      height: calc(var(--logoH) * var(--scale));
+      width:auto;
+      display:block;
+      flex:0 0 auto;
+      border-radius:12px;
+      margin:0;
+    }
+
+    .title-text{
+      display:flex;
+      align-items:center;
+      letter-spacing:.01em;
+    }
+
+    .title-text{
+      font-family:Orbitron, "Space Grotesk", Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+      font-weight:900; letter-spacing:.02em; line-height:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      font-size:clamp(34px, calc(60px * var(--scale)), 72px);
+      background:linear-gradient(90deg, var(--brand-1), var(--brand-2), var(--accent));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      text-shadow:0 0 24px rgba(124,92,255,.18);
+      text-align:center;
+    }
+    /* .title-sub{
+      margin-top:6px; font-family:"Space Grotesk", Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+      font-weight:800; letter-spacing:.01em; line-height:1.1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      font-size:clamp(18px, calc(26px * var(--scale)), 32px); color:var(--text); opacity:.95; text-align:center;
+    } */
+    .title-sub{
+      margin-top:8px;
+      font-family:"Space Grotesk", Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+      font-weight:800; letter-spacing:.01em; line-height:1.08; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      font-size:clamp(24px, calc(36px * var(--scale)), 44px);
+      color:var(--text); opacity:.95; text-align:center;
+    }
+
+
+
+    /* Sparks */
+    .sparks{position:absolute;inset:0;pointer-events:none;opacity:.7}
+    .spark{position:absolute;width:2px;height:2px;background:radial-gradient(circle,var(--accent),transparent 70%);border-radius:50%;animation:fly 6s linear infinite}
+    @keyframes fly{from{transform:translate3d(0,0,0)}to{transform:translate3d(140vw,-40vh,0)}}
+
+    section{ margin: var(--secGap) 0; }
+    .section-title{
+      display:flex; align-items:center; gap:10px;
+      font-family:"Space Grotesk"; font-weight:800;
+      font-size: var(--secTitleSize);              /* ← 用变量控制字号 */
+      letter-spacing:.02em;
+      justify-content:center;
+      text-align:center;
+    }
+    .section-title .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg, var(--brand-1), var(--brand-2)); box-shadow:0 0 18px rgba(124,92,255,.35)}
+    .note{color:var(--muted);font-size:.95rem;margin-top:6px;text-align:center} /* 摘要/方法文字居中 */
+
+
+    .teaser{
+      display:grid; gap:14px; align-items:center; justify-items:center;
+      border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+      border-radius:16px; padding:14px;
+      text-align:center;
+      width:100%;                            /* 与 .fig 一样 */
+      max-width: calc(1120px * var(--scale));/* 与 .fig 一样 */
+      margin:0 auto;
+    }
+
+    /* 让 teaser 里的主图充满这个 90% 宽度的卡片 */
+    .teaser img.scale-90{ width:90% !important; height:auto; }
+
+    /* 全局让 PNG/JPG 居中 */
+    img[src$=".png"], img[src$=".jpg"], img[src$=".jpeg"]{display:block;margin:0 auto}
+
+    /* Specific scaling helpers */
+    .scale-90{width:90% !important; height:auto}
+    .scale-40{width:40% !important; height:auto}
+
+    .fig{
+      width:100%; max-width: calc(1120px * var(--scale));
+      border:1px solid rgba(255,255,255,.1); border-radius:12px; overflow:hidden;
+      background:#0d0f17; display:block; padding:10px; margin:0 auto; /* 居中容器 */
+      text-align:center;
+    }
+    .fig img{display:block; height:auto; max-width:100%; margin:0 auto}
+    .fig-caption{color:var(--muted); font-size:.92rem; text-align:center; margin-top:8px}
+
+    /* Carousel */
+    .carousel{position:relative;margin-top:12px}
+    .carousel .track{display:flex;gap:18px;overflow:auto;padding:6px 0;scroll-snap-type:x mandatory;scroll-behavior:smooth}
+    .carousel .track::-webkit-scrollbar{height:8px}
+    .carousel .track::-webkit-scrollbar-thumb{background:linear-gradient(90deg,var(--brand-1),var(--brand-2));border-radius:999px}
+    .slide{flex: 0 0 min(96vw, calc(1140px * var(--scale))); scroll-snap-align:center; scroll-snap-stop:always; position:relative;}
+    .carousel .nav{position:absolute;top:50%;transform:translateY(-50%);z-index:10}
+    .carousel .prev{left:-6px}
+    .carousel .next{right:-6px}
+    .carousel .dots{display:flex;justify-content:center;gap:6px;margin-top:10px}
+    .carousel .dot.active{background:linear-gradient(90deg,var(--brand-1),var(--brand-2));box-shadow:var(--ring)}
+    .carousel .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.35)}
+
+    /* Split compare block */
+    .cmp{ position:relative;border-radius:16px;overflow:hidden;background:#000;border:1px solid rgba(255,255,255,.08);
+      aspect-ratio: 16 / 9; max-width: calc(1140px * var(--scale)); margin: 0 auto; }
+    .cmp video{display:block;width:100%;height:100%;object-fit:contain}
+    .cmp .layer{position:absolute;inset:0}
+    .cmp .top{--split:50%; clip-path: polygon(0 0, var(--split) 0, var(--split) 100%, 0 100%);}
+    .cmp .handle{position:absolute;top:0;left:50%;transform:translateX(-50%);height:100%;width:2px;background:#fff;}
+    .cmp .knob{position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);width:calc(44px * var(--scale));height:calc(44px * var(--scale));border-radius:50%;background:linear-gradient(180deg,#fff,#cdd6ff);border:2px solid #111;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 30px rgba(0,0,0,.45)}
+    .cmp .knob svg{width:18px;height:18px}
+
+    /* Corner labels */
+    .cmp .labels{position:absolute;left:10px;right:10px;top:10px;display:flex;justify-content:space-between;pointer-events:none}
+    .pill{pointer-events:auto;display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(16,18,28,.7);border:1px solid rgba(255,255,255,.12);backdrop-filter: blur(8px); font-weight:700; font-size:.82rem}
+
+    /* Speedup badge (two-line) */
+    .badge{
+      position:absolute; top:45px; right:10px; z-index:2;
+      padding:6px 10px; border-radius:999px;
+      background:linear-gradient(90deg, rgba(124,92,255,.25), rgba(38,230,164,.25));
+      border:1px solid rgba(255,255,255,.18);
+      font-weight:900; font-size:.82rem; letter-spacing:.02em;
+      box-shadow:0 0 24px rgba(124,92,255,.22), inset 0 0 1px rgba(255,255,255,.25);
+      animation:breath 2.5s ease-in-out infinite;
+      pointer-events:none;
+      backdrop-filter: blur(8px);
+      white-space: pre-line;
+      text-align: center;
+    }
+    @keyframes breath{
+      0%,100%{ transform:translateY(0); opacity:.98 }
+      50%{ transform:translateY(-1px); opacity:1 }
+    }
+    /* 仅影响轮播里的左右箭头按钮 */
+    .iconbtn.nav{
+      color:#fff;                 /* 箭头字符 ◀ ▶ 显示为白色 */
+      border-color:rgba(255,255,255,.4);
+    }
+
+    /* 若后续把箭头改成 SVG，这条会让 SVG 也变白 */
+    .iconbtn.nav svg path{
+      fill:#fff;
+    }
+
+
+    .caption{margin-top:8px;color:var(--muted);font-size:.92rem;text-align:center}
+
+    /* Clips 004 crop math */
+    .crop-bottom-hfill .cmp-video{
+      position:absolute;
+      --_S: calc(100 / var(--cropH));
+      --_SHIFT: calc((100 - var(--cropH)) * var(--_S));
+      left:50%; top: calc(-1% * var(--_SHIFT));
+      height: calc(100% * var(--_S)); width: auto;
+      transform: translateX(-50%);
+      object-fit: contain; object-position: center bottom;
+    }
+
+    /* Tabs (only for Comparisons) */
+    .compare-switch{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+    /* .compare-tab{padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));cursor:pointer;font-weight:800}
+    .compare-tab.active{box-shadow:var(--ring)} */
+    .compare-tab{
+      padding:8px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      cursor:pointer;
+      font-weight:800;
+      color:#fff;                 /* 新增：文字白色 */
+      transition:color .2s, box-shadow .2s;
+    }
+    .compare-tab:hover{
+      box-shadow:var(--ring);
+      color:#fff;                 /* hover 保持白色 */
+    }
+    .compare-tab.active{
+      box-shadow:var(--ring);
+      color:#fff;                 /* active 状态保持白色 */
+    }
+
+
+    pre.bib{background:#0d0f17;color:#dbe1ff;padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,.08); overflow:auto}
+    .cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+    .cta{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.18);font-weight:700}
+    footer{margin:64px 0 28px; color:var(--muted); font-size:.9rem; display:flex; align-items:center; justify-content:center}
+
+    /* Reuse iconbtn for carousel nav only */
+    .iconbtn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));cursor:pointer}
+    .iconbtn:hover{box-shadow:var(--ring)}
+    .subsec{max-width:1000px;margin:0 auto;}
+    .subsec h4{
+      margin:10px 0 6px 0;
+      font-family:'Space Grotesk';
+      font-weight:800;
+      text-align:center;   /* 标题居中 */
+    }
+    .subsec .note{ text-align:left; } /* 段落左对齐 */
+
+    @media (min-width: 1280px){
+      .slide{ flex-basis: min(96vw, calc(1120px * var(--scale))); }
+      .cmp{ max-width: calc(1120px * var(--scale)); }
+    }
+    /* ===== Light Theme Overrides ===== */
+    html[data-theme="light"]{
+      /* 变量换成亮色系 */
+      --bg:#fafbff;
+      --panel:#ffffff; 
+      --panel-2:#f5f7ff;
+      --text:#0f1222; 
+      --muted:#606575;
+
+      --brand-1:#7c5cff; 
+      --brand-2:#26bfa4;  /* 略收饱和，适配浅底 */
+      --accent:#ffb020;
+
+      --danger:#e74a4a; 
+      --good:#1ea86f;
+
+      --ring: 0 0 0 2px rgba(124,92,255,.25), 0 0 30px rgba(38,191,164,.12);
+    }
+
+    /* 页面背景从深色改为浅底+淡色渐变光斑 */
+    html[data-theme="light"] body{
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(124,92,255,.18), transparent 60%),
+        radial-gradient(900px 600px at 110% 10%, rgba(38,230,164,.12), transparent 60%),
+        var(--bg);
+      color:var(--text);
+    }
+
+    /* 顶部导航浅底边框 */
+    html[data-theme="light"] .topnav{
+      background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,0));
+      border-bottom:1px solid rgba(0,0,0,.08);
+      backdrop-filter:saturate(140%) blur(8px);
+    }
+    html[data-theme="light"] .topnav .inner{ max-width: calc(1440px * var(--scale)); }
+    html[data-theme="light"] .chip{
+      border:1px solid rgba(0,0,0,.12);
+      background:linear-gradient(180deg, rgba(0,0,0,.03), rgba(0,0,0,.01));
+    }
+
+    /* 标题渐变在浅底更清晰，文本阴影减弱 */
+    html[data-theme="light"] .title-text{
+      text-shadow:0 0 16px rgba(124,92,255,.14);
+    }
+    html[data-theme="light"] .title-sub{ color:var(--text); opacity:.9; }
+
+    /* 卡片与图注 */
+    html[data-theme="light"] .teaser,
+    html[data-theme="light"] .fig{
+      background:#ffffff; 
+      border:1px solid rgba(0,0,0,.08);
+    }
+    html[data-theme="light"] .fig-caption{ color:var(--muted); }
+
+    /* 轮播滚动条与圆点 */
+    html[data-theme="light"] .carousel .track::-webkit-scrollbar-thumb{
+      background:linear-gradient(90deg,var(--brand-1),var(--brand-2));
+    }
+    html[data-theme="light"] .carousel .dot{ 
+      background:rgba(0,0,0,.18); 
+      border:1px solid rgba(0,0,0,.25);
+    }
+
+    /* 左右对比容器浅底、边框变暗色 */
+    html[data-theme="light"] .cmp{
+      background:#fff;
+      border:1px solid rgba(0,0,0,.08);
+    }
+    html[data-theme="light"] .cmp .handle{ background:#111; }
+    html[data-theme="light"] .cmp .knob{ border-color:#e5e7ef; }
+
+    /* 角标 pill & 速度徽章在浅底的样式 */
+    html[data-theme="light"] .pill{
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(0,0,0,.12);
+      color:var(--text);
+      backdrop-filter: blur(6px);
+    }
+    html[data-theme="light"] .badge{
+      background:linear-gradient(90deg, rgba(124,92,255,.18), rgba(38,230,164,.18));
+      border:1px solid rgba(0,0,0,.12);
+      color:#222;
+    }
+
+    /* 比较方法切换按钮（保持可见对比） */
+    html[data-theme="light"] .compare-tab{
+      color:#111;
+      border:1px solid rgba(0,0,0,.12);
+      background:linear-gradient(180deg, rgba(0,0,0,.03), rgba(0,0,0,.01));
+    }
+    html[data-theme="light"] .compare-tab:hover,
+    html[data-theme="light"] .compare-tab.active{
+      box-shadow:var(--ring);
+      color:#111;
+    }
+
+    /* 轮播左右箭头在浅底用深色 */
+    html[data-theme="light"] .iconbtn.nav{
+      color:#111; 
+      border-color:rgba(0,0,0,.3);
+    }
+    html[data-theme="light"] .iconbtn.nav svg path{ fill:#111; }
+
+    /* 代码块（BibTeX）浅底样式 */
+    html[data-theme="light"] pre.bib{
+      background:#f6f7fb;
+      color:#2b2f42;
+      border:1px solid rgba(0,0,0,.08);
+    }
+
+    /* 页脚颜色 */
+    html[data-theme="light"] footer{ color:#6b7184; }
+
+
+    .hl{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(124,92,255,.25), rgba(38,230,164,.25));
+      border:1px solid rgba(255,255,255,.18);
+      font-weight:900;
+      letter-spacing:.01em;
+      box-shadow:0 0 18px rgba(124,92,255,.22), inset 0 0 1px rgba(255,255,255,.25);
+      backdrop-filter: blur(6px);
+    }
+    html[data-theme="light"] .hl{
+      background:linear-gradient(90deg, rgba(124,92,255,.18), rgba(38,230,164,.18));
+      border:1px solid rgba(0,0,0,.12);
+    }
+
+
+  </style>
+</head>
+
+<body>
+  <!-- Sticky top nav -->
+  <div class="topnav">
+    <div class="inner">
+      <a class="logo" href="#top" aria-label="Go to top">
+        <img src="./logo.png" alt="FlashVSR logo">
+        <span>FlashVSR</span>
+      </a>
+      <nav>
+        <a class="chip" href="#abs">Abstract</a>
+        <a class="chip" href="#method">Method</a>
+        <a class="chip" href="#vsr120k">VSR-120K Datasets</a> <!-- ← add this line here -->
+        <a class="chip" href="#s1">Real</a>
+        <a class="chip" href="#s2">AIGC</a>
+        <a class="chip" href="#s3">Long Video</a>
+        <a class="chip" href="#s4">Comparisons</a>
+        <a class="chip" href="#s5">Ablations</a>
+        <a class="chip" href="#bib">BibTeX</a>
+      </nav>
+      <div class="top-actions"><!-- empty --></div>
+    </div>
+  </div>
+
+  <div class="container" id="top">
+    <header class="hero">
+      <div class="title-wrap">
+        <div class="sparks" aria-hidden="true"></div>
+        <div class="title-row" role="img" aria-label="FLASHVSR">
+          <img src="./logo.png" class="logo" alt="FlashVSR logo">
+          <div class="title-text">FLASHVSR</div>
+        </div>
+        <div class="title-sub">Towards Real-Time Diffusion-Based Streaming Video Super-Resolution</div>
+      </div>
+
+      <div class="paper-meta">
+        <!-- <h3 style="margin:0 0 8px 0;font-family:Space Grotesk;font-weight:800;text-align:center">Authors & Affiliations</h3> -->
+        <!-- <div class="authors" style="text-align:center">
+          Junhao Zhuang<sup>1</sup> · Shi Guo<sup>2</sup> · Xin Cai<sup>3</sup> · Xiaohui Li<sup>4</sup> · Yihao Liu<sup>2</sup> · Chun Yuan<sup>1</sup><span title="Corresponding author">*</span> · Tianfan Xue<sup>3</sup>*
+        </div> -->
+        <div class="authors" style="text-align:center">
+          <a href="https://zhuang2002.github.io/" target="_blank" rel="noopener noreferrer">Junhao Zhuang</a><sup>1, 2</sup> ·
+          <a href="https://guoshi28.github.io/" target="_blank" rel="noopener noreferrer">Shi Guo</a><sup>2</sup><sup>‡</sup> ·
+          <a href="https://caixin98.github.io/" target="_blank" rel="noopener noreferrer">Xin Cai</a><sup>3</sup> ·
+          <a href="https://github.com/xh9998" target="_blank" rel="noopener noreferrer">Xiaohui Li</a><sup>4</sup> ·
+          <a href="https://lyh-18.github.io/" target="_blank" rel="noopener noreferrer">Yihao Liu</a><sup>2</sup> ·
+          <a href="https://scholar.google.com.hk/citations?user=fYdxi2sAAAAJ&hl=en" target="_blank" rel="noopener noreferrer">Chun Yuan</a><sup>1</sup><sup>†</sup> ·
+          <a href="https://tianfan.info/" target="_blank" rel="noopener noreferrer">Tianfan Xue</a><sup>2, 3</sup><sup>†</sup>
+        </div>
+        
+        <div class="affils" style="margin-top:6px;text-align:center">
+          <sup>1</sup>Tsinghua University · <sup>2</sup>Shanghai Artificial Intelligence Laboratory · 
+          <sup>3</sup>The Chinese University of Hong Kong · <sup>4</sup>Shanghai Jiao Tong University
+        </div>
+        
+        <div class="note" style="margin-top:4px;text-align:center;opacity:.85">
+          † Corresponding author &nbsp;&nbsp; ‡ Project Lead
+        </div>
+
+        <div class="cta-row">
+          <a class="cta" href="#" title="Paper">📄 Paper</a>
+          <a class="cta" href="#" title="Code">🐙 Code</a>
+          <a class="cta" href="#" title="Model (HF)">🤗 Model</a>
+          <a class="cta" href="#" title="Datasets">🗃️ Dataset</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Abstract -->
+    <section id="abs" aria-labelledby="abs-title">
+      <div class="section-title" id="abs-title"><span class="dot"></span> Abstract</div>
+      <div class="teaser">
+        <img src="./teaser.png" alt="Teaser figure for FlashVSR" class="scale-90">
+        <p class="note" style="max-width:1000px;margin:0 auto;text-align:left;">
+          Diffusion models have recently advanced video restoration, but applying them to real-world video super-resolution (VSR) remains challenging due to high latency, prohibitive computation, and poor generalization to ultra-high resolutions. Our goal in this work is to make diffusion-based VSR practical by achieving efficiency, scalability, and real-time performance. To this end, we propose <strong>FlashVSR</strong>, the first diffusion-based one-step streaming framework towards real-time VSR. <strong>FlashVSR</strong> runs at <strong><span class="hl">∼17 FPS for 768 × 1408 videos on a single A100 GPU</span></strong> by combining three complementary innovations: (i) a train-friendly three-stage distillation pipeline that enables streaming super-resolution, (ii) locality-constrained sparse attention that cuts redundant computation while bridging the train–test resolution gap, and (iii) a tiny conditional decoder that accelerates reconstruction without sacrificing quality. To support large-scale training, we also construct <strong>VSR-120K</strong>, a new dataset with 120k videos and 180k images. Extensive experiments show that <strong>FlashVSR</strong> scales reliably to ultra-high resolutions and achieves state-of-the-art performance with up to ∼12× speedup over prior one-step diffusion VSR models. We will release code, models, and the dataset to foster future research in efficient diffusion-based VSR.
+        </p>
+      </div>
+    </section>
+
+    <!-- Method (brief) -->
+    <section id="method" aria-labelledby="method-title">
+      <div class="section-title" id="method-title"><span class="dot"></span> Method </div>
+      <p class="note" style="max-width:1000px;margin-left:auto;margin-right:auto;">
+        We distill a full-attention teacher into a sparse-causal, one-step student for streaming VSR. The model runs causally with
+        a KV cache and uses locality-constrained sparse attention to cut redundant computation and close the train–inference
+        resolution gap. A <strong>Tiny Conditional Decoder (TC Decoder)</strong> leverages LR frames + latents to reconstruct HR frames efficiently.
+      </p>
+      <div class="fig" aria-label="Method flowchart">
+        <img src="./flowchart.jpg" alt="Three-stage distillation to sparse-causal one-step VSR" class="scale-90">
+      </div>
+      <div class="fig-caption">Figure: Three-stage distillation → Sparse-causal one-step VSR with streaming inference.</div>
+
+      <!-- Sub: Locality-Constrained Sparse Attention -->
+      <!-- <div style="margin-top:22px">
+        <h4 style="margin:10px 0 6px 0;font-family:'Space Grotesk';font-weight:800;text-align:left">Locality-Constrained Sparse Attention</h4>
+        <p class="note" style="max-width:1000px;margin-left:auto;margin-right:auto;">
+          Models trained on medium-resolution data often fail to generalize to ultra-high resolutions, exhibiting repeated textures and blurring. This stems from the periodicity of positional encodings, where inference ranges exceed those observed during training, causing pattern repetition across dimensions. We address this by constraining each query to attend within a local spatial window, aligning the positional range between training and inference. Built upon this locality constraint, we further apply <em>sparse attention</em> that focuses computation on the top-k most relevant regions rather than the full feature space, improving both efficiency and visual consistency at high resolutions.
+        </p>              
+        <div class="fig" aria-label="Local attention illustration">
+          <img src="./LocalAttn.jpg" alt="Local window mask with block selection" class="scale-90">
+        </div>
+        <div class="fig-caption">Figure: Local windows align positional ranges between training and inference to avoid artifacts.</div>
+      </div> -->
+      <div class="subsec" style="margin-top:22px">
+        <h4>Locality-Constrained Sparse Attention</h4>
+        <p class="note">
+          Models trained on medium-resolution data often fail to generalize to ultra-high resolutions,
+          exhibiting repeated textures and blurring. This stems from the periodicity of positional encodings,
+          where inference ranges exceed those observed during training, causing pattern repetition across
+          dimensions. We address this by constraining each query to attend within a local spatial window,
+          aligning the positional range between training and inference. Built upon this locality constraint,
+          we further apply <em>sparse attention</em> that focuses computation on the top-k most relevant
+          regions rather than the full feature space, improving both efficiency and visual consistency at
+          high resolutions.
+        </p>
+        <div class="fig" aria-label="Local attention illustration">
+          <img src="./LocalAttn.jpg" alt="Local window mask with block selection" class="scale-90">
+        </div>
+        <div class="fig-caption">Figure: Local windows align positional ranges between training and inference to avoid artifacts.</div>
+      </div>
+      
+
+      <div class="subsec" style="margin-top:22px">
+        <h4>Tiny Conditional Decoder (TC Decoder)</h4>
+        <p class="note">
+          Decoding dominates runtime in VAE-based pipelines. TC Decoder conditions on LR frames and latents,
+          simplifying HR reconstruction for a ~7× faster decode than the original VAE decoder while maintaining
+          near-indistinguishable visual quality.
+        </p>
+        <div class="fig" aria-label="TC Decoder illustration">
+          <img src="./TCDecoder.jpg" alt="TC Decoder training and conditioning overview" class="scale-40">
+        </div>
+        <div class="fig-caption">Figure: Training pipeline of the TC Decoder.</div>
+      </div>
+      
+    </section>
+
+    <section id="vsr120k" aria-labelledby="vsr120k-title">
+      <div class="section-title" id="vsr120k-title"><span class="dot"></span> VSR-120K Dataset</div>
+      <p class="note" style="max-width:1000px;margin-left:auto;margin-right:auto;text-align:left;">
+        We construct <strong>VSR-120K</strong>, a large-scale dataset designed for high-quality video super-resolution training.
+        The dataset contains around <strong>120k</strong> video clips (average &gt;350 frames) and <strong>180k</strong> high-resolution images
+        collected from open platforms.
+        To ensure data quality, we filter all samples using <em>LAION-Aesthetic</em> and <em>MUSIQ</em> predictors for visual quality assessment,
+        and apply <em>RAFT</em> to remove segments with insufficient motion.
+        Only videos with resolutions higher than 1080p and adequate temporal dynamics are retained.
+        After multi-stage filtering, we obtain a clean, diverse corpus suitable for large-scale joint image–video super-resolution training.
+      </p>
+    </section>
+    
+
+    <!-- Real -->
+    <section aria-labelledby="s1">
+      <div class="section-title" id="s1"><span class="dot"></span> Real-World Videos Super-Resolution </div>
+      <p class="note">Drag the vertical bar: left = <strong>LR</strong>, right = <strong>Ours</strong>.</p>
+      <div class="carousel" data-carousel>
+        <button class="iconbtn nav prev" aria-label="Previous">◀</button>
+        <div class="track" id="gal-real"></div>
+        <button class="iconbtn nav next" aria-label="Next">▶</button>
+        <div class="dots" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- AIGC -->
+    <section aria-labelledby="s2">
+      <div class="section-title" id="s2"><span class="dot"></span> AIGC Videos Enhancement </div>
+      <div class="carousel" data-carousel>
+        <button class="iconbtn nav prev" aria-label="Previous">◀</button>
+        <div class="track" id="gal-aigc"></div>
+        <button class="iconbtn nav next" aria-label="Next">▶</button>
+        <div class="dots" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- Long -->
+    <section aria-labelledby="s3">
+      <div class="section-title" id="s3"><span class="dot"></span> Long Videos Super-Resolution </div>
+      <div class="carousel" data-carousel>
+        <button class="iconbtn nav prev" aria-label="Previous">◀</button>
+        <div class="track" id="gal-long"></div>
+        <button class="iconbtn nav next" aria-label="Next">▶</button>
+        <div class="dots" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- Comparisons -->
+    <section aria-labelledby="s4">
+      <div class="section-title" id="s4"><span class="dot"></span> Ours vs. Others </div>
+      <p class="note">Switch methods via tabs; each page shows Clips 001–004 (left: baseline, right: Ours). </p>
+
+      <div class="compare-switch" id="compareSwitch">
+        <button class="compare-tab" data-method="LR">vs. LR</button>
+        <button class="compare-tab" data-method="RealViformer">vs. RealViformer</button>
+        <button class="compare-tab" data-method="DOVE">vs. DOVE</button>
+        <button class="compare-tab" data-method="SeedVR2">vs. SeedVR2</button>
+      </div>
+      <div id="compareHost"></div>
+    </section>
+
+    <!-- Ablations (NO pagination) -->
+    <section aria-labelledby="s5">
+      <div class="section-title" id="s5"><span class="dot"></span> Ablations</div>
+      <p class="note">Two key ablations: (1) Global sparse attention vs. Local-constrained sparse attention; (2) WanVAE decoder vs. TC Decoder (badge at top-right shows two lines: “TC Decoder / ~7× speedup”).</p>
+
+      <!-- Ablation 1: Global vs. Local -->
+      <div class="carousel" data-carousel>
+        <button class="iconbtn nav prev" aria-label="Previous">◀</button>
+        <div class="track" id="gal-ablation-attn"></div>
+        <button class="iconbtn nav next" aria-label="Next">▶</button>
+        <div class="dots" aria-hidden="true"></div>
+      </div>
+
+      <!-- Ablation 2: WanVAE decoder vs. TC Decoder -->
+      <div class="carousel" data-carousel style="margin-top:18px">
+        <button class="iconbtn nav prev" aria-label="Previous">◀</button>
+        <div class="track" id="gal-ablation-decoder"></div>
+        <button class="iconbtn nav next" aria-label="Next">▶</button>
+        <div class="dots" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- BibTeX -->
+    <section id="bib" aria-labelledby="s-bib">
+      <div class="section-title" id="s-bib"><span class="dot"></span> BibTeX</div>
+      <pre class="bib" aria-label="BibTeX entry"><code>@inproceedings{zhuang2025flashvsr,
+  title = {FLASHVSR: Towards Real-Time Diffusion-Based Streaming Video Super-Resolution},
+  author = {Zhuang, Junhao and Guo, Shi and Cai, Xin and Li, Xiaohui and Liu, Yihao and Yuan, Chun and Xue, Tianfan},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year = {2026},
+  note = {Under review},
+  url = {https://example.com/flashvsr}
+}</code></pre>
+    </section>
+
+    <footer>
+      <div>© 2025 FlashVSR Authors</div>
+    </footer>
+  </div>
+
+  <!-- Tooltip (reserved) -->
+  <div class="tip" id="tip" role="tooltip" style="display:none"></div>
+
+  <script>
+    // scale via URL param
+    (function applyScaleFromQuery(){
+      const sp = new URLSearchParams(location.search).get('scale');
+      if(!sp) return;
+      const val = Math.max(0.6, Math.min(2.5, parseFloat(sp)));
+      if(!isNaN(val)) document.documentElement.style.setProperty('--scale', String(val));
+    })();
+
+    const $  = (s, r=document) => r.querySelector(s);
+    const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+    // sparks
+    const sparksWrap = document.createElement('div');
+    sparksWrap.className='sparks';
+    $('.title-wrap').prepend(sparksWrap);
+    for(let i=0;i<22;i++){
+      const s=document.createElement('div');
+      s.className='spark';
+      s.style.left=(Math.random()*80+5)+'%';
+      s.style.top=(Math.random()*80+5)+'%';
+      s.style.animationDelay=(Math.random()*6)+'s';
+      s.style.opacity=Math.random()*0.9+0.2;
+      sparksWrap.appendChild(s);
+    }
+
+    /* ===== vertical split builder ===== */
+    function makeSplitCard({
+      leftSrc, rightSrc,
+      leftLabel='Other', rightLabel='Ours',
+      caption, cropBottomHFill=false,
+      badgeText=null
+    }){
+      const card = document.createElement('div');
+      card.className='slide';
+
+      const wrap = document.createElement('div');
+      wrap.className='cmp';
+      wrap.tabIndex = 0;
+
+      // base (RIGHT = Ours)
+      const base = document.createElement('video');
+      base.src = rightSrc;
+      base.autoplay = true; base.muted = true; base.loop = true; base.playsInline = true; base.preload = 'auto';
+      base.className='cmp-video';
+
+      // top (LEFT = baseline)
+      const top = document.createElement('div');
+      top.className='layer top';
+      top.style.setProperty('--split','50%');
+      const vTop = document.createElement('video');
+      vTop.src = leftSrc;
+      vTop.autoplay = true; vTop.muted = true; vTop.loop = true; vTop.playsInline = true; vTop.preload = 'auto';
+      vTop.className='cmp-video';
+      top.appendChild(vTop);
+
+      // labels
+      const labels = document.createElement('div');
+      labels.className='labels';
+      const leftP = document.createElement('span');
+      leftP.className='pill';
+      leftP.textContent = leftLabel;
+      const rightP = document.createElement('span');
+      rightP.className='pill';
+      rightP.textContent = rightLabel;
+      labels.appendChild(leftP);
+      labels.appendChild(rightP);
+
+      // optional badge
+      let badge = null;
+      if(badgeText){
+        badge = document.createElement('div');
+        badge.className = 'badge';
+        badge.textContent = badgeText;
+      }
+
+      // handle/knob
+      const handle = document.createElement('div');
+      handle.className='handle';
+      const knob = document.createElement('div');
+      knob.className='knob';
+      knob.innerHTML = `
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="#111" d="M9 6 3 12l6 6V6Zm6 0v12l6-6-6-6Z"/>
+        </svg>
+      `;
+
+      wrap.appendChild(base);
+      wrap.appendChild(top);
+      wrap.appendChild(handle);
+      wrap.appendChild(knob);
+      if(badge) wrap.appendChild(badge);
+      wrap.appendChild(labels);
+
+      if(cropBottomHFill){
+        wrap.classList.add('crop-bottom-hfill');
+      }
+
+      if(caption){
+        const cap=document.createElement('div');
+        cap.className='caption';
+        cap.textContent=caption;
+        card.appendChild(wrap);
+        card.appendChild(cap);
+      } else {
+        card.appendChild(wrap);
+      }
+
+      // drag behavior
+      const setSplit = (pct)=>{
+        pct=Math.max(0,Math.min(100,pct));
+        top.style.setProperty('--split', pct + '%');
+        handle.style.left = pct + '%';
+        knob.style.left = pct + '%';
+      };
+      setSplit(50);
+
+      let active=false;
+      const move = (clientX)=>{
+        const rect = wrap.getBoundingClientRect();
+        const pct = (clientX - rect.left) / rect.width * 100;
+        setSplit(pct);
+      };
+      const start = (e)=>{
+        active=true;
+        move(e.touches ? e.touches[0].clientX : e.clientX);
+        e.preventDefault();
+      };
+      const onMove = (e)=>{
+        if(!active) return;
+        move(e.touches ? e.touches[0].clientX : e.clientX);
+      };
+      const end = ()=> active=false;
+
+      wrap.addEventListener('mousedown', start);
+      wrap.addEventListener('touchstart', start, {passive:false});
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('touchmove', onMove, {passive:false});
+      window.addEventListener('mouseup', end);
+      window.addEventListener('touchend', end);
+
+      card._videos = [base, vTop];
+      return card;
+    }
+
+    /* datasets (non-compare) */
+    const DATASETS = {
+      real: [
+        { lq: './videos/real_LQ_001.mp4',  ours: './videos/real_ours_001.mp4',  caption: 'Real • Clip 1' },
+        { lq: './videos/real_LQ_005.mp4', ours: './videos/real_ours_005.mp4', caption: 'Real • Clip 2' },
+        { lq: './videos/real_LQ_003.mp4', ours: './videos/real_ours_003.mp4', caption: 'Real • Clip 3' },
+        { lq: './videos/real_LQ_002.mp4', ours: './videos/real_ours_002.mp4', caption: 'Real • Clip 4' },
+        { lq: './videos/real_LQ_004.mp4', ours: './videos/real_ours_004.mp4', caption: 'Real • Clip 5' },
+      ],
+      aigc: [
+        { lq: './videos/AIGC_LQ_001.mp4', ours: './videos/AIGC_ours_001.mp4', caption: 'AIGC • Clip 1' },
+        { lq: './videos/AIGC_LQ_002.mp4', ours: './videos/AIGC_ours_002.mp4', caption: 'AIGC • Clip 2' },
+        { lq: './videos/AIGC_LQ_003.mp4', ours: './videos/AIGC_ours_003.mp4', caption: 'AIGC • Clip 3' },
+        { lq: './videos/AIGC_LQ_004.mp4', ours: './videos/AIGC_ours_004.mp4', caption: 'AIGC • Clip 4' },
+        { lq: './videos/AIGC_LQ_005.mp4', ours: './videos/AIGC_ours_005.mp4', caption: 'AIGC • Clip 5' },
+      ],
+      long: [
+        { lq: './videos/long_LQ_001.mp4', ours: './videos/long_ours_001.mp4', caption: 'Long • Clip 1 (237 frames)' },
+        { lq: './videos/long_LQ_002.mp4', ours: './videos/long_ours_002.mp4', caption: 'Long • Clip 2 (301 frames)' },
+      ]
+    };
+
+    function mountCarouselSplit(rootId, list){
+      const root = document.getElementById(rootId);
+      if(!root) return;
+      list.forEach(({lq, ours, caption})=>{
+        root.appendChild(
+          makeSplitCard({ leftSrc: lq, rightSrc: ours, leftLabel: 'LR', rightLabel: 'Ours', caption })
+        );
+      });
+    }
+    mountCarouselSplit('gal-real', DATASETS.real);
+    mountCarouselSplit('gal-aigc', DATASETS.aigc);
+    mountCarouselSplit('gal-long', DATASETS.long);
+
+    /* Comparisons (pagination 001–004) */
+    const METHOD_TO_FILE = {
+      'LR': 'compare_LQ_',
+      'DOVE': 'compare_dove_',
+      'SeedVR2': 'compare_seedvr2_',
+      'RealViformer': 'compare_realviformer_',
+      'Ours': 'compare_ours_'
+    };
+    const vpath = (method, id) => `./videos/${METHOD_TO_FILE[method]}${id}.mp4`;
+
+    const compareHost = document.getElementById('compareHost');
+    const compareSwitch = document.getElementById('compareSwitch');
+    const IDS = ['001','002','003','004'];
+
+    function buildCarouselShell(){
+      const car = document.createElement('div');
+      car.className = 'carousel';
+      car.setAttribute('data-carousel','');
+      car.innerHTML = `
+        <button class="iconbtn nav prev" aria-label="Previous">◀</button>
+        <div class="track"></div>
+        <button class="iconbtn nav next" aria-label="Next">▶</button>
+        <div class="dots" aria-hidden="true"></div>
+      `;
+      return car;
+    }
+
+    function initCarousel(car){
+      const track = car.querySelector('.track');
+      const prev = car.querySelector('.prev');
+      const next = car.querySelector('.next');
+      const dotsC = car.querySelector('.dots');
+      const slides = Array.from(track.children);
+
+      function setEdgePadding(){
+        const first = slides[0];
+        if(!first) return;
+        const slideW = first.getBoundingClientRect().width;
+        const pad = Math.max(0, (track.clientWidth - slideW) / 2);
+        track.style.paddingLeft = pad + 'px';
+        track.style.paddingRight = pad + 'px';
+      }
+      function centerIndex(idx){
+        const i = Math.max(0, Math.min(idx, slides.length - 1));
+        const s = slides[i];
+        const left = s.offsetLeft - (track.clientWidth - s.clientWidth)/2;
+        track.scrollTo({ left, behavior: 'smooth' });
+      }
+      function currentIndex(){
+        const mid = track.scrollLeft + track.clientWidth/2;
+        let idx = 0, min = Infinity;
+        slides.forEach((s,i)=>{
+          const c = Math.abs((s.offsetLeft + s.clientWidth/2) - mid);
+          if(c < min){ min = c; idx = i; }
+        });
+        return idx;
+      }
+
+      dotsC.innerHTML = '';
+      slides.forEach((_,i)=>{
+        const d=document.createElement('button');
+        d.className='dot'+(i===0?' active':'');
+        d.setAttribute('aria-label','Go to slide '+(i+1));
+        d.onclick=()=>centerIndex(i);
+        dotsC.appendChild(d);
+      });
+      const dots=[...dotsC.children];
+      const updateDots=()=>{
+        const idx = currentIndex();
+        dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
+      };
+      track.addEventListener('scroll', updateDots, {passive:true});
+
+      // vertical wheel -> horizontal scroll
+      track.addEventListener('wheel', (e)=>{
+        if(Math.abs(e.deltaX) < Math.abs(e.deltaY)){
+          track.scrollLeft += e.deltaY;
+          e.preventDefault();
+        }
+      }, {passive:false});
+
+      // drag-scroll
+      let isDown=false, startX, scrollL;
+      track.addEventListener('pointerdown', e=>{
+        isDown=true; startX=e.clientX; scrollL=track.scrollLeft; track.setPointerCapture(e.pointerId);
+      });
+      track.addEventListener('pointermove', e=>{
+        if(!isDown) return;
+        track.scrollLeft = scrollL - (e.clientX-startX);
+      });
+      const endDrag = ()=> isDown=false;
+      track.addEventListener('pointerup', endDrag);
+      track.addEventListener('pointercancel', endDrag);
+
+      prev.onclick = ()=> centerIndex(currentIndex() - 1);
+      next.onclick = ()=> centerIndex(currentIndex() + 1);
+
+      setEdgePadding();
+      new ResizeObserver(setEdgePadding).observe(track);
+      centerIndex(0);
+      updateDots();
+    }
+
+    function renderComparePage(method){
+      $$('.compare-tab', compareSwitch).forEach(b=> b.classList.toggle('active', b.dataset.method === method));
+      compareHost.innerHTML = '';
+      const car = buildCarouselShell();
+      const track = car.querySelector('.track');
+
+      IDS.forEach(id=>{
+        const leftSrc = vpath(method, id);
+        const rightSrc = vpath('Ours', id);
+        const caption = `Clips ${id} — ${method} vs. Ours`;
+        const card = makeSplitCard({
+          leftSrc, rightSrc,
+          leftLabel: method, rightLabel: 'Ours',
+          caption,
+          cropBottomHFill: id === '004'
+        });
+        track.appendChild(card);
+      });
+
+      compareHost.appendChild(car);
+      initCarousel(car);
+    }
+
+    compareSwitch.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.compare-tab');
+      if(!btn) return;
+      renderComparePage(btn.dataset.method);
+    });
+
+    // default comparisons page
+    renderComparePage('RealViformer');
+
+    /* Ablations (NO pagination) */
+    const ABL_ATTENTION = [
+      {
+        left: './videos/ablation_mask_global.mp4',
+        right: './videos/ablation_mask_local.mp4',
+        leftLabel: 'Global Sparse',
+        rightLabel: 'Local-Constrained Sparse (Ours)',
+        caption: 'Global vs. Local-Constrained Sparse Attention',
+      },
+    ];
+
+    const ABL_DECODER = [
+      {
+        left: './videos/ablation_WanVAE.mp4',
+        right: './videos/ablation_TCDecoder.mp4',
+        leftLabel: 'WanVAE Decoder',
+        rightLabel: 'TC Decoder',
+        caption: 'WanVAE Decoder vs. TC Decoder—quality is nearly indistinguishable, while the TC Decoder is ~7× faster.',
+        badgeText: '~7× speedup'
+      },
+    ];
+
+    function mountAblationSplit(trackId, items) {
+      const track = document.getElementById(trackId);
+      if (!track) return;
+      items.forEach(({ left, right, leftLabel, rightLabel, caption, badgeText }) => {
+        track.appendChild(
+          makeSplitCard({
+            leftSrc: left,
+            rightSrc: right,
+            leftLabel,
+            rightLabel,
+            caption,
+            badgeText
+          })
+        );
+      });
+    }
+    mountAblationSplit('gal-ablation-attn', ABL_ATTENTION);
+    mountAblationSplit('gal-ablation-decoder', ABL_DECODER);
+
+    // init carousels already in DOM
+    document.querySelectorAll('[data-carousel]').forEach(initCarousel);
+
+    // 已移除：全局同步/重置按钮与相关逻辑
+  </script>
+</body>
+</html>
