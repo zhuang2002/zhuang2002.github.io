@@ -409,12 +409,11 @@
 
     /* ==== TL;DR 调整版样式 ==== */
     .note.tldr{
-      font-size: inherit;          /* 恢复原字号 */
-      font-weight: 400;            /* 不加粗 */
+      font-size: inherit;
+      font-weight: 400;
       line-height: 1.4;
     }
 
-    /* 暗色主题：与副标题一致 */
     html[data-theme="dark"] .tldr,
     html[data-theme="dark"] .tldr *{
       color: var(--text) !important;
@@ -422,7 +421,6 @@
       text-shadow: none !important;
     }
 
-    /* 亮色主题：增加对比度 */
     html[data-theme="light"] .tldr,
     html[data-theme="light"] .tldr *{
       color: var(--text) !important;
@@ -432,13 +430,10 @@
 
     /* === Mobile center fixes (drop right below existing CSS) === */
     @media (max-width: 768px){
-      /* 1) 让容器在小屏上按“网格-居中”对齐，避免视觉贴左 */
       .container{
         display: grid;
-        justify-items: center; /* 所有 section 的直系子元素默认居中 */
+        justify-items: center;
       }
-
-      /* 2) 所有主要内容块强制居中（即使宽度 < 屏宽） */
       section > .teaser,
       section > .fig,
       section > .carousel,
@@ -451,49 +446,38 @@
         max-width: min(100%, calc(1120px * var(--scale)));
         width: 100%;
       }
-
-      /* 3) 轮播里的每张卡片也自我居中，避免首张“贴左”观感 */
       .carousel .slide{
         margin-left: auto;
         margin-right: auto;
       }
-
-      /* 4) 让比较卡片在竖屏更容易居中与塞下（你已有高度规则，补齐宽度/圆角） */
       .cmp{
         margin-left: auto !important;
         margin-right: auto !important;
         border-radius: 12px;
         max-width: 100%;
       }
-
-      /* 5) 文案说明在小屏统一靠中，避免左对齐看起来偏左 */
       section .note,
       .fig-caption,
       .caption,
       .cta-row{
         text-align: center !important;
       }
-
-      /* 6) 比较页的 tabs 自适应紧凑且居中（你已做，补一条对齐保险） */
       .compare-switch{
         justify-content: center !important;
       }
     }
 
-    /* 超小屏再收紧一点边距，保证视觉正中 */
     @media (max-width: 420px){
       .container{ padding-left: 12px; padding-right: 12px; }
     }
 
-    /* =========================
-       ✅ 新增补丁 1：TL;DR 行宽控制（放在靠后覆盖）
-       ========================= */
+    /* TL;DR 行宽控制 */
     .note.tldr{
       max-width: 72ch;
       margin-left: auto;
       margin-right: auto;
       word-break: normal;
-      overflow-wrap: anywhere;   /* 超长 token 也能断行 */
+      overflow-wrap: anywhere;
     }
     @media (max-width: 1024px){
       .note.tldr{ max-width: 60ch; }
@@ -506,9 +490,7 @@
       }
     }
 
-    /* ==========================================
-       ✅ 新增补丁 2：顶栏与 .container 完全对齐
-       ========================================== */
+    /* 顶栏与 .container 对齐 */
     .topnav{
       position: sticky; top:0; z-index:30;
       background: linear-gradient(180deg,var(--bg),rgba(0,0,0,0));
@@ -519,18 +501,18 @@
       width: 100%;
       max-width: calc(1440px * var(--scale));
       margin: 0 auto;
-      padding: 28px;                  /* 与 .container 同步 */
+      padding: 28px;
       display: flex; align-items: center; gap: 16px;
     }
     @media (max-width: 1024px){
-      .topnav .inner{ padding: 20px; } /* 与上方 .container 在 1024 下的 padding 对齐 */
+      .topnav .inner{ padding: 20px; }
     }
     @media (max-width: 768px){
-      .topnav .inner{ padding: 16px; } /* 与上方 .container 在 768 下的 padding 对齐 */
-      .topnav nav{ padding-left: 2px; padding-right: 2px; } /* 可选：避免 chip 贴边 */
+      .topnav .inner{ padding: 16px; }
+      .topnav nav{ padding-left: 2px; padding-right: 2px; }
     }
     @media (max-width: 420px){
-      .topnav .inner{ padding-left: 12px; padding-right: 12px; } /* 与超小屏 .container 对齐 */
+      .topnav .inner{ padding-left: 12px; padding-right: 12px; }
     }
 
   </style>
@@ -613,7 +595,7 @@
       <div class="teaser">
         <img src="./teaser.png" alt="Teaser figure for FlashVSR" class="scale-90">
         <p class="note" style="max-width:1000px;margin:0 auto;text-align:left;">
-          Diffusion models have recently advanced video restoration, but applying them to real-world video super-resolution (VSR) remains challenging due to high latency, prohibitive computation, and poor generalization to ultra-high resolutions. Our goal in this work is to make diffusion-based VSR practical by achieving efficiency, scalability, and real-time performance. To this end, we propose <strong><span class="hl">FlashVSR</span></strong>, the first diffusion-based one-step streaming framework towards real-time VSR. FlashVSR runs at <span class="hl">∼17 FPS for 768 × 1408 videos on a single A100 GPU</span> by combining three complementary innovations: (i) a train-friendly three-stage distillation pipeline that enables streaming super-resolution, (ii) locality-constrained sparse attention that cuts redundant computation while bridging the train–test resolution gap, and (iii) a tiny conditional decoder that accelerates reconstruction without sacrificing quality. To support large-scale training, we also construct <strong><span class="hl">VSR-120K</span></strong>, a new dataset with 120k videos and 180k images. Extensive experiments show that FlashVSR scales reliably to ultra-high resolutions and achieves state-of-the-art performance with up to <strong><span class="hl">∼12× speedup</span></strong> over prior one-step diffusion VSR models. We will release code, models, and the dataset to foster future research in efficient diffusion-based VSR.
+          Diffusion models have recently advanced video restoration, but applying them to real-world video super-resolution (VSR) remains challenging due to high latency, prohibitive computation, and poor generalization to ultra-high resolutions. Our goal in this work is to make diffusion-based VSR practical by achieving efficiency, scalability, and real-time performance. To this end, we propose <strong><span class="hl">FlashVSR</span></strong>, the first diffusion-based one-step streaming framework towards real-time VSR. FlashVSR runs at <span class="hl">∼17 FPS for 768 × 1408 videos on a single A100 GPU</span> by combining three complementary innovations: (i) a train-friendly three-stage distillation pipeline that enables streaming super-resolution, (ii) locality-constrained sparse attention that cuts redundant computation while bridging the train–test resolution gap, and (iii) a tiny conditional decoder that accelerates reconstruction without sacrificing quality. To support large-scale training, we also construct <strong><span class="hl">VSR-120K</span></strong>, a new dataset with 120k videos and 180k images. Extensive experiments show that <strong>FlashVSR</strong> scales reliably to ultra-high resolutions and achieves state-of-the-art performance with up to <strong><span class="hl">∼12× speedup</span></strong> over prior one-step diffusion VSR models. We will release code, models, and the dataset to foster future research in efficient diffusion-based VSR.
         </p>
       </div>
     </section>
@@ -790,7 +772,6 @@
 
     /* ===== 状态 UI 构建 & 绑定 ===== */
     function buildStatusInsidePill(pillEl, initialText='Loading…'){
-      // <span class="vstat loading"><span class="spinner"></span><span class="dot"></span><em>Loading…</em></span><button class="retry">↻</button>
       const stat = document.createElement('span');
       stat.className = 'vstat loading';
       const spin = document.createElement('span'); spin.className='spinner';
@@ -833,7 +814,6 @@
       videoEl.addEventListener('playing',     toPlaying);
       videoEl.addEventListener('error',       toError);
 
-      // 关键：阻止事件冒泡，避免被分割线/容器拖拽拦截
       ui.retry.addEventListener('click', (e) => {
         e.stopPropagation();
         e.preventDefault();
@@ -844,7 +824,7 @@
       });
     }
 
-    // === 工具：判定是否交互元素（点击这些不触发拖拽）
+    // 判定是否交互元素（点击这些不触发拖拽）
     const isInteractiveTarget = (el) => {
       return !!el.closest('.labels, .pill, .retry, .compare-tab, .iconbtn, a, button, .dots');
     };
@@ -937,21 +917,23 @@
         card.appendChild(wrap);
       }
 
-      // === 拖拽行为（交互元素豁免 + 也绑定到 knob/handle）
+      // === 拖拽行为（交互元素豁免 + 仅作用当前卡片） ===
       const setSplit = (pct)=>{
-        pct=Math.max(0,Math.min(100,pct));
+        pct = Math.max(0, Math.min(100, pct));
         top.style.setProperty('--split', pct + '%');
-        document.querySelectorAll('.cmp .handle').forEach(h => h.style.left = pct + '%');
-        document.querySelectorAll('.cmp .knob').forEach(k => k.style.left = pct + '%');
+        // ✅ 只更新当前卡片的把手与旋钮
+        handle.style.left = pct + '%';
+        knob.style.left = pct + '%';
       };
       setSplit(50);
 
-      let active=false;
       const move = (clientX)=>{
         const rect = wrap.getBoundingClientRect();
         const pct = (clientX - rect.left) / rect.width * 100;
         setSplit(pct);
       };
+
+      let active=false;
       const start = (e)=>{
         if(isInteractiveTarget(e.target)) return; // 点击交互元素不触发拖拽
         active=true;
