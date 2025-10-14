@@ -279,19 +279,19 @@
     /* === Make CTAs crisper in light theme === */
     html[data-theme="light"] .cta{
       color: var(--text);
-      border: 1px solid rgba(0,0,0,.22);                 /* 边框更深一点 */
-      background: linear-gradient(180deg, #ffffff, #f4f6ff); /* 更清晰的浅色渐变 */
+      border: 1px solid rgba(0,0,0,.22);
+      background: linear-gradient(180deg, #ffffff, #f4f6ff);
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.75),             /* 里侧高光，增强边缘锐利感 */
-        0 1px 2px rgba(0,0,0,.06);                        /* 轻微外阴影，提升层次 */
+        inset 0 1px 0 rgba(255,255,255,.75),
+        0 1px 2px rgba(0,0,0,.06);
     }
 
     html[data-theme="light"] .cta:hover{
-      border-color: rgba(0,0,0,.28);                      /* 悬停更清晰 */
+      border-color: rgba(0,0,0,.28);
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,.85),
         0 1px 2px rgba(0,0,0,.06),
-        var(--ring);                                      /* 复用你已有的 ring 光晕 */
+        var(--ring);
     }
 
     html[data-theme="light"] .cta:focus-visible{
@@ -303,12 +303,11 @@
     }
 
     html[data-theme="light"] .cta:active{
-      transform: translateY(1px);                         /* 轻按压反馈 */
+      transform: translateY(1px);
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,.65),
         0 0 0 1px rgba(0,0,0,.04);
     }
-
 
     .hl{
       display:inline-block;
@@ -486,7 +485,53 @@
       .container{ padding-left: 12px; padding-right: 12px; }
     }
 
+    /* =========================
+       ✅ 新增补丁 1：TL;DR 行宽控制（放在靠后覆盖）
+       ========================= */
+    .note.tldr{
+      max-width: 72ch;
+      margin-left: auto;
+      margin-right: auto;
+      word-break: normal;
+      overflow-wrap: anywhere;   /* 超长 token 也能断行 */
+    }
+    @media (max-width: 1024px){
+      .note.tldr{ max-width: 60ch; }
+    }
+    @media (max-width: 768px){
+      .note.tldr{
+        max-width: 46ch;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+    }
 
+    /* ==========================================
+       ✅ 新增补丁 2：顶栏与 .container 完全对齐
+       ========================================== */
+    .topnav{
+      position: sticky; top:0; z-index:30;
+      background: linear-gradient(180deg,var(--bg),rgba(0,0,0,0));
+      backdrop-filter: saturate(150%) blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .topnav .inner{
+      width: 100%;
+      max-width: calc(1440px * var(--scale));
+      margin: 0 auto;
+      padding: 28px;                  /* 与 .container 同步 */
+      display: flex; align-items: center; gap: 16px;
+    }
+    @media (max-width: 1024px){
+      .topnav .inner{ padding: 20px; } /* 与上方 .container 在 1024 下的 padding 对齐 */
+    }
+    @media (max-width: 768px){
+      .topnav .inner{ padding: 16px; } /* 与上方 .container 在 768 下的 padding 对齐 */
+      .topnav nav{ padding-left: 2px; padding-right: 2px; } /* 可选：避免 chip 贴边 */
+    }
+    @media (max-width: 420px){
+      .topnav .inner{ padding-left: 12px; padding-right: 12px; } /* 与超小屏 .container 对齐 */
+    }
 
   </style>
 </head>
@@ -896,8 +941,8 @@
       const setSplit = (pct)=>{
         pct=Math.max(0,Math.min(100,pct));
         top.style.setProperty('--split', pct + '%');
-        handle.style.left = pct + '%';
-        knob.style.left = pct + '%';
+        document.querySelectorAll('.cmp .handle').forEach(h => h.style.left = pct + '%');
+        document.querySelectorAll('.cmp .knob').forEach(k => k.style.left = pct + '%');
       };
       setSplit(50);
 
