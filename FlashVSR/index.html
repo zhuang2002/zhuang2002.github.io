@@ -478,6 +478,132 @@
       opacity: 1 !important;
       text-shadow: none !important;
     }
+    /* ======= 修复：手机端目录栏与页面宽度 ======= */
+
+    /* 让容器在移动端占满屏宽，而不是受 max-width 限制 */
+    @media (max-width: 1024px){
+      :root{
+        /* figW 和 maxW 改为随视口自适应，避免“中间一条” */
+        --maxW: 100vw;
+        --figW: min(100vw - 24px, 1120px);
+      }
+      .container{
+        max-width: 100% !important;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      .topnav .inner{
+        max-width: 100% !important;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+    }
+
+    @media (max-width: 768px){
+      :root{
+        /* 更紧凑一点，给两侧留 16px 安全边距 */
+        --maxW: 100vw;
+        --figW: calc(100vw - 32px);
+      }
+
+      /* 顶栏改为两行：第一行 logo，第二行整行放导航标签 */
+      .topnav .inner{
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        grid-auto-rows: auto;
+        row-gap: 10px;
+        align-items: center;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      /* nav 占满一整行、可横向滚动、默认居中 */
+      .topnav nav{
+        grid-column: 1 / -1;
+        order: 2;
+        display: flex;
+        width: 100%;
+        justify-content: center;           /* 居中 */
+        gap: 8px;
+        overflow-x: auto;                  /* 可横向滚动 */
+        -webkit-overflow-scrolling: touch; /* iOS 惯性滚动 */
+        scrollbar-width: none;             /* Firefox 隐藏滚动条 */
+        padding: 0 4px;
+        margin: 0 auto;
+        mask-image: linear-gradient(to right, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+      }
+      .topnav nav::-webkit-scrollbar{ display:none; }
+
+      /* logo 单独一行并居中 */
+      .topnav a.logo{
+        order: 1;
+        justify-self: center;
+      }
+
+      /* 让“中间内容”真正铺满可用宽度 */
+      .container{
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      /* 走马灯中的 slide 与对比卡片按屏宽自适应，避免显得太窄 */
+      .slide{ flex-basis: min(96vw, var(--figW)) !important; }
+      .cmp{
+        max-width: 100% !important;
+        width: 100% !important;
+        border-radius: 12px;
+      }
+    }
+
+    /* 超小屏再紧一点边距 */
+    @media (max-width: 420px){
+      .container{ padding-left: 12px; padding-right: 12px; }
+      .topnav .inner{ padding-left: 12px; padding-right: 12px; }
+      .topnav nav{ mask-image: linear-gradient(to right, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%); }
+    }
+    /* ======= 修复：桌面端右侧空白的横向溢出 ======= */
+
+    /* 全局禁止页面级别的横向滚动（内部可横向滚动的容器不受影响） */
+    html, body {
+      overflow-x: hidden !important;
+    }
+
+    /* 避免标题区装饰元素造成潜在溢出（如 sparks 等绝对定位动画） */
+    .title-wrap {
+      overflow: hidden; /* 只裁剪装饰，不影响内容 */
+    }
+
+    /* 轮播左右箭头不要探出容器（之前 -6px 可能造成页面级别溢出） */
+    .carousel .prev { left: 6px !important; }
+    .carousel .next { right: 6px !important; }
+
+    /* 让走马灯的滚动仅在自身内部，不把页面撑宽 */
+    .carousel .track {
+      overflow-x: auto;    /* 已有——这里再次强调覆盖 */
+      overscroll-behavior-x: contain; /* 防止滚到页面层 */
+    }
+
+    /* 对比卡片成为布局边界，不把外层撑宽 */
+    .cmp {
+      max-width: 100%;
+      contain: layout paint; /* 限定布局/绘制边界，防溢出 */
+    }
+
+    /* 容器自身也不允许把内容挤出页面（保险） */
+    .container {
+      overflow-x: clip; /* 现代浏览器更稳妥的裁剪 */
+    }
+
+    /* 若你在移动端把顶栏 nav 做了负外边距/遮罩，也防止波及桌面 */
+    @media (min-width: 1025px){
+      .topnav .inner {
+        max-width: var(--maxW); /* 保持与 container 一致 */
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+
+
   </style>
 </head>
 
