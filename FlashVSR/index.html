@@ -2,23 +2,26 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>FLASHVSR: Towards Real-Time Diffusion-Based Streaming Video Super-Resolution</title>
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Base UI fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <!-- Artistic title font -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
-  <!-- Favicon -->
+
+  <!-- Icons / PWA basics -->
   <link rel="icon" href="./logo.png" sizes="32x32">
   <link rel="icon" href="./logo.png" sizes="192x192">
   <link rel="apple-touch-icon" href="./logo.png">
-  
+
   <style>
     :root{
       --scale: 0.9;
-      --cropH: 85;
+      --cropH: 85; /* % of height to keep (for clip 004) */
 
       --bg:#0a0b10;
       --panel:#12131b; --panel-2:#0e0f16;
@@ -29,7 +32,12 @@
       --ring: 0 0 0 2px rgba(124,92,255,.35), 0 0 40px rgba(38,230,164,.15);
       --secGap: 56px;
       --secTitleSize: clamp(22px, 28px * var(--scale), 36px);
+      --titleGap: 6px;
+      --logoH: 72px;
+      --maxW: calc(1440px * var(--scale));
+      --figW: calc(1120px * var(--scale));
     }
+
     *{box-sizing:border-box}
     html,body{
       margin:0;
@@ -38,20 +46,41 @@
         radial-gradient(900px 600px at 110% 10%, rgba(38,230,164,.18), transparent 60%),
         var(--bg);
       color:var(--text);
-      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+      -webkit-text-size-adjust:100%; /* iOS font zoom guard */
     }
     a{color:inherit;text-decoration:none}
-    .container{max-width: calc(1440px * var(--scale)); margin:0 auto; padding:28px}
+    .container{max-width: var(--maxW); margin:0 auto; padding:28px}
 
-    /* Sticky Nav (dark-only) */
-    .topnav{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,var(--bg),rgba(0,0,0,0));backdrop-filter:saturate(150%) blur(8px);border-bottom:1px solid rgba(255,255,255,.08)}
-    .topnav .inner{max-width: calc(1440px * var(--scale)); margin:0 auto; padding:12px 28px; display:flex; align-items:center; gap:16px}
+    /* ===== Sticky Nav (kept single definition to avoid overrides) ===== */
+    .topnav{
+      position: sticky; top:0; z-index:30;
+      background: linear-gradient(180deg,var(--bg),rgba(0,0,0,0));
+      backdrop-filter: saturate(150%) blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      -webkit-backdrop-filter: saturate(150%) blur(8px);
+    }
+    .topnav .inner{
+      width: 100%;
+      max-width: var(--maxW);
+      margin: 0 auto;
+      padding: 12px 28px;
+      display: flex; align-items: center; gap: 16px;
+    }
     .topnav a.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-family:Space Grotesk}
     .topnav a.logo img{height:24px;width:auto;display:block}
-    .topnav nav{display:flex;gap:14px;flex:1;flex-wrap:wrap;justify-content:center}
-    .chip{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02))}
+    .topnav nav{
+      display:flex;gap:14px;flex:1;flex-wrap:wrap;justify-content:center;
+      min-width: 0; /* avoid overflow on small screens */
+    }
+    .chip{
+      padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      white-space:nowrap;
+    }
     .top-actions{display:flex;gap:8px}
 
+    /* Authors */
     .authors sup { font-size: 0.7em; vertical-align: super; opacity: 0.8; }
     .authors a { color: var(--text); text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,.2); }
     .authors a:hover { color: #fff; border-bottom-color: #fff; }
@@ -60,14 +89,13 @@
     section[aria-labelledby="s4"] { --scale: 1 !important; }
     #compareHost { --scale: 1 !important; }
 
-    /* Header */
+    /* ===== Header ===== */
     header.hero{position:relative;display:grid;grid-template-columns:1fr;gap:12px;align-items:center}
     .title-wrap{position:relative;padding:6px 0 2px 0;background:none;border:none;box-shadow:none;overflow:visible}
-    :root{ --titleGap: 6px; --logoH: 72px; }
     .title-row{ display:flex; align-items:center; justify-content:center; gap: var(--titleGap); }
     .title-row img.logo{ height: calc(var(--logoH) * var(--scale)); width:auto; display:block; flex:0 0 auto; border-radius:12px; margin:0; }
-    .title-text{ display:flex; align-items:center; letter-spacing:.01em; }
     .title-text{
+      display:flex; align-items:center; letter-spacing:.01em;
       font-family:Orbitron, "Space Grotesk", Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
       font-weight:900; letter-spacing:.02em; line-height:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
       font-size:clamp(34px, calc(60px * var(--scale)), 72px);
@@ -89,6 +117,7 @@
     .spark{position:absolute;width:2px;height:2px;background:radial-gradient(circle,var(--accent),transparent 70%);border-radius:50%;animation:fly 6s linear infinite}
     @keyframes fly{from{transform:translate3d(0,0,0)}to{transform:translate3d(140vw,-40vh,0)}}
 
+    /* Sections */
     section{ margin: var(--secGap) 0; }
     .section-title{
       display:flex; align-items:center; gap:10px;
@@ -108,17 +137,17 @@
       border-radius:16px; padding:14px;
       text-align:center;
       width:100%;
-      max-width: calc(1120px * var(--scale));
+      max-width: var(--figW);
       margin:0 auto;
     }
     .teaser img.scale-90{ width:90% !important; height:auto; }
 
-    img[src$=".png"], img[src$=".jpg"], img[src$=".jpeg"]{display:block;margin:0 auto}
+    img[src$=".png"], img[src$=".jpg"], img[src$=".jpeg"]{display:block;margin:0 auto;max-width:100%;height:auto}
     .scale-90{width:90% !important; height:auto}
     .scale-40{width:40% !important; height:auto}
 
     .fig{
-      width:100%; max-width: calc(1120px * var(--scale));
+      width:100%; max-width: var(--figW);
       border:1px solid rgba(255,255,255,.1); border-radius:12px; overflow:hidden;
       background:#0d0f17; display:block; padding:10px; margin:0 auto;
       text-align:center;
@@ -126,12 +155,15 @@
     .fig img{display:block; height:auto; max-width:100%; margin:0 auto}
     .fig-caption{color:var(--muted); font-size:.92rem; text-align:center; margin-top:8px}
 
-    /* Carousel */
+    /* ===== Carousel ===== */
     .carousel{position:relative;margin-top:12px}
-    .carousel .track{display:flex;gap:18px;overflow:auto;padding:6px 0;scroll-snap-type:x mandatory;scroll-behavior:smooth}
+    .carousel .track{
+      display:flex;gap:18px;overflow:auto;padding:6px 0;scroll-snap-type:x mandatory;scroll-behavior:smooth;
+      -webkit-overflow-scrolling:touch; /* iOS momentum scroll */
+    }
     .carousel .track::-webkit-scrollbar{height:8px}
     .carousel .track::-webkit-scrollbar-thumb{background:linear-gradient(90deg,var(--brand-1),var(--brand-2));border-radius:999px}
-    .slide{flex: 0 0 min(96vw, calc(1140px * var(--scale))); scroll-snap-align:center; scroll-snap-stop:always; position:relative;}
+    .slide{flex: 0 0 min(96vw, var(--figW)); scroll-snap-align:center; scroll-snap-stop:always; position:relative;}
     .carousel .nav{position:absolute;top:50%;transform:translateY(-50%);z-index:10}
     .carousel .prev{left:-6px}
     .carousel .next{right:-6px}
@@ -139,14 +171,17 @@
     .carousel .dot.active{background:linear-gradient(90deg,var(--brand-1),var(--brand-2));box-shadow:var(--ring)}
     .carousel .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.35)}
 
-    /* Split compare block */
-    .cmp{ position:relative;border-radius:16px;overflow:hidden;background:#000;border:1px solid rgba(255,255,255,.08);
-      aspect-ratio: 16 / 9; max-width: calc(1140px * var(--scale)); margin: 0 auto; }
+    /* ===== Split compare block ===== */
+    .cmp{
+      position:relative;border-radius:16px;overflow:hidden;background:#000;border:1px solid rgba(255,255,255,.08);
+      aspect-ratio: 16 / 9; max-width: var(--figW); margin: 0 auto;
+      touch-action:none; /* allow precise drag without browser gestures */
+    }
     .cmp video{display:block;width:100%;height:100%;object-fit:contain}
     .cmp .layer{position:absolute;inset:0}
     .cmp .top{--split:50%; clip-path: polygon(0 0, var(--split) 0, var(--split) 100%, 0 100%);}
     .cmp .handle{position:absolute;top:0;left:50%;transform:translateX(-50%);height:100%;width:2px;background:#fff; z-index:4; }
-    .cmp .knob{position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);width:calc(44px * var(--scale));height:calc(44px * var(--scale));border-radius:50%;background:linear-gradient(180deg,#fff,#cdd6ff);border:2px solid #111;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 30px rgba(0,0,0,.45); z-index:4;}
+    .cmp .knob{position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);width:calc(44px * var(--scale));height:calc(44px * var(--scale));border-radius:50%;background:linear-gradient(180deg,#fff,#cdd6ff);border:2px solid #111;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 30px rgba(0,0,0,.45); z-index:4;touch-action:none}
     .cmp .knob svg{width:18px;height:18px}
 
     /* Corner labels */
@@ -175,7 +210,7 @@
 
     .caption{margin-top:8px;color:var(--muted);font-size:.92rem;text-align:center}
 
-    /* Clips 004 crop math */
+    /* Clip 004 crop math */
     .crop-bottom-hfill .cmp-video{
       position:absolute;
       --_S: calc(100 / var(--cropH));
@@ -213,8 +248,8 @@
     .subsec .note{ text-align:left; }
 
     @media (min-width: 1280px){
-      .slide{ flex-basis: min(96vw, calc(1120px * var(--scale))); }
-      .cmp{ max-width: calc(1120px * var(--scale)); }
+      .slide{ flex-basis: min(96vw, var(--figW)); }
+      .cmp{ max-width: var(--figW); }
     }
 
     /* ===== Light Theme Overrides ===== */
@@ -235,8 +270,8 @@
       background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,0));
       border-bottom:1px solid rgba(0,0,0,.08);
       backdrop-filter:saturate(140%) blur(8px);
+      -webkit-backdrop-filter:saturate(140%) blur(8px);
     }
-    html[data-theme="light"] .topnav .inner{ max-width: calc(1440px * var(--scale)); }
     html[data-theme="light"] .chip{
       border:1px solid rgba(0,0,0,.12);
       background:linear-gradient(180deg, rgba(0,0,0,.03), rgba(0,0,0,.01));
@@ -285,7 +320,6 @@
         inset 0 1px 0 rgba(255,255,255,.75),
         0 1px 2px rgba(0,0,0,.06);
     }
-
     html[data-theme="light"] .cta:hover{
       border-color: rgba(0,0,0,.28);
       box-shadow:
@@ -293,7 +327,6 @@
         0 1px 2px rgba(0,0,0,.06),
         var(--ring);
     }
-
     html[data-theme="light"] .cta:focus-visible{
       outline: none;
       box-shadow:
@@ -301,7 +334,6 @@
         0 1px 2px rgba(0,0,0,.06);
       border-color: rgba(124,92,255,.45);
     }
-
     html[data-theme="light"] .cta:active{
       transform: translateY(1px);
       box-shadow:
@@ -309,6 +341,7 @@
         0 0 0 1px rgba(0,0,0,.04);
     }
 
+    /* Highlight chip */
     .hl{
       display:inline-block;
       padding:2px 8px;
@@ -325,7 +358,7 @@
       border:1px solid rgba(0,0,0,.12);
     }
 
-    /* ====== 新增：视频加载状态 UI（pill 内部） ====== */
+    /* ====== 视频加载状态 UI（pill 内部） ====== */
     .pill .vstat{
       display:inline-flex; align-items:center; gap:6px; margin-left:8px; font-weight:700;
       opacity:.95;
@@ -356,34 +389,31 @@
     }
     @keyframes spin{ to{ transform:rotate(360deg); } }
 
-    /* ===== Mobile tweaks ===== */
+    /* ===== Mobile tweaks (robust & consistent with desktop layout) ===== */
     @media (max-width: 1024px){
-      :root{ --scale: 0.92; --secGap: 44px; }
+      :root{ --scale: 0.92; --secGap: 44px; --logoH: 64px; }
       .container{ padding:20px; }
-      .topnav .inner{ padding:10px 20px; }
+      .topnav .inner{ padding: 16px 20px; }
       .title-row{ gap:10px; }
-      :root{ --logoH: 64px; }
       .title-text{ font-size: clamp(30px, 6.2vw, 48px); }
       .title-sub{ font-size: clamp(18px, 3.6vw, 28px); }
-      .chip{ white-space:nowrap; }
     }
 
     @media (max-width: 768px){
-      :root{ --scale: 0.86; --secGap: 36px; }
-      .container{ padding:16px; }
+      :root{ --scale: 0.86; --secGap: 36px; --logoH: 54px; }
+      .container{ padding:16px; display:grid; justify-items:center; }
       .topnav nav{
         overflow-x:auto; gap:8px; justify-content:flex-start;
         -webkit-overflow-scrolling:touch; scrollbar-width:none;
       }
       .topnav nav::-webkit-scrollbar{ display:none; }
-      :root{ --logoH: 54px; }
       .title-row{ gap:8px; }
       .title-text{ font-size: clamp(26px, 7vw, 36px); }
       .title-sub{ font-size: clamp(15px, 4.5vw, 22px); }
       .teaser, .fig{ padding:10px; border-radius:12px; }
       .fig img, .teaser img{ width:100% !important; }
 
-      /* 让比较卡片在竖屏更好塞下：高度跟随屏宽 */
+      /* 比较卡片：高度随屏幕自适应，保持与桌面相同的信息密度 */
       .cmp{
         aspect-ratio: auto;
         height: min(58vw, 62vh);
@@ -392,48 +422,8 @@
       }
       .cmp .knob{ width:34px; height:34px; }
       .pill{ padding:5px 8px; font-size:.78rem; }
-    }
 
-    @media (max-width: 420px){
-      :root{ --scale: 0.82; }
-      .title-text{ font-size: clamp(24px, 7.8vw, 32px); }
-      .title-sub{ font-size: clamp(14px, 4.4vw, 20px); }
-      .cmp{ height: 60vw; }
-    }
-
-    /* 小屏上的 compare tabs 更紧凑（可选） */
-    @media (max-width: 768px){
-      .compare-switch{ gap:8px; }
-      .compare-tab{ padding:7px 10px; font-size:.9rem; }
-    }
-
-    /* ==== TL;DR 调整版样式 ==== */
-    .note.tldr{
-      font-size: inherit;
-      font-weight: 400;
-      line-height: 1.4;
-    }
-
-    html[data-theme="dark"] .tldr,
-    html[data-theme="dark"] .tldr *{
-      color: var(--text) !important;
-      opacity: .95 !important;
-      text-shadow: none !important;
-    }
-
-    html[data-theme="light"] .tldr,
-    html[data-theme="light"] .tldr *{
-      color: var(--text) !important;
-      opacity: 1 !important;
-      text-shadow: none !important;
-    }
-
-    /* === Mobile center fixes (drop right below existing CSS) === */
-    @media (max-width: 768px){
-      .container{
-        display: grid;
-        justify-items: center;
-      }
+      /* 居中所有主要容器，避免左右偏移 */
       section > .teaser,
       section > .fig,
       section > .carousel,
@@ -443,78 +433,51 @@
       footer{
         margin-left: auto !important;
         margin-right: auto !important;
-        max-width: min(100%, calc(1120px * var(--scale)));
+        max-width: min(100%, var(--figW));
         width: 100%;
       }
       .carousel .slide{
         margin-left: auto;
         margin-right: auto;
       }
-      .cmp{
-        margin-left: auto !important;
-        margin-right: auto !important;
-        border-radius: 12px;
-        max-width: 100%;
-      }
-      section .note,
-      .fig-caption,
-      .caption,
-      .cta-row{
-        text-align: center !important;
-      }
-      .compare-switch{
-        justify-content: center !important;
-      }
+      .caption, .fig-caption, section .note, .cta-row{ text-align: center !important; }
+      .compare-switch{ justify-content: center !important; }
     }
 
     @media (max-width: 420px){
+      :root{ --scale: 0.82; }
       .container{ padding-left: 12px; padding-right: 12px; }
+      .title-text{ font-size: clamp(24px, 7.8vw, 32px); }
+      .title-sub{ font-size: clamp(14px, 4.4vw, 20px); }
+      .cmp{ height: 60vw; }
     }
 
-    /* TL;DR 行宽控制 */
+    /* TL;DR 行宽与对比度（暗/亮主题统一视觉） */
     .note.tldr{
+      font-size: inherit;
+      font-weight: 400;
+      line-height: 1.4;
       max-width: 72ch;
       margin-left: auto;
       margin-right: auto;
       word-break: normal;
       overflow-wrap: anywhere;
     }
-    @media (max-width: 1024px){
-      .note.tldr{ max-width: 60ch; }
-    }
-    @media (max-width: 768px){
-      .note.tldr{
-        max-width: 46ch;
-        padding-left: 12px;
-        padding-right: 12px;
-      }
-    }
+    @media (max-width: 1024px){ .note.tldr{ max-width: 60ch; } }
+    @media (max-width: 768px){ .note.tldr{ max-width: 46ch; padding-left: 12px; padding-right: 12px; } }
 
-    /* 顶栏与 .container 对齐 */
-    .topnav{
-      position: sticky; top:0; z-index:30;
-      background: linear-gradient(180deg,var(--bg),rgba(0,0,0,0));
-      backdrop-filter: saturate(150%) blur(8px);
-      border-bottom: 1px solid rgba(255,255,255,.08);
+    html[data-theme="dark"] .tldr,
+    html[data-theme="dark"] .tldr *{
+      color: var(--text) !important;
+      opacity: .95 !important;
+      text-shadow: none !important;
     }
-    .topnav .inner{
-      width: 100%;
-      max-width: calc(1440px * var(--scale));
-      margin: 0 auto;
-      padding: 28px;
-      display: flex; align-items: center; gap: 16px;
+    html[data-theme="light"] .tldr,
+    html[data-theme="light"] .tldr *{
+      color: var(--text) !important;
+      opacity: 1 !important;
+      text-shadow: none !important;
     }
-    @media (max-width: 1024px){
-      .topnav .inner{ padding: 20px; }
-    }
-    @media (max-width: 768px){
-      .topnav .inner{ padding: 16px; }
-      .topnav nav{ padding-left: 2px; padding-right: 2px; }
-    }
-    @media (max-width: 420px){
-      .topnav .inner{ padding-left: 12px; padding-right: 12px; }
-    }
-
   </style>
 </head>
 
@@ -569,9 +532,8 @@
         <div class="note" style="margin-top:4px;text-align:center;opacity:.85">
           † Corresponding author
         </div>
-        
 
-        <div class="cta-row">
+        <div class="cta-row" role="group" aria-label="resources">
           <a class="cta" href="#" title="Paper">📄 Paper</a>
           <a class="cta" href="#" title="Code">🐙 Code</a>
           <a class="cta" href="#" title="Model (HF)">🤗 Model</a>
@@ -593,7 +555,7 @@
     <section id="abs" aria-labelledby="abs-title">
       <div class="section-title" id="abs-title"><span class="dot"></span> Abstract</div>
       <div class="teaser">
-        <img src="./teaser.png" alt="Teaser figure for FlashVSR" class="scale-90">
+        <img src="./teaser.png" alt="Teaser figure for FlashVSR" class="scale-90" width="1600" height="900" loading="lazy" decoding="async">
         <p class="note" style="max-width:1000px;margin:0 auto;text-align:left;">
           Diffusion models have recently advanced video restoration, but applying them to real-world video super-resolution (VSR) remains challenging due to high latency, prohibitive computation, and poor generalization to ultra-high resolutions. Our goal in this work is to make diffusion-based VSR practical by achieving efficiency, scalability, and real-time performance. To this end, we propose <strong><span class="hl">FlashVSR</span></strong>, the first diffusion-based one-step streaming framework towards real-time VSR. FlashVSR runs at <span class="hl">∼17 FPS for 768 × 1408 videos on a single A100 GPU</span> by combining three complementary innovations: (i) a train-friendly three-stage distillation pipeline that enables streaming super-resolution, (ii) locality-constrained sparse attention that cuts redundant computation while bridging the train–test resolution gap, and (iii) a tiny conditional decoder that accelerates reconstruction without sacrificing quality. To support large-scale training, we also construct <strong><span class="hl">VSR-120K</span></strong>, a new dataset with 120k videos and 180k images. Extensive experiments show that <strong>FlashVSR</strong> scales reliably to ultra-high resolutions and achieves state-of-the-art performance with up to <strong><span class="hl">∼12× speedup</span></strong> over prior one-step diffusion VSR models. We will release code, models, and the dataset to foster future research in efficient diffusion-based VSR.
         </p>
@@ -609,7 +571,7 @@
         resolution gap. A <strong>Tiny Conditional Decoder (TC Decoder)</strong> leverages LR frames + latents to reconstruct HR frames efficiently.
       </p>
       <div class="fig" aria-label="Method flowchart">
-        <img src="./flowchart.jpg" alt="Three-stage distillation to sparse-causal one-step VSR" class="scale-90">
+        <img src="./flowchart.jpg" alt="Three-stage distillation to sparse-causal one-step VSR" class="scale-90" width="1600" height="900" loading="lazy" decoding="async">
       </div>
       <div class="fig-caption">Figure: Three-stage distillation → Sparse-causal one-step VSR with streaming inference.</div>
 
@@ -622,7 +584,7 @@
           Building upon this locality constraint, we further adopt sparse attention that concentrates computation on the top-k most relevant regions rather than across the entire spatial dimensions, significantly improving computational efficiency and perceptual quality at high resolutions.
         </p>
         <div class="fig" aria-label="Local attention illustration">
-          <img src="./LocalAttn.jpg" alt="Local window mask with block selection" class="scale-90">
+          <img src="./LocalAttn.jpg" alt="Local window mask with block selection" class="scale-90" width="1600" height="900" loading="lazy" decoding="async">
         </div>
         <div class="fig-caption">Figure: Local windows align positional ranges between training and inference to avoid artifacts.</div>
       </div>
@@ -634,7 +596,7 @@
           By leveraging these LR signals, the TC Decoder effectively simplifies the high-resolution (HR) reconstruction process, achieving a <strong>7× acceleration in decoding speed</strong> while maintaining <strong>virtually indistinguishable visual quality</strong> from the original VAE decoder.
         </p>
         <div class="fig" aria-label="TC Decoder illustration">
-          <img src="./TCDecoder.jpg" alt="TC Decoder training and conditioning overview" class="scale-40">
+          <img src="./TCDecoder.jpg" alt="TC Decoder training and conditioning overview" class="scale-40" width="1400" height="900" loading="lazy" decoding="async">
         </div>
         <div class="fig-caption">Figure: Training pipeline of the TC Decoder.</div>        
       </div>
@@ -658,9 +620,9 @@
       <div class="section-title" id="s1"><span class="dot"></span> Real-World Videos Super-Resolution </div>
       <p class="note">Drag the vertical bar: left = <strong>LR</strong>, right = <strong>Ours</strong>.</p>
       <div class="carousel" data-carousel>
-        <button class="iconbtn nav prev" aria-label="Previous">◀</button>
+        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
         <div class="track" id="gal-real"></div>
-        <button class="iconbtn nav next" aria-label="Next">▶</button>
+        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
         <div class="dots" aria-hidden="true"></div>
       </div>
     </section>
@@ -669,9 +631,9 @@
     <section aria-labelledby="s2">
       <div class="section-title" id="s2"><span class="dot"></span> AIGC Videos Enhancement </div>
       <div class="carousel" data-carousel>
-        <button class="iconbtn nav prev" aria-label="Previous">◀</button>
+        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
         <div class="track" id="gal-aigc"></div>
-        <button class="iconbtn nav next" aria-label="Next">▶</button>
+        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
         <div class="dots" aria-hidden="true"></div>
       </div>
     </section>
@@ -680,9 +642,9 @@
     <section aria-labelledby="s3">
       <div class="section-title" id="s3"><span class="dot"></span> Long Videos Super-Resolution </div>
       <div class="carousel" data-carousel>
-        <button class="iconbtn nav prev" aria-label="Previous">◀</button>
+        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
         <div class="track" id="gal-long"></div>
-        <button class="iconbtn nav next" aria-label="Next">▶</button>
+        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
         <div class="dots" aria-hidden="true"></div>
       </div>
     </section>
@@ -690,13 +652,13 @@
     <!-- Comparisons -->
     <section aria-labelledby="s4">
       <div class="section-title" id="s4"><span class="dot"></span> Ours vs. Others </div>
-      <p class="note">Switch methods via tabs; each page shows Clips 001–004 (left: baseline, right: Ours). </p>
+      <p class="note">Switch methods via tabs; each page shows Clips 001–004 (left: baseline, right: Ours).</p>
 
       <div class="compare-switch" id="compareSwitch">
-        <button class="compare-tab" data-method="LR">vs. LR</button>
-        <button class="compare-tab" data-method="RealViformer">vs. RealViformer</button>
-        <button class="compare-tab" data-method="DOVE">vs. DOVE</button>
-        <button class="compare-tab" data-method="SeedVR2">vs. SeedVR2</button>
+        <button class="compare-tab" data-method="LR" type="button">vs. LR</button>
+        <button class="compare-tab" data-method="RealViformer" type="button">vs. RealViformer</button>
+        <button class="compare-tab" data-method="DOVE" type="button">vs. DOVE</button>
+        <button class="compare-tab" data-method="SeedVR2" type="button">vs. SeedVR2</button>
       </div>
       <div id="compareHost"></div>
     </section>
@@ -708,17 +670,17 @@
 
       <!-- Ablation 1: Global vs. Local -->
       <div class="carousel" data-carousel>
-        <button class="iconbtn nav prev" aria-label="Previous">◀</button>
+        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
         <div class="track" id="gal-ablation-attn"></div>
-        <button class="iconbtn nav next" aria-label="Next">▶</button>
+        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
         <div class="dots" aria-hidden="true"></div>
       </div>
 
       <!-- Ablation 2: WanVAE decoder vs. TC Decoder -->
       <div class="carousel" data-carousel style="margin-top:18px">
-        <button class="iconbtn nav prev" aria-label="Previous">◀</button>
+        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
         <div class="track" id="gal-ablation-decoder"></div>
-        <button class="iconbtn nav next" aria-label="Next">▶</button>
+        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
         <div class="dots" aria-hidden="true"></div>
       </div>
     </section>
@@ -757,18 +719,22 @@
     const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
 
     /* ===== sparks ===== */
-    const sparksWrap = document.createElement('div');
-    sparksWrap.className='sparks';
-    $('.title-wrap').prepend(sparksWrap);
-    for(let i=0;i<22;i++){
-      const s=document.createElement('div');
-      s.className='spark';
-      s.style.left=(Math.random()*80+5)+'%';
-      s.style.top=(Math.random()*80+5)+'%';
-      s.style.animationDelay=(Math.random()*6)+'s';
-      s.style.opacity=Math.random()*0.9+0.2;
-      sparksWrap.appendChild(s);
-    }
+    (function mountSparks(){
+      const wrap = $('.title-wrap');
+      if(!wrap) return;
+      const sparksWrap = document.createElement('div');
+      sparksWrap.className='sparks';
+      wrap.prepend(sparksWrap);
+      for(let i=0;i<22;i++){
+        const s=document.createElement('div');
+        s.className='spark';
+        s.style.left=(Math.random()*80+5)+'%';
+        s.style.top=(Math.random()*80+5)+'%';
+        s.style.animationDelay=(Math.random()*6)+'s';
+        s.style.opacity=(Math.random()*0.5+0.35).toFixed(2);
+        sparksWrap.appendChild(s);
+      }
+    })();
 
     /* ===== 状态 UI 构建 & 绑定 ===== */
     function buildStatusInsidePill(pillEl, initialText='Loading…'){
@@ -960,6 +926,10 @@
       handle.addEventListener('mousedown', start);
       handle.addEventListener('touchstart', start, {passive:false});
 
+      // iOS autoplay nudge (muted inline autoplay requires a play() call sometimes)
+      const ensurePlay = (v)=> v.play().catch(()=>{ /* ignore */ });
+      ensurePlay(base); ensurePlay(vTop);
+
       card._videos = [base, vTop];
       return card;
     }
@@ -989,11 +959,13 @@
     function mountCarouselSplit(rootId, list){
       const root = document.getElementById(rootId);
       if(!root) return;
+      const frag = document.createDocumentFragment();
       list.forEach(({lq, ours, caption})=>{
-        root.appendChild(
+        frag.appendChild(
           makeSplitCard({ leftSrc: lq, rightSrc: ours, leftLabel: 'LR', rightLabel: 'Ours', caption })
         );
       });
+      root.appendChild(frag);
     }
     mountCarouselSplit('gal-real', DATASETS.real);
     mountCarouselSplit('gal-aigc', DATASETS.aigc);
@@ -1018,9 +990,9 @@
       car.className = 'carousel';
       car.setAttribute('data-carousel','');
       car.innerHTML = `
-        <button class="iconbtn nav prev" aria-label="Previous">◀</button>
+        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
         <div class="track"></div>
-        <button class="iconbtn nav next" aria-label="Next">▶</button>
+        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
         <div class="dots" aria-hidden="true"></div>
       `;
       return car;
@@ -1032,6 +1004,10 @@
       const next = car.querySelector('.next');
       const dotsC = car.querySelector('.dots');
       const slides = Array.from(track.children);
+      if(slides.length === 0){
+        // still ensure padding to center when slides appended later
+        return;
+      }
 
       function setEdgePadding(){
         const first = slides[0];
@@ -1062,6 +1038,7 @@
         const d=document.createElement('button');
         d.className='dot'+(i===0?' active':'');
         d.setAttribute('aria-label','Go to slide '+(i+1));
+        d.type='button';
         d.onclick=()=>centerIndex(i);
         dotsC.appendChild(d);
       });
@@ -1081,7 +1058,7 @@
       }, {passive:false});
 
       // drag-scroll
-      let isDown=false, startX, scrollL;
+      let isDown=false, startX=0, scrollL=0;
       track.addEventListener('pointerdown', e=>{
         isDown=true; startX=e.clientX; scrollL=track.scrollLeft; track.setPointerCapture(e.pointerId);
       });
@@ -1092,6 +1069,7 @@
       const endDrag = ()=> isDown=false;
       track.addEventListener('pointerup', endDrag);
       track.addEventListener('pointercancel', endDrag);
+      track.addEventListener('pointerleave', endDrag);
 
       prev.onclick = ()=> centerIndex(currentIndex() - 1);
       next.onclick = ()=> centerIndex(currentIndex() + 1);
@@ -1151,7 +1129,7 @@
         right: 'https://raw.githubusercontent.com/zhuang2002/flashvsr_assert/main/videos/ablation_TCDecoder.mp4',
         leftLabel: 'WanVAE Decoder',
         rightLabel: 'TC Decoder',
-        caption: 'WanVAE Decoder vs. TC Decoder—quality is nearly indistinguishable, while the TC Decoder is ~7× faster.',
+        caption: 'WanVAE Decoder vs. TC Decoder — quality is nearly indistinguishable, while the TC Decoder is ~7× faster.',
         badgeText: '~7× speedup'
       },
     ];
@@ -1159,8 +1137,9 @@
     function mountAblationSplit(trackId, items) {
       const track = document.getElementById(trackId);
       if (!track) return;
+      const frag = document.createDocumentFragment();
       items.forEach(({ left, right, leftLabel, rightLabel, caption, badgeText }) => {
-        track.appendChild(
+        frag.appendChild(
           makeSplitCard({
             leftSrc: left,
             rightSrc: right,
@@ -1171,12 +1150,16 @@
           })
         );
       });
+      track.appendChild(frag);
     }
     mountAblationSplit('gal-ablation-attn', ABL_ATTENTION);
     mountAblationSplit('gal-ablation-decoder', ABL_DECODER);
 
-    // init carousels already in DOM
+    // init carousels already in DOM (non-compare)
     document.querySelectorAll('[data-carousel]').forEach(initCarousel);
+
+    // iOS viewport bounce guard for video drag (prevents page scroll hijack)
+    document.addEventListener('gesturestart', e => e.preventDefault());
   </script>
 </body>
 </html>
