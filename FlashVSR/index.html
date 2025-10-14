@@ -431,6 +431,62 @@
       text-shadow: none !important;
     }
 
+    /* === Mobile center fixes (drop right below existing CSS) === */
+    @media (max-width: 768px){
+      /* 1) 让容器在小屏上按“网格-居中”对齐，避免视觉贴左 */
+      .container{
+        display: grid;
+        justify-items: center; /* 所有 section 的直系子元素默认居中 */
+      }
+
+      /* 2) 所有主要内容块强制居中（即使宽度 < 屏宽） */
+      section > .teaser,
+      section > .fig,
+      section > .carousel,
+      #compareHost > .carousel,
+      section > .subsec,
+      section > pre.bib,
+      footer{
+        margin-left: auto !important;
+        margin-right: auto !important;
+        max-width: min(100%, calc(1120px * var(--scale)));
+        width: 100%;
+      }
+
+      /* 3) 轮播里的每张卡片也自我居中，避免首张“贴左”观感 */
+      .carousel .slide{
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      /* 4) 让比较卡片在竖屏更容易居中与塞下（你已有高度规则，补齐宽度/圆角） */
+      .cmp{
+        margin-left: auto !important;
+        margin-right: auto !important;
+        border-radius: 12px;
+        max-width: 100%;
+      }
+
+      /* 5) 文案说明在小屏统一靠中，避免左对齐看起来偏左 */
+      section .note,
+      .fig-caption,
+      .caption,
+      .cta-row{
+        text-align: center !important;
+      }
+
+      /* 6) 比较页的 tabs 自适应紧凑且居中（你已做，补一条对齐保险） */
+      .compare-switch{
+        justify-content: center !important;
+      }
+    }
+
+    /* 超小屏再收紧一点边距，保证视觉正中 */
+    @media (max-width: 420px){
+      .container{ padding-left: 12px; padding-right: 12px; }
+    }
+
+
 
   </style>
 </head>
@@ -446,7 +502,7 @@
       <nav>
         <a class="chip" href="#abs">Abstract</a>
         <a class="chip" href="#method">Method</a>
-        <a class="chip" href="#vsr120k">VSR-120K Datasets</a>
+        <a class="chip" href="#vsr120k">VSR-120K Dataset</a>
         <a class="chip" href="#s1">Real</a>
         <a class="chip" href="#s2">AIGC</a>
         <a class="chip" href="#s3">Long Video</a>
@@ -492,7 +548,7 @@
           <a class="cta" href="#" title="Paper">📄 Paper</a>
           <a class="cta" href="#" title="Code">🐙 Code</a>
           <a class="cta" href="#" title="Model (HF)">🤗 Model</a>
-          <a class="cta" href="#" title="Datasets">🗃️ Dataset</a>
+          <a class="cta" href="#" title="Dataset">🗃️ Dataset</a>
         </div>
         <div class="note tldr" style="margin-top:10px; text-align:center;">
           <span style="opacity:.9;">TL;DR —</span>
