@@ -145,12 +145,12 @@
     .cmp video{display:block;width:100%;height:100%;object-fit:contain}
     .cmp .layer{position:absolute;inset:0}
     .cmp .top{--split:50%; clip-path: polygon(0 0, var(--split) 0, var(--split) 100%, 0 100%);}
-    .cmp .handle{position:absolute;top:0;left:50%;transform:translateX(-50%);height:100%;width:2px;background:#fff;}
-    .cmp .knob{position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);width:calc(44px * var(--scale));height:calc(44px * var(--scale));border-radius:50%;background:linear-gradient(180deg,#fff,#cdd6ff);border:2px solid #111;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 30px rgba(0,0,0,.45)}
+    .cmp .handle{position:absolute;top:0;left:50%;transform:translateX(-50%);height:100%;width:2px;background:#fff; z-index:4; }
+    .cmp .knob{position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);width:calc(44px * var(--scale));height:calc(44px * var(--scale));border-radius:50%;background:linear-gradient(180deg,#fff,#cdd6ff);border:2px solid #111;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 30px rgba(0,0,0,.45); z-index:4;}
     .cmp .knob svg{width:18px;height:18px}
 
     /* Corner labels */
-    .cmp .labels{position:absolute;left:10px;right:10px;top:10px;display:flex;justify-content:space-between;pointer-events:none}
+    .cmp .labels{position:absolute;left:10px;right:10px;top:10px;display:flex;justify-content:space-between;pointer-events:auto; z-index:5;}
     .pill{pointer-events:auto;display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(16,18,28,.7);border:1px solid rgba(255,255,255,.12);backdrop-filter: blur(8px); font-weight:700; font-size:.82rem}
 
     /* Speedup badge */
@@ -276,6 +276,40 @@
     html[data-theme="light"] pre.bib{ background:#f6f7fb; color:#2b2f42; border:1px solid rgba(0,0,0,.08); }
     html[data-theme="light"] footer{ color:#6b7184; }
 
+    /* === Make CTAs crisper in light theme === */
+    html[data-theme="light"] .cta{
+      color: var(--text);
+      border: 1px solid rgba(0,0,0,.22);                 /* 边框更深一点 */
+      background: linear-gradient(180deg, #ffffff, #f4f6ff); /* 更清晰的浅色渐变 */
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.75),             /* 里侧高光，增强边缘锐利感 */
+        0 1px 2px rgba(0,0,0,.06);                        /* 轻微外阴影，提升层次 */
+    }
+
+    html[data-theme="light"] .cta:hover{
+      border-color: rgba(0,0,0,.28);                      /* 悬停更清晰 */
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.85),
+        0 1px 2px rgba(0,0,0,.06),
+        var(--ring);                                      /* 复用你已有的 ring 光晕 */
+    }
+
+    html[data-theme="light"] .cta:focus-visible{
+      outline: none;
+      box-shadow:
+        0 0 0 3px rgba(124,92,255,.28),
+        0 1px 2px rgba(0,0,0,.06);
+      border-color: rgba(124,92,255,.45);
+    }
+
+    html[data-theme="light"] .cta:active{
+      transform: translateY(1px);                         /* 轻按压反馈 */
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.65),
+        0 0 0 1px rgba(0,0,0,.04);
+    }
+
+
     .hl{
       display:inline-block;
       padding:2px 8px;
@@ -322,6 +356,82 @@
       animation:spin 0.8s linear infinite;
     }
     @keyframes spin{ to{ transform:rotate(360deg); } }
+
+    /* ===== Mobile tweaks ===== */
+    @media (max-width: 1024px){
+      :root{ --scale: 0.92; --secGap: 44px; }
+      .container{ padding:20px; }
+      .topnav .inner{ padding:10px 20px; }
+      .title-row{ gap:10px; }
+      :root{ --logoH: 64px; }
+      .title-text{ font-size: clamp(30px, 6.2vw, 48px); }
+      .title-sub{ font-size: clamp(18px, 3.6vw, 28px); }
+      .chip{ white-space:nowrap; }
+    }
+
+    @media (max-width: 768px){
+      :root{ --scale: 0.86; --secGap: 36px; }
+      .container{ padding:16px; }
+      .topnav nav{
+        overflow-x:auto; gap:8px; justify-content:flex-start;
+        -webkit-overflow-scrolling:touch; scrollbar-width:none;
+      }
+      .topnav nav::-webkit-scrollbar{ display:none; }
+      :root{ --logoH: 54px; }
+      .title-row{ gap:8px; }
+      .title-text{ font-size: clamp(26px, 7vw, 36px); }
+      .title-sub{ font-size: clamp(15px, 4.5vw, 22px); }
+      .teaser, .fig{ padding:10px; border-radius:12px; }
+      .fig img, .teaser img{ width:100% !important; }
+
+      /* 让比较卡片在竖屏更好塞下：高度跟随屏宽 */
+      .cmp{
+        aspect-ratio: auto;
+        height: min(58vw, 62vh);
+        max-width: 100%;
+        border-radius:12px;
+      }
+      .cmp .knob{ width:34px; height:34px; }
+      .pill{ padding:5px 8px; font-size:.78rem; }
+    }
+
+    @media (max-width: 420px){
+      :root{ --scale: 0.82; }
+      .title-text{ font-size: clamp(24px, 7.8vw, 32px); }
+      .title-sub{ font-size: clamp(14px, 4.4vw, 20px); }
+      .cmp{ height: 60vw; }
+    }
+
+    /* 小屏上的 compare tabs 更紧凑（可选） */
+    @media (max-width: 768px){
+      .compare-switch{ gap:8px; }
+      .compare-tab{ padding:7px 10px; font-size:.9rem; }
+    }
+
+    /* ==== TL;DR 调整版样式 ==== */
+    .note.tldr{
+      font-size: inherit;          /* 恢复原字号 */
+      font-weight: 400;            /* 不加粗 */
+      line-height: 1.4;
+    }
+
+    /* 暗色主题：与副标题一致 */
+    html[data-theme="dark"] .tldr,
+    html[data-theme="dark"] .tldr *{
+      color: var(--text) !important;
+      opacity: .95 !important;
+      text-shadow: none !important;
+    }
+
+    /* 亮色主题：增加对比度 */
+    html[data-theme="light"] .tldr,
+    html[data-theme="light"] .tldr *{
+      color: var(--text) !important;
+      opacity: 1 !important;
+      text-shadow: none !important;
+    }
+
+
   </style>
 </head>
 
@@ -362,26 +472,36 @@
       <div class="paper-meta">
         <div class="authors" style="text-align:center">
           <a href="https://zhuang2002.github.io/" target="_blank" rel="noopener noreferrer">Junhao Zhuang</a><sup>1, 2</sup> ·
-          <a href="https://guoshi28.github.io/" target="_blank" rel="noopener noreferrer">Shi Guo</a><sup>2</sup><sup>‡</sup> ·
+          <a href="https://guoshi28.github.io/" target="_blank" rel="noopener noreferrer">Shi Guo</a><sup>2</sup><sup>†</sup> ·
           <a href="https://caixin98.github.io/" target="_blank" rel="noopener noreferrer">Xin Cai</a><sup>3</sup> ·
           <a href="https://github.com/xh9998" target="_blank" rel="noopener noreferrer">Xiaohui Li</a><sup>4</sup> ·
           <a href="https://lyh-18.github.io/" target="_blank" rel="noopener noreferrer">Yihao Liu</a><sup>2</sup> ·
           <a href="https://scholar.google.com.hk/citations?user=fYdxi2sAAAAJ&hl=en" target="_blank" rel="noopener noreferrer">Chun Yuan</a><sup>1</sup><sup>†</sup> ·
-          <a href="https://tianfan.info/" target="_blank" rel="noopener noreferrer">Tianfan Xue</a><sup>2, 3</sup><sup>†</sup>
+          <a href="https://tianfan.info/" target="_blank" rel="noopener noreferrer">Tianfan Xue</a><sup>3</sup><sup>†</sup>
         </div>
         <div class="affils" style="margin-top:6px;text-align:center">
           <sup>1</sup>Tsinghua University · <sup>2</sup>Shanghai Artificial Intelligence Laboratory · 
           <sup>3</sup>The Chinese University of Hong Kong · <sup>4</sup>Shanghai Jiao Tong University
         </div>
         <div class="note" style="margin-top:4px;text-align:center;opacity:.85">
-          † Corresponding author &nbsp;&nbsp; ‡ Project Lead
+          † Corresponding author
         </div>
+        
 
         <div class="cta-row">
           <a class="cta" href="#" title="Paper">📄 Paper</a>
           <a class="cta" href="#" title="Code">🐙 Code</a>
           <a class="cta" href="#" title="Model (HF)">🤗 Model</a>
           <a class="cta" href="#" title="Datasets">🗃️ Dataset</a>
+        </div>
+        <div class="note tldr" style="margin-top:10px; text-align:center;">
+          <span style="opacity:.9;">TL;DR —</span>
+          <span style="opacity:.95;">
+            FlashVSR is a streaming, one-step diffusion-based video super-resolution framework with
+            block-sparse attention and a Tiny Conditional Decoder. It reaches ~17 FPS at 768×1408
+            on a single A100 GPU. A Locality-Constrained Attention design further improves generalization
+            and perceptual quality on ultra-high-resolution videos.
+          </span>
         </div>
       </div>
     </header>
@@ -392,7 +512,7 @@
       <div class="teaser">
         <img src="./teaser.png" alt="Teaser figure for FlashVSR" class="scale-90">
         <p class="note" style="max-width:1000px;margin:0 auto;text-align:left;">
-          Diffusion models have recently advanced video restoration, but applying them to real-world video super-resolution (VSR) remains challenging due to high latency, prohibitive computation, and poor generalization to ultra-high resolutions. Our goal in this work is to make diffusion-based VSR practical by achieving efficiency, scalability, and real-time performance. To this end, we propose <strong><span class="hl">FlashVSR</span></strong>, the first diffusion-based one-step streaming framework towards real-time VSR. FlashVSR runs at <strong><span class="hl">∼17 FPS for 768 × 1408 videos on a single A100 GPU</span></strong> by combining three complementary innovations: (i) a train-friendly three-stage distillation pipeline that enables streaming super-resolution, (ii) locality-constrained sparse attention that cuts redundant computation while bridging the train–test resolution gap, and (iii) a tiny conditional decoder that accelerates reconstruction without sacrificing quality. To support large-scale training, we also construct <strong><span class="hl">VSR-120K</span></strong>, a new dataset with 120k videos and 180k images. Extensive experiments show that <strong>FlashVSR</strong> scales reliably to ultra-high resolutions and achieves state-of-the-art performance with up to <strong><span class="hl">∼12× speedup</span></strong> over prior one-step diffusion VSR models. We will release code, models, and the dataset to foster future research in efficient diffusion-based VSR.
+          Diffusion models have recently advanced video restoration, but applying them to real-world video super-resolution (VSR) remains challenging due to high latency, prohibitive computation, and poor generalization to ultra-high resolutions. Our goal in this work is to make diffusion-based VSR practical by achieving efficiency, scalability, and real-time performance. To this end, we propose <strong><span class="hl">FlashVSR</span></strong>, the first diffusion-based one-step streaming framework towards real-time VSR. FlashVSR runs at <span class="hl">∼17 FPS for 768 × 1408 videos on a single A100 GPU</span> by combining three complementary innovations: (i) a train-friendly three-stage distillation pipeline that enables streaming super-resolution, (ii) locality-constrained sparse attention that cuts redundant computation while bridging the train–test resolution gap, and (iii) a tiny conditional decoder that accelerates reconstruction without sacrificing quality. To support large-scale training, we also construct <strong><span class="hl">VSR-120K</span></strong>, a new dataset with 120k videos and 180k images. Extensive experiments show that FlashVSR scales reliably to ultra-high resolutions and achieves state-of-the-art performance with up to <strong><span class="hl">∼12× speedup</span></strong> over prior one-step diffusion VSR models. We will release code, models, and the dataset to foster future research in efficient diffusion-based VSR.
         </p>
       </div>
     </section>
@@ -413,14 +533,10 @@
       <div class="subsec" style="margin-top:22px">
         <h4>Locality-Constrained Sparse Attention</h4>
         <p class="note">
-          Models trained on medium-resolution data often fail to generalize to ultra-high resolutions,
-          exhibiting repeated textures and blurring. This stems from the periodicity of positional encodings,
-          where inference ranges exceed those observed during training, causing pattern repetition across
-          dimensions. We address this by constraining each query to attend within a local spatial window,
-          aligning the positional range between training and inference. Built upon this locality constraint,
-          we further apply <em>sparse attention</em> that focuses computation on the top-k most relevant
-          regions rather than the full feature space, improving both efficiency and visual consistency at
-          high resolutions.
+          When models trained on medium-resolution data are applied to ultra-high-resolution inputs, they often exhibit repeated textures and blurring.
+          This degradation stems from the periodicity of positional encodings—for instance, in RoPE, when inference spans exceed the positional range encountered during training, the rotational angles wrap around periodically, causing aliasing and pattern repetition along specific spatial dimensions.
+          To mitigate this, we constrain each query to attend only within a local spatial window, ensuring that the positional range during inference remains consistent with that seen in training.
+          Building upon this locality constraint, we further adopt sparse attention that concentrates computation on the top-k most relevant regions rather than across the entire spatial dimensions, significantly improving computational efficiency and perceptual quality at high resolutions.
         </p>
         <div class="fig" aria-label="Local attention illustration">
           <img src="./LocalAttn.jpg" alt="Local window mask with block selection" class="scale-90">
@@ -431,14 +547,13 @@
       <div class="subsec" style="margin-top:22px">
         <h4>Tiny Conditional Decoder (TC Decoder)</h4>
         <p class="note">
-          Decoding dominates runtime in VAE-based pipelines. TC Decoder conditions on LR frames and latents,
-          simplifying HR reconstruction for a ~7× faster decode than the original VAE decoder while maintaining
-          near-indistinguishable visual quality.
+          Compared with the original <strong>WanVAE</strong> decoder, the proposed <strong>Tiny Conditional (TC) Decoder</strong> takes not only the latent representations but also the corresponding low-resolution (LR) frames as additional conditioning inputs. 
+          By leveraging these LR signals, the TC Decoder effectively simplifies the high-resolution (HR) reconstruction process, achieving a <strong>7× acceleration in decoding speed</strong> while maintaining <strong>virtually indistinguishable visual quality</strong> from the original VAE decoder.
         </p>
         <div class="fig" aria-label="TC Decoder illustration">
           <img src="./TCDecoder.jpg" alt="TC Decoder training and conditioning overview" class="scale-40">
         </div>
-        <div class="fig-caption">Figure: Training pipeline of the TC Decoder.</div>
+        <div class="fig-caption">Figure: Training pipeline of the TC Decoder.</div>        
       </div>
     </section>
 
@@ -506,7 +621,7 @@
     <!-- Ablations (NO pagination) -->
     <section aria-labelledby="s5">
       <div class="section-title" id="s5"><span class="dot"></span> Ablations</div>
-      <p class="note">Two key ablations: (1) Global sparse attention vs. Local-constrained sparse attention; (2) WanVAE decoder vs. TC Decoder (badge at top-right shows two lines: “TC Decoder / ~7× speedup”).</p>
+      <p class="note">Two key ablations: (1) Global sparse attention vs. Local-constrained sparse attention; (2) Reconstruction Comparison: WanVAE Decoder vs. TC Decoder.</p>
 
       <!-- Ablation 1: Global vs. Local -->
       <div class="carousel" data-carousel>
@@ -572,7 +687,7 @@
       sparksWrap.appendChild(s);
     }
 
-    /* ===== 新增：状态 UI 构建 & 绑定 ===== */
+    /* ===== 状态 UI 构建 & 绑定 ===== */
     function buildStatusInsidePill(pillEl, initialText='Loading…'){
       // <span class="vstat loading"><span class="spinner"></span><span class="dot"></span><em>Loading…</em></span><button class="retry">↻</button>
       const stat = document.createElement('span');
@@ -604,10 +719,10 @@
     function wireVideoStatus(videoEl, ui){
       ui.setState('loading', 'Loading…');
 
-      const toReady = () => ui.setState('ready', 'Ready');
+      const toReady   = () => ui.setState('ready', 'Ready');
       const toPlaying = () => ui.setState('ready', 'Playing');
       const toLoading = () => ui.setState('loading', 'Buffering…');
-      const toError = () => ui.setState('error', 'Failed');
+      const toError   = () => ui.setState('error', 'Failed');
 
       videoEl.addEventListener('loadstart',   () => ui.setState('loading', 'Loading…'));
       videoEl.addEventListener('waiting',     toLoading);
@@ -617,15 +732,21 @@
       videoEl.addEventListener('playing',     toPlaying);
       videoEl.addEventListener('error',       toError);
 
-      ui.retry.addEventListener('click', () => {
+      // 关键：阻止事件冒泡，避免被分割线/容器拖拽拦截
+      ui.retry.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
         ui.setState('loading', 'Reloading…');
         const src = videoEl.currentSrc || videoEl.src;
         videoEl.src = '';
         setTimeout(()=>{ videoEl.src = src; videoEl.load(); videoEl.play().catch(()=>{}); }, 30);
       });
-
-      if (videoEl.readyState >= 2) { toReady(); }
     }
+
+    // === 工具：判定是否交互元素（点击这些不触发拖拽）
+    const isInteractiveTarget = (el) => {
+      return !!el.closest('.labels, .pill, .retry, .compare-tab, .iconbtn, a, button, .dots');
+    };
 
     /* ===== vertical split builder ===== */
     function makeSplitCard({
@@ -669,7 +790,7 @@
       labels.appendChild(leftP);
       labels.appendChild(rightP);
 
-      // ===== 新增：状态点/文字/重试 与视频绑定 =====
+      // 状态点/文字/重试 与视频绑定
       const uiLeft  = buildStatusInsidePill(leftP,  'Loading…');
       const uiRight = buildStatusInsidePill(rightP, 'Loading…');
       wireVideoStatus(vTop,  uiLeft);
@@ -715,7 +836,7 @@
         card.appendChild(wrap);
       }
 
-      // drag behavior
+      // === 拖拽行为（交互元素豁免 + 也绑定到 knob/handle）
       const setSplit = (pct)=>{
         pct=Math.max(0,Math.min(100,pct));
         top.style.setProperty('--split', pct + '%');
@@ -731,6 +852,7 @@
         setSplit(pct);
       };
       const start = (e)=>{
+        if(isInteractiveTarget(e.target)) return; // 点击交互元素不触发拖拽
         active=true;
         move(e.touches ? e.touches[0].clientX : e.clientX);
         e.preventDefault();
@@ -741,12 +863,19 @@
       };
       const end = ()=> active=false;
 
+      // 全区域拖拽（已做交互元素豁免）
       wrap.addEventListener('mousedown', start);
       wrap.addEventListener('touchstart', start, {passive:false});
       window.addEventListener('mousemove', onMove);
       window.addEventListener('touchmove', onMove, {passive:false});
       window.addEventListener('mouseup', end);
       window.addEventListener('touchend', end);
+
+      // 也允许仅拖动把手/旋钮
+      knob.addEventListener('mousedown', start);
+      knob.addEventListener('touchstart', start, {passive:false});
+      handle.addEventListener('mousedown', start);
+      handle.addEventListener('touchstart', start, {passive:false});
 
       card._videos = [base, vTop];
       return card;
@@ -929,7 +1058,7 @@
         right: 'https://raw.githubusercontent.com/zhuang2002/flashvsr_assert/main/videos/ablation_mask_local.mp4',
         leftLabel: 'Global Sparse',
         rightLabel: 'Local-Constrained Sparse (Ours)',
-        caption: 'Global vs. Local-Constrained Sparse Attention',
+        caption: 'Global vs. Local-Constrained Sparse Attention (2688×1536 High-Resolution Video Super-Resolution Result).',
       },
     ];
 
