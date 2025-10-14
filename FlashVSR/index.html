@@ -603,6 +603,82 @@
       }
     }
 
+    /* ====== 修复：移动端正文被挤到右侧不可见 ====== */
+
+    /* A. “禁止横向滚动”仅在桌面端生效；移动端允许横向拖拽自救 */
+    @media (min-width: 1025px){
+      html, body { overflow-x: hidden !important; }
+    }
+
+    /* B. 关键容器的宽度与最小宽度护栏，防止被内部子项撑出屏幕 */
+    html, body { width: 100%; min-width: 0; }
+    .container, section, .carousel, .carousel .track, #compareHost {
+      width: 100%;
+      min-width: 0;           /* ← 网格/弹性容器最容易缺这个导致溢出 */
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* C. 移动端把版心与图/视频容器放宽到 100% 屏宽 */
+    @media (max-width: 1024px){
+      :root{
+        --maxW: 100%;
+        --figW: 100%;
+      }
+      .container{
+        max-width: 100% !important;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+      /* 轮播轨道不再额外撑宽页面 */
+      .carousel .track{
+        padding-left: 0;
+        padding-right: 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      /* 每个 slide 跟随屏宽 */
+      .slide{ flex-basis: 100% !important; max-width: 100% !important; }
+      /* 对比卡片占满可用宽度，避免 off-canvas */
+      .cmp{ max-width: 100% !important; width: 100% !important; }
+    }
+
+    /* D. 顶栏（移动端）避免产生 off-canvas 与遮罩副作用 */
+    @media (max-width: 768px){
+      .topnav .inner{
+        max-width: 100% !important;
+        width: 100%;
+        display: grid !important;
+        grid-template-columns: 1fr;
+        row-gap: 10px;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+      .topnav nav{
+        width: 100%;
+        min-width: 0;
+        justify-content: center;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: 0 4px;
+        margin: 0 auto;
+        /* 如怀疑遮罩导致渲染异常，可直接注释下一行 */
+        mask-image: none;
+      }
+      .topnav nav::-webkit-scrollbar{ display:none; }
+      .topnav a.logo{ justify-self: center; }
+    }
+
+    /* E. 任何绝对定位的装饰都不再把页面撑宽（sparks/knob等） */
+    .title-wrap{ overflow: hidden; }
+    .carousel .prev { left: 6px !important; }
+    .carousel .next { right: 6px !important; }
+
+    /* F. 保险：图片/视频永远不超过容器宽度 */
+    img, video{ max-width: 100%; height: auto; }
+
+
 
   </style>
 </head>
@@ -663,7 +739,7 @@
           <a class="cta" href="#" title="Paper">📄 Paper</a>
           <a class="cta" href="#" title="Code">🐙 Code</a>
           <a class="cta" href="#" title="Model (HF)">🤗 Model</a>
-          <a class="cta" href="#" title="Dataset">🗃️ Dataset</a>
+          <a class="cta" href="#" title="Dataset">🗃️ Dataset(Pending release)</a>
         </div>
         <div class="note tldr" style="margin-top:10px; text-align:center;">
           <span style="opacity:.9;">TL;DR —</span>
