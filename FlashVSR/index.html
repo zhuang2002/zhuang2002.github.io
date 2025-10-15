@@ -165,8 +165,8 @@
     .carousel .track::-webkit-scrollbar-thumb{background:linear-gradient(90deg,var(--brand-1),var(--brand-2));border-radius:999px}
     .slide{flex: 0 0 min(96vw, var(--figW)); scroll-snap-align:center; scroll-snap-stop:always; position:relative;}
     .carousel .nav{position:absolute;top:50%;transform:translateY(-50%);z-index:10}
-    .carousel .prev{left:-6px}
-    .carousel .next{right:-6px}
+    .carousel .prev{left:6px}
+    .carousel .next{right:6px}
     .carousel .dots{display:flex;justify-content:center;gap:6px;margin-top:10px}
     .carousel .dot.active{background:linear-gradient(90deg,var(--brand-1),var(--brand-2));box-shadow:var(--ring)}
     .carousel .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.35)}
@@ -239,7 +239,9 @@
     pre.bib{background:#0d0f17;color:#dbe1ff;padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,.08); overflow:auto}
     .cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
     .cta{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.18);font-weight:700}
-    footer{margin:64px 0 28px; color:var(--muted); font-size:.9rem; display:flex; align-items:center; justify-content:center}
+    footer{margin:64px 0 28px; color:var(--muted); font-size:.9rem; display:flex; align-items:center; justify-content:center; text-align:center; padding: 0 16px;}
+    .footer-note{margin-top:6px; font-size:.88rem; opacity:.9;}
+    .footer-note a{ text-decoration: underline; text-underline-offset: 3px; }
 
     .iconbtn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));cursor:pointer}
     .iconbtn:hover{box-shadow:var(--ring)}
@@ -905,8 +907,15 @@
     </section>
 
     <footer>
-      <div>© 2025 FlashVSR Authors</div>
-    </footer>
+      <div>
+        © 2025 FlashVSR Authors
+        <div class="footer-note">
+          The <span class="hl">source code</span> of this page is open for reuse.  
+          Please provide <span class="hl">proper attribution</span> and include a  
+          link to the <a href="https://zhuang2002.github.io/FlashVSR/" target="_blank" rel="noopener">FlashVSR project page</a> when using or adapting it.
+        </div>
+      </div>
+    </footer>    
   </div>
 
   <!-- Tooltip (reserved) -->
