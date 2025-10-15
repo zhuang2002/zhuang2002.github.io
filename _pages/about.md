@@ -211,6 +211,8 @@ Chun Yuan, Ming Li, Shengfeng He, Fei Richard Yu,
 
 </tbody></table>
 
+---
+
 # 💼 Experience
 ---
 
@@ -230,7 +232,6 @@ Chun Yuan, Ming Li, Shengfeng He, Fei Richard Yu,
   **Shanghai, China** · **Jul 2023 – Feb 2024**  
   ◦ **Supervisors:** [Yanhong Zeng](https://zengyh1900.github.io/), [Kai Chen](https://scholar.google.com/citations?user=eGD0b7IAAAAJ&hl=en&oi=sra) · **Topics:** Image Inpainting, Image Editing, Diffusion Model
 
----
 
 ---
 # 🌎 Visitor Map
