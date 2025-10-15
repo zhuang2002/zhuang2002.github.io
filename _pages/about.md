@@ -204,33 +204,26 @@ My research interests lie in *Computer Vision*, particularly in *image and video
 ---
 
 # 💼 Experience
----
 
-### *Kuaishou / KlingAI* — Research Intern  
-**Sep 2025 – Present**  
+**Kuaishou / KlingAI** — *Research Intern*  
+Sep 2025 – Present  
 Supervised by [Xintao Wang](https://xinntao.github.io/)  
-**Topics:** Video Generation
+Topics: Video Generation
 
----
-
-### *Shanghai Artificial Intelligence Laboratory* — Research Intern  
-**May 2025 – Sep 2025**  
+**Shanghai Artificial Intelligence Laboratory** — *Research Intern*  
+May 2025 – Sep 2025  
 Supervised by [Shi Guo](https://guoshi28.github.io/), [Tianfan Xue](https://tianfan.info/)  
-**Topics:** Video Super-Resolution · Diffusion Acceleration · Sparse Attention
+Topics: Video Super-Resolution · Diffusion Acceleration · Sparse Attention
 
----
-
-### *Tencent, ARC Lab* — Research Intern  
-**May 2024 – Apr 2025**  
+**Tencent, ARC Lab** — *Research Intern*  
+May 2024 – Apr 2025  
 Supervised by [Zhaoyang Zhang](https://zzyfd.github.io/#/), [Ying Shan](https://scholar.google.com/citations?user=4oXBp9UAAAAJ&hl=en)  
-**Topics:** Comic Colorization · Video Generation · Diffusion
+Topics: Comic Colorization · Video Generation · Diffusion
 
----
-
-### *Shanghai Artificial Intelligence Laboratory* — Research Intern  
-**Jul 2023 – Feb 2024**  
+**Shanghai Artificial Intelligence Laboratory** — *Research Intern*  
+Jul 2023 – Feb 2024  
 Supervised by [Yanhong Zeng](https://zengyh1900.github.io/), [Kai Chen](https://scholar.google.com/citations?user=eGD0b7IAAAAJ&hl=en&oi=sra)  
-**Topics:** Image Inpainting · Diffusion
+Topics: Image Inpainting · Diffusion
 
 
 ---
