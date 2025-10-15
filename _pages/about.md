@@ -211,6 +211,27 @@ Chun Yuan, Ming Li, Shengfeng He, Fei Richard Yu,
 
 </tbody></table>
 
+# 💼 Experience
+---
+
+- <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Kwai_logo_%282020%29.svg/512px-Kwai_logo_%282020%29.svg.png" alt="Kuaishou logo" height="16" style="vertical-align:text-bottom;margin-right:6px;"> **Kuaishou / KlingAI** — *Research Intern*  
+  **Shenzhen, China** · **Sep 2025 – Present**  
+  ◦ **Supervisor:** [Xintao Wang](https://xinntao.github.io/) · **Topics:** Video Generation
+
+- <img src="https://powerpaint.github.io/fig/PJlab.jpeg?x-oss-process=image/resize,m_fixed,w_240" alt="Shanghai AI Lab logo" height="16" style="vertical-align:text-bottom;margin-right:6px;"> **Shanghai Artificial Intelligence Laboratory** — *Research Intern*  
+  **Shanghai, China** · **May 2025 – Sep 2025**  
+  ◦ **Supervisor:** [Shi Guo](https://guoshi28.github.io/), [Tianfan Xue](https://tianfan.info/) · **Topics:** Video Super-Resolution, Diffusion Acceleration, Sparse Attention
+
+- <img src="https://avatars.githubusercontent.com/u/83739826?s=200&v=4" alt="Tencent ARC Lab logo" height="16" style="vertical-align:text-bottom;margin-right:6px;"> **Tencent, ARC Lab** — *Research Intern*  
+  **Shenzhen, China** · **May 2024 – Apr 2025**  
+  ◦ **Supervisors:** [Zhaoyang Zhang](https://zzyfd.github.io/#/), [Ying Shan](https://scholar.google.com/citations?user=4oXBp9UAAAAJ&hl=en) · **Topics:** Comic Colorization, Video Generation, Diffusion Model
+
+- <img src="https://powerpaint.github.io/fig/PJlab.jpeg?x-oss-process=image/resize,m_fixed,w_240" alt="Shanghai AI Lab logo" height="16" style="vertical-align:text-bottom;margin-right:6px;"> **Shanghai Artificial Intelligence Laboratory** — *Research Intern*  
+  **Shanghai, China** · **Jul 2023 – Feb 2024**  
+  ◦ **Supervisors:** [Yanhong Zeng](https://zengyh1900.github.io/), [Kai Chen](https://scholar.google.com/citations?user=eGD0b7IAAAAJ&hl=en&oi=sra) · **Topics:** Image Inpainting, Image Editing, Diffusion Model
+
+---
+
 ---
 # 🌎 Visitor Map
 <div style="display: flex; justify-content: center; margin: 20px 0;">
