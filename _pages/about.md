@@ -17,11 +17,11 @@ redirect_from:
   }
 </style>
 
-I am currently a second-year Master's student in Computer Technology at **Tsinghua University**, under the supervision of **Prof. Chun Yuan**. I obtained my Bachelor's degree in Computer Science and Technology from the **Yingcai Honors College at the University of Electronic Science and Technology of China** in 2023, where I was fortunate to be advised by **Prof. Xile Zhao**.  
+I am currently a second-year Master's student in Computer Technology at *Tsinghua University*, under the supervision of *Prof. Chun Yuan*. I obtained my Bachelor's degree in Computer Science and Technology from the *Yingcai Honors College at the University of Electronic Science and Technology of China* in 2023, where I was fortunate to be advised by *Prof. Xile Zhao*.  
 
-I am currently working as a **Research Assistant** at **MMLab, The Chinese University of Hong Kong (CUHK)**, under the supervision of **Prof. Tianfan Xue**.
+I am currently working as a *Research Assistant* at *MMLab, The Chinese University of Hong Kong (CUHK)*, under the supervision of *Prof. Tianfan Xue*.
 
-My research interests lie in **Computer Vision**, particularly in **image and video generation**.
+My research interests lie in *Computer Vision*, particularly in *image and video generation*.
 
 
 [Email](mailto:zhuangjh23@mails.tsinghua.edu.cn) / [GitHub](https://github.com/zhuang2002)
@@ -207,20 +207,20 @@ My research interests lie in **Computer Vision**, particularly in **image and vi
 ---
 
 - **Kuaishou / KlingAI** — *Research Intern*  
-  **Shenzhen, China** · **Sep 2025 – Present**  
-  ◦ **Supervisor:** [Xintao Wang](https://xinntao.github.io/) · **Topics:** Video Generation, World Model, Diffusion Acceleration
+  Shenzhen, China · Sep 2025 – Present  
+  ◦ Supervisor: [Xintao Wang](https://xinntao.github.io/) · Topics: Video Generation
 
 - **Shanghai Artificial Intelligence Laboratory** — *Research Intern*  
-  **Shanghai, China** · **May 2025 – Sep 2025**  
-  ◦ **Supervisor:** [Shi Guo](https://guoshi28.github.io/), [Tianfan Xue](https://tianfan.info/) · **Topics:** Video Super-Resolution, Diffusion Acceleration, Sparse Attention
+  Shanghai, China · May 2025 – Sep 2025
+  ◦ Supervisor: [Shi Guo](https://guoshi28.github.io/), [Tianfan Xue](https://tianfan.info/) · Topics: Video Super-Resolution, Diffusion Acceleration, Sparse Attention
 
 - **Tencent, ARC Lab** — *Research Intern*  
-  **Shenzhen, China** · **May 2024 – Apr 2025**  
-  ◦ **Supervisors:** [Zhaoyang Zhang](https://zzyfd.github.io/#/), [Ying Shan](https://scholar.google.com/citations?user=4oXBp9UAAAAJ&hl=en) · **Topics:** Comic Colorization, Video Generation, Diffusion Model
+  Shenzhen, China · May 2024 – Apr 2025
+  ◦ Supervisors: [Zhaoyang Zhang](https://zzyfd.github.io/#/), [Ying Shan](https://scholar.google.com/citations?user=4oXBp9UAAAAJ&hl=en) · Topics: Comic Colorization, Video Generation, Diffusion Model
 
 - **Shanghai Artificial Intelligence Laboratory** — *Research Intern*  
-  **Shanghai, China** · **Jul 2023 – Feb 2024**  
-  ◦ **Supervisors:** [Yanhong Zeng](https://zengyh1900.github.io/), [Kai Chen](https://scholar.google.com/citations?user=eGD0b7IAAAAJ&hl=en&oi=sra) · **Topics:** Image Inpainting, Image Editing, Diffusion Model
+  Shanghai, China · Jul 2023 – Feb 2024  
+  ◦ Supervisors: [Yanhong Zeng](https://zengyh1900.github.io/), [Kai Chen](https://scholar.google.com/citations?user=eGD0b7IAAAAJ&hl=en&oi=sra) · Topics: Image Inpainting, Image Editing, Diffusion Model
 
 ---
 
