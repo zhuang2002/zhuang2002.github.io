@@ -30,6 +30,26 @@ My research interests lie in **Computer Vision**, particularly in **image and vi
 ---
 \* indicates equal contribution
 <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>	
+<!--FlashVSR-->
+  <tr>
+    <td style="padding:20px;width:30%;max-width:30%" align="center">
+      <img style="width:100%;max-width:100%" src="https://zhuang2002.github.io/FlashVSR/flowchart.jpg" alt="dise">
+    </td>
+    <td width="75%" valign="center">
+      <papertitle>FlashVSR: Towards Real-Time Diffusion-Based Streaming Video Super-Resolution</papertitle>
+      <br>
+      <b>Junhao Zhuang</b>, Shi Guo, Xin Cai, Xiaohui Li, Yihao Liu, Chun Yuan and Tianfan Xue
+      <br>
+      <em>arXiv preprint arXiv:2510.12747 2025</em>
+      <br>
+      <a href="https://arxiv.org/abs/2510.12747">[PDF]</a> 
+      <a href="https://zhuang2002.github.io/FlashVSR/">[Project Page]</a>
+      <a href="https://github.com/OpenImagingLab/FlashVSR">[Code]</a>
+      <br>
+      <p> FlashVSR is a streaming, one-step diffusion-based video super-resolution framework with block-sparse attention and a Tiny Conditional Decoder. It reaches ~17 FPS at 768×1408 on a single A100 GPU. A Locality-Constrained Attention design further improves generalization and perceptual quality on ultra-high-resolution videos.</p>
+    </td>
+  </tr>	
+  
 
   <!--Cobra-->
   <tr>
