@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Ablation Studies - FlashVSR</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="icon" href="./logo.png" sizes="32x32">
+  <link rel="icon" href="./logo.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="./logo.png">
+
+  <style>
+    :root{
+      --scale: 0.9;
+      --bg:#0a0b10;
+      --panel:#12131b; --panel-2:#0e0f16;
+      --text:#eaeaf2; --muted:#aeb2c7;
+      --brand-1:#7c5cff; --brand-2:#26e6a4; --accent:#ffd33d;
+      --danger:#ff6b6b; --good:#32d296;
+      --radius:20px;
+      --ring: 0 0 0 2px rgba(124,92,255,.35), 0 0 40px rgba(38,230,164,.15);
+      --secGap: 56px;
+      --secTitleSize: clamp(22px, 28px * var(--scale), 36px);
+      --titleGap: 6px;
+      --logoH: 72px;
+      --maxW: calc(1440px * var(--scale));
+      --figW: calc(1120px * var(--scale));
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(124,92,255,.25), transparent 60%),
+        radial-gradient(900px 600px at 110% 10%, rgba(38,230,164,.18), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+      -webkit-text-size-adjust:100%;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width: var(--maxW); margin:0 auto; padding:28px}
+
+    /* Sticky Nav */
+    .topnav{
+      position: sticky; top:0; z-index:30;
+      background: linear-gradient(180deg,var(--bg),rgba(0,0,0,0));
+      backdrop-filter: saturate(150%) blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      -webkit-backdrop-filter: saturate(150%) blur(8px);
+    }
+    .topnav .inner{
+      width: 100%;
+      max-width: var(--maxW);
+      margin: 0 auto;
+      padding: 12px 28px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .topnav a.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-family:Space Grotesk}
+    .topnav a.logo img{height:24px;width:auto;display:block}
+    .topnav nav{
+      display:flex;gap:14px;flex:1;flex-wrap:wrap;justify-content:center;
+      min-width: 0;
+    }
+    .chip{
+      padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      white-space:nowrap;
+    }
+    .chip:hover{box-shadow:var(--ring)}
+    .top-actions{display:flex;gap:8px}
+
+    /* Sections */
+    section{ margin: var(--secGap) 0; }
+    .section-title{
+      display:flex; align-items:center; gap:10px;
+      font-family:"Space Grotesk"; font-weight:800;
+      font-size: var(--secTitleSize);
+      letter-spacing:.02em;
+      justify-content:center;
+      text-align:center;
+    }
+    .section-title .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg, var(--brand-1), var(--brand-2)); box-shadow:0 0 18px rgba(124,92,255,.35)}
+    .note{color:var(--muted);font-size:.95rem;margin-top:6px;text-align:center}
+
+    /* Carousel */
+    .carousel{position:relative;margin-top:12px}
+    .carousel .track{
+      display:flex;gap:18px;overflow:auto;padding:6px 0;scroll-snap-type:x mandatory;scroll-behavior:smooth;
+      -webkit-overflow-scrolling:touch;
+    }
+    .carousel .track::-webkit-scrollbar{height:8px}
+    .carousel .track::-webkit-scrollbar-thumb{background:linear-gradient(90deg,var(--brand-1),var(--brand-2));border-radius:999px}
+    .slide{flex: 0 0 min(96vw, var(--figW)); scroll-snap-align:center; scroll-snap-stop:always; position:relative;}
+    .carousel .nav{position:absolute;top:50%;transform:translateY(-50%);z-index:10}
+    .carousel .prev{left:6px}
+    .carousel .next{right:6px}
+    .carousel .dots{display:flex;justify-content:center;gap:6px;margin-top:10px}
+    .carousel .dot.active{background:linear-gradient(90deg,var(--brand-1),var(--brand-2));box-shadow:var(--ring)}
+    .carousel .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.35)}
+
+    /* Split compare block */
+    .cmp{
+      position:relative;border-radius:16px;overflow:hidden;background:#000;border:1px solid rgba(255,255,255,.08);
+      aspect-ratio: 16 / 9; max-width: var(--figW); margin: 0 auto;
+      touch-action:none;
+    }
+    .cmp video{display:block;width:100%;height:100%;object-fit:contain}
+    .cmp .layer{position:absolute;inset:0}
+    .cmp .top{--split:50%; clip-path: polygon(0 0, var(--split) 0, var(--split) 100%, 0 100%);}
+    .cmp .handle{position:absolute;top:0;left:50%;transform:translateX(-50%);height:100%;width:2px;background:#fff; z-index:4; }
+    .cmp .knob{position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);width:calc(44px * var(--scale));height:calc(44px * var(--scale));border-radius:50%;background:linear-gradient(180deg,#fff,#cdd6ff);border:2px solid #111;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 30px rgba(0,0,0,.45); z-index:4;touch-action:none}
+    .cmp .knob svg{width:18px;height:18px}
+
+    /* Corner labels */
+    .cmp .labels{position:absolute;left:10px;right:10px;top:10px;display:flex;justify-content:space-between;pointer-events:auto; z-index:5;}
+    .pill{pointer-events:auto;display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(16,18,28,.7);border:1px solid rgba(255,255,255,.12);backdrop-filter: blur(8px); font-weight:700; font-size:.82rem}
+
+    /* Speedup badge */
+    .badge{
+      position:absolute; top:45px; right:10px; z-index:2;
+      padding:6px 10px; border-radius:999px;
+      background:linear-gradient(90deg, rgba(124,92,255,.25), rgba(38,230,164,.25));
+      border:1px solid rgba(255,255,255,.18);
+      font-weight:900; font-size:.82rem; letter-spacing:.02em;
+      box-shadow:0 0 24px rgba(124,92,255,.22), inset 0 0 1px rgba(255,255,255,.25);
+      animation:breath 2.5s ease-in-out infinite;
+      pointer-events:none;
+      backdrop-filter: blur(8px);
+      white-space: pre-line;
+      text-align: center;
+    }
+    @keyframes breath{ 0%,100%{ transform:translateY(0); opacity:.98 } 50%{ transform:translateY(-1px); opacity:1 } }
+
+    .iconbtn.nav{ color:#fff; border-color:rgba(255,255,255,.4); }
+    .iconbtn.nav svg path{ fill:#fff; }
+
+    .caption{margin-top:8px;color:var(--muted);font-size:.92rem;text-align:center}
+
+    .iconbtn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));cursor:pointer}
+    .iconbtn:hover{box-shadow:var(--ring)}
+
+    .cta{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.18);font-weight:700}
+
+    footer{margin:64px 0 28px; color:var(--muted); font-size:.9rem; display:flex; align-items:center; justify-content:center; text-align:center; padding: 0 16px;}
+
+    /* 视频加载状态 UI */
+    .pill .vstat{
+      display:inline-flex; align-items:center; gap:6px; margin-left:8px; font-weight:700;
+      opacity:.95;
+    }
+    .pill .vstat .dot{
+      width:8px; height:8px; border-radius:50%;
+      background:rgba(255,255,255,.35);
+      box-shadow:0 0 8px rgba(0,0,0,.25);
+    }
+    .pill .vstat.loading .dot{ background: #aaa; }
+    .pill .vstat.ready   .dot{ background: var(--good); }
+    .pill .vstat.error   .dot{ background: var(--danger); }
+
+    .pill .retry{
+      margin-left:8px; padding:4px 8px; border-radius:8px; cursor:pointer;
+      border:1px solid rgba(255,255,255,.2);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      font-weight:800; font-size:.8rem;
+      display:none;
+    }
+    .pill .retry:hover{ box-shadow: var(--ring); }
+
+    .pill .spinner{
+      width:12px; height:12px; border-radius:50%;
+      border:2px solid rgba(255,255,255,.25);
+      border-top-color:#fff;
+      animation:spin 0.8s linear infinite;
+    }
+    @keyframes spin{ to{ transform:rotate(360deg); } }
+
+    /* Mobile tweaks */
+    @media (max-width: 1024px){
+      :root{ --scale: 0.92; --secGap: 44px; --logoH: 64px; }
+      .container{ padding:20px; }
+      .topnav .inner{ padding: 16px 20px; }
+    }
+
+    @media (max-width: 768px){
+      :root{ --scale: 0.86; --secGap: 36px; --logoH: 54px; }
+      .container{ padding:16px; display:grid; justify-items:center; }
+      .topnav nav{
+        overflow-x:auto; gap:8px; justify-content:flex-start;
+        -webkit-overflow-scrolling:touch; scrollbar-width:none;
+      }
+      .topnav nav::-webkit-scrollbar{ display:none; }
+      .cmp{
+        aspect-ratio: auto;
+        height: min(58vw, 62vh);
+        max-width: 100%;
+        border-radius:12px;
+      }
+      .cmp .knob{ width:34px; height:34px; }
+      .pill{ padding:5px 8px; font-size:.78rem; }
+    }
+
+    @media (max-width: 420px){
+      :root{ --scale: 0.82; }
+      .container{ padding-left: 12px; padding-right: 12px; }
+      .cmp{ height: 60vw; }
+    }
+
+    html, body {
+      overflow-x: hidden !important;
+    }
+
+    .container, section, .carousel, .carousel .track {
+      width: 100%;
+      min-width: 0;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    img, video{ max-width: 100%; height: auto; }
+
+    /* Back button style */
+    .back-btn{
+      display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.18);font-weight:700;
+      transition: all 0.2s;
+    }
+    .back-btn:hover{box-shadow:var(--ring); transform: translateX(-2px);}
+
+  </style>
+</head>
+
+<body>
+  <!-- Sticky top nav -->
+  <div class="topnav">
+    <div class="inner">
+      <a class="logo" href="index.html" aria-label="Go to homepage">
+        <img src="./logo.png" alt="FlashVSR logo">
+        <span>FlashVSR</span>
+      </a>
+      <nav>
+        <a class="chip back-btn" href="index.html">← Back to Main</a>
+        <a class="chip" href="comparisons.html">View Comparisons</a>
+      </nav>
+      <div class="top-actions"></div>
+    </div>
+  </div>
+
+  <div class="container" id="top">
+    <header style="text-align:center;padding:20px 0;">
+      <h1 style="font-family:'Space Grotesk';font-size:clamp(28px, 5vw, 42px);font-weight:800;margin:0 0 8px 0;">
+        Ablation Studies
+      </h1>
+      <p class="note">Detailed ablation experiments on key components of FlashVSR</p>
+    </header>
+
+    <!-- Ablations -->
+    <section aria-labelledby="s5">
+      <div class="section-title" id="s5"><span class="dot"></span> Attention Mechanism</div>
+      <p class="note">Comparison between Global Sparse Attention and Local-Constrained Sparse Attention</p>
+
+      <!-- Ablation 1: Global vs. Local -->
+      <div class="carousel" data-carousel>
+        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+        <div class="track" id="gal-ablation-attn"></div>
+        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+        <div class="dots" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title"><span class="dot"></span> Decoder Comparison</div>
+      <p class="note">WanVAE Decoder vs. Tiny Conditional (TC) Decoder</p>
+
+      <!-- Ablation 2: WanVAE decoder vs. TC Decoder -->
+      <div class="carousel" data-carousel style="margin-top:18px">
+        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+        <div class="track" id="gal-ablation-decoder"></div>
+        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+        <div class="dots" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- Link to Comparisons -->
+    <section style="text-align:center;padding:40px 0;">
+      <div class="section-title"><span class="dot"></span> Method Comparisons</div>
+      <p class="note" style="margin-bottom:20px;">View detailed comparisons with other state-of-the-art methods</p>
+      <a class="cta" href="comparisons.html" style="font-size:1.05rem;padding:12px 24px;">
+        🔍 View Method Comparisons →
+      </a>
+    </section>
+
+    <footer>
+      <div>
+        © 2025 FlashVSR Authors
+      </div>
+    </footer>    
+  </div>
+
+  <script>
+    const $  = (s, r=document) => r.querySelector(s);
+    const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+    /* 状态 UI 构建 & 绑定 */
+    function buildStatusInsidePill(pillEl, initialText='Loading…'){
+      const stat = document.createElement('span');
+      stat.className = 'vstat loading';
+      const spin = document.createElement('span'); spin.className='spinner';
+      const dot  = document.createElement('span'); dot.className='dot';
+      const txt  = document.createElement('em');  txt.textContent = initialText;
+      stat.appendChild(spin); stat.appendChild(dot); stat.appendChild(txt);
+
+      const retry = document.createElement('button');
+      retry.className = 'retry';
+      retry.type = 'button';
+      retry.textContent = '↻';
+
+      pillEl.appendChild(stat);
+      pillEl.appendChild(retry);
+
+      const setState = (state, text) => {
+        stat.classList.remove('loading','ready','error');
+        stat.classList.add(state);
+        if (text) txt.textContent = text;
+        spin.style.display = (state === 'loading') ? 'inline-block' : 'none';
+        retry.style.display = (state === 'error') ? 'inline-flex' : 'none';
+      };
+
+      return { stat, setState, retry };
+    }
+
+    function wireVideoStatus(videoEl, ui){
+      ui.setState('loading', 'Loading…');
+
+      const toReady   = () => ui.setState('ready', 'Ready');
+      const toPlaying = () => ui.setState('ready', 'Playing');
+      const toLoading = () => ui.setState('loading', 'Buffering…');
+      const toError   = () => ui.setState('error', 'Failed');
+
+      videoEl.addEventListener('loadstart',   () => ui.setState('loading', 'Loading…'));
+      videoEl.addEventListener('waiting',     toLoading);
+      videoEl.addEventListener('stalled',     toLoading);
+      videoEl.addEventListener('loadeddata',  toReady);
+      videoEl.addEventListener('canplay',     toReady);
+      videoEl.addEventListener('playing',     toPlaying);
+      videoEl.addEventListener('error',       toError);
+
+      ui.retry.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        ui.setState('loading', 'Reloading…');
+        const src = videoEl.currentSrc || videoEl.src;
+        videoEl.src = '';
+        setTimeout(()=>{ videoEl.src = src; videoEl.load(); videoEl.play().catch(()=>{}); }, 30);
+      });
+    }
+
+    const isInteractiveTarget = (el) => {
+      return !!el.closest('.labels, .pill, .retry, .iconbtn, a, button, .dots');
+    };
+
+    /* vertical split builder */
+    function makeSplitCard({
+      leftSrc, rightSrc,
+      leftLabel='Other', rightLabel='Ours',
+      caption, badgeText=null
+    }){
+      const card = document.createElement('div');
+      card.className='slide';
+
+      const wrap = document.createElement('div');
+      wrap.className='cmp';
+      wrap.tabIndex = 0;
+
+      const base = document.createElement('video');
+      base.src = rightSrc;
+      base.autoplay = true; base.muted = true; base.loop = true; base.playsInline = true; base.preload = 'auto';
+      base.className='cmp-video';
+
+      const top = document.createElement('div');
+      top.className='layer top';
+      top.style.setProperty('--split','50%');
+      const vTop = document.createElement('video');
+      vTop.src = leftSrc;
+      vTop.autoplay = true; vTop.muted = true; vTop.loop = true; vTop.playsInline = true; vTop.preload = 'auto';
+      vTop.className='cmp-video';
+      top.appendChild(vTop);
+
+      const labels = document.createElement('div');
+      labels.className='labels';
+      const leftP = document.createElement('span');
+      leftP.className='pill';
+      leftP.textContent = leftLabel;
+      const rightP = document.createElement('span');
+      rightP.className='pill';
+      rightP.textContent = rightLabel;
+      labels.appendChild(leftP);
+      labels.appendChild(rightP);
+
+      const uiLeft  = buildStatusInsidePill(leftP,  'Loading…');
+      const uiRight = buildStatusInsidePill(rightP, 'Loading…');
+      wireVideoStatus(vTop,  uiLeft);
+      wireVideoStatus(base,  uiRight);
+
+      let badge = null;
+      if(badgeText){
+        badge = document.createElement('div');
+        badge.className = 'badge';
+        badge.textContent = badgeText;
+      }
+
+      const handle = document.createElement('div');
+      handle.className='handle';
+      const knob = document.createElement('div');
+      knob.className='knob';
+      knob.innerHTML = `
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="#111" d="M9 6 3 12l6 6V6Zm6 0v12l6-6-6-6Z"/>
+        </svg>
+      `;
+
+      wrap.appendChild(base);
+      wrap.appendChild(top);
+      wrap.appendChild(handle);
+      wrap.appendChild(knob);
+      if(badge) wrap.appendChild(badge);
+      wrap.appendChild(labels);
+
+      if(caption){
+        const cap=document.createElement('div');
+        cap.className='caption';
+        cap.textContent=caption;
+        card.appendChild(wrap);
+        card.appendChild(cap);
+      } else {
+        card.appendChild(wrap);
+      }
+
+      const setSplit = (pct)=>{
+        pct = Math.max(0, Math.min(100, pct));
+        top.style.setProperty('--split', pct + '%');
+        handle.style.left = pct + '%';
+        knob.style.left = pct + '%';
+      };
+      setSplit(50);
+
+      const move = (clientX)=>{
+        const rect = wrap.getBoundingClientRect();
+        const pct = (clientX - rect.left) / rect.width * 100;
+        setSplit(pct);
+      };
+
+      let active=false;
+      const start = (e)=>{
+        if(isInteractiveTarget(e.target)) return;
+        active=true;
+        move(e.touches ? e.touches[0].clientX : e.clientX);
+        e.preventDefault();
+      };
+      const onMove = (e)=>{
+        if(!active) return;
+        move(e.touches ? e.touches[0].clientX : e.clientX);
+      };
+      const end = ()=> active=false;
+
+      wrap.addEventListener('mousedown', start);
+      wrap.addEventListener('touchstart', start, {passive:false});
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('touchmove', onMove, {passive:false});
+      window.addEventListener('mouseup', end);
+      window.addEventListener('touchend', end);
+
+      knob.addEventListener('mousedown', start);
+      knob.addEventListener('touchstart', start, {passive:false});
+      handle.addEventListener('mousedown', start);
+      handle.addEventListener('touchstart', start, {passive:false});
+
+      const ensurePlay = (v)=> v.play().catch(()=>{ /* ignore */ });
+      ensurePlay(base); ensurePlay(vTop);
+
+      card._videos = [base, vTop];
+      return card;
+    }
+
+    function initCarousel(car){
+      const track = car.querySelector('.track');
+      const prev = car.querySelector('.prev');
+      const next = car.querySelector('.next');
+      const dotsC = car.querySelector('.dots');
+      const slides = Array.from(track.children);
+      if(slides.length === 0){
+        return;
+      }
+
+      function setEdgePadding(){
+        const first = slides[0];
+        if(!first) return;
+        const slideW = first.getBoundingClientRect().width;
+        const pad = Math.max(0, (track.clientWidth - slideW) / 2);
+        track.style.paddingLeft = pad + 'px';
+        track.style.paddingRight = pad + 'px';
+      }
+      function centerIndex(idx){
+        const i = Math.max(0, Math.min(idx, slides.length - 1));
+        const s = slides[i];
+        const left = s.offsetLeft - (track.clientWidth - s.clientWidth)/2;
+        track.scrollTo({ left, behavior: 'smooth' });
+      }
+      function currentIndex(){
+        const mid = track.scrollLeft + track.clientWidth/2;
+        let idx = 0, min = Infinity;
+        slides.forEach((s,i)=>{
+          const c = Math.abs((s.offsetLeft + s.clientWidth/2) - mid);
+          if(c < min){ min = c; idx = i; }
+        });
+        return idx;
+      }
+
+      dotsC.innerHTML = '';
+      slides.forEach((_,i)=>{
+        const d=document.createElement('button');
+        d.className='dot'+(i===0?' active':'');
+        d.setAttribute('aria-label','Go to slide '+(i+1));
+        d.type='button';
+        d.onclick=()=>centerIndex(i);
+        dotsC.appendChild(d);
+      });
+      const dots=[...dotsC.children];
+      const updateDots=()=>{
+        const idx = currentIndex();
+        dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
+      };
+      track.addEventListener('scroll', updateDots, {passive:true});
+
+      track.addEventListener('wheel', (e)=>{
+        if(Math.abs(e.deltaX) < Math.abs(e.deltaY)){
+          track.scrollLeft += e.deltaY;
+          e.preventDefault();
+        }
+      }, {passive:false});
+
+      let isDown=false, startX=0, scrollL=0;
+      track.addEventListener('pointerdown', e=>{
+        isDown=true; startX=e.clientX; scrollL=track.scrollLeft; track.setPointerCapture(e.pointerId);
+      });
+      track.addEventListener('pointermove', e=>{
+        if(!isDown) return;
+        track.scrollLeft = scrollL - (e.clientX-startX);
+      });
+      const endDrag = ()=> isDown=false;
+      track.addEventListener('pointerup', endDrag);
+      track.addEventListener('pointercancel', endDrag);
+      track.addEventListener('pointerleave', endDrag);
+
+      prev.onclick = ()=> centerIndex(currentIndex() - 1);
+      next.onclick = ()=> centerIndex(currentIndex() + 1);
+
+      setEdgePadding();
+      new ResizeObserver(setEdgePadding).observe(track);
+      centerIndex(0);
+      updateDots();
+    }
+
+    /* Ablations */
+    const ABL_ATTENTION = [
+      {
+        left: './videos/ablation_mask_global.mp4',
+        right: './videos/ablation_mask_local.mp4',
+        leftLabel: 'Global Sparse',
+        rightLabel: 'Local-Constrained Sparse (Ours)',
+        caption: 'Global vs. Local-Constrained Sparse Attention (2688×1536 High-Resolution Video Super-Resolution Result).',
+      },
+      {
+        left: './videos/ablation_mask_global1.mp4',
+        right: './videos/ablation_mask_local1.mp4',
+        leftLabel: 'Global Sparse',
+        rightLabel: 'Local-Constrained Sparse (Ours)',
+        caption: 'Global vs. Local-Constrained Sparse Attention (2304x3072 High-Resolution Video Super-Resolution Result).',
+      }
+    ];
+
+    const ABL_DECODER = [
+      {
+        left: './videos/ablation_WanVAE.mp4',
+        right: './videos/ablation_TCDecoder.mp4',
+        leftLabel: 'WanVAE Decoder',
+        rightLabel: 'TC Decoder',
+        caption: 'WanVAE Decoder vs. TC Decoder — quality is nearly indistinguishable, while the TC Decoder is ~7× faster.',
+        badgeText: '~7× speedup'
+      },
+    ];
+
+    function mountAblationSplit(trackId, items) {
+      const track = document.getElementById(trackId);
+      if (!track) return;
+      const frag = document.createDocumentFragment();
+      items.forEach(({ left, right, leftLabel, rightLabel, caption, badgeText }) => {
+        frag.appendChild(
+          makeSplitCard({
+            leftSrc: left,
+            rightSrc: right,
+            leftLabel,
+            rightLabel,
+            caption,
+            badgeText
+          })
+        );
+      });
+      track.appendChild(frag);
+    }
+    mountAblationSplit('gal-ablation-attn', ABL_ATTENTION);
+    mountAblationSplit('gal-ablation-decoder', ABL_DECODER);
+
+    document.querySelectorAll('[data-carousel]').forEach(initCarousel);
+
+    document.addEventListener('gesturestart', e => e.preventDefault());
+  </script>
+</body>
+</html>
+

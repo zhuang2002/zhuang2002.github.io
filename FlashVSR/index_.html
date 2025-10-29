@@ -1,0 +1,1380 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>FLASHVSR: Towards Real-Time Diffusion-Based Streaming Video Super-Resolution</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Base UI fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Artistic title font -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Icons / PWA basics -->
+  <link rel="icon" href="./logo.png" sizes="32x32">
+  <link rel="icon" href="./logo.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="./logo.png">
+
+  <style>
+    :root{
+      --scale: 0.9;
+      --cropH: 85; /* % of height to keep (for clip 004) */
+
+      --bg:#0a0b10;
+      --panel:#12131b; --panel-2:#0e0f16;
+      --text:#eaeaf2; --muted:#aeb2c7;
+      --brand-1:#7c5cff; --brand-2:#26e6a4; --accent:#ffd33d;
+      --danger:#ff6b6b; --good:#32d296;
+      --radius:20px;
+      --ring: 0 0 0 2px rgba(124,92,255,.35), 0 0 40px rgba(38,230,164,.15);
+      --secGap: 56px;
+      --secTitleSize: clamp(22px, 28px * var(--scale), 36px);
+      --titleGap: 6px;
+      --logoH: 72px;
+      --maxW: calc(1440px * var(--scale));
+      --figW: calc(1120px * var(--scale));
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(124,92,255,.25), transparent 60%),
+        radial-gradient(900px 600px at 110% 10%, rgba(38,230,164,.18), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+      -webkit-text-size-adjust:100%; /* iOS font zoom guard */
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width: var(--maxW); margin:0 auto; padding:28px}
+
+    /* ===== Sticky Nav (kept single definition to avoid overrides) ===== */
+    .topnav{
+      position: sticky; top:0; z-index:30;
+      background: linear-gradient(180deg,var(--bg),rgba(0,0,0,0));
+      backdrop-filter: saturate(150%) blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      -webkit-backdrop-filter: saturate(150%) blur(8px);
+    }
+    .topnav .inner{
+      width: 100%;
+      max-width: var(--maxW);
+      margin: 0 auto;
+      padding: 12px 28px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .topnav a.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-family:Space Grotesk}
+    .topnav a.logo img{height:24px;width:auto;display:block}
+    .topnav nav{
+      display:flex;gap:14px;flex:1;flex-wrap:wrap;justify-content:center;
+      min-width: 0; /* avoid overflow on small screens */
+    }
+    .chip{
+      padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      white-space:nowrap;
+    }
+    .top-actions{display:flex;gap:8px}
+
+    /* Authors */
+    .authors sup { font-size: 0.7em; vertical-align: super; opacity: 0.8; }
+    .authors a { color: var(--text); text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,.2); }
+    .authors a:hover { color: #fff; border-bottom-color: #fff; }
+
+    /* 仅“Ours vs. Others”区块使用 scale = 1.0 */
+    section[aria-labelledby="s4"] { --scale: 1 !important; }
+    #compareHost { --scale: 1 !important; }
+
+    /* ===== Header ===== */
+    header.hero{position:relative;display:grid;grid-template-columns:1fr;gap:12px;align-items:center}
+    .title-wrap{position:relative;padding:6px 0 2px 0;background:none;border:none;box-shadow:none;overflow:visible}
+    .title-row{ display:flex; align-items:center; justify-content:center; gap: var(--titleGap); }
+    .title-row img.logo{ height: calc(var(--logoH) * var(--scale)); width:auto; display:block; flex:0 0 auto; border-radius:12px; margin:0; }
+    .title-text{
+      display:flex; align-items:center; letter-spacing:.01em;
+      font-family:Orbitron, "Space Grotesk", Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+      font-weight:900; letter-spacing:.02em; line-height:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      font-size:clamp(34px, calc(60px * var(--scale)), 72px);
+      background:linear-gradient(90deg, var(--brand-1), var(--brand-2), var(--accent));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      text-shadow:0 0 24px rgba(124,92,255,.18);
+      text-align:center;
+    }
+    .title-sub{
+      margin-top:8px;
+      font-family:"Space Grotesk", Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+      font-weight:800; letter-spacing:.01em; line-height:1.08; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      font-size:clamp(24px, calc(36px * var(--scale)), 44px);
+      color:var(--text); opacity:.95; text-align:center;
+    }
+
+    /* Sparks */
+    .sparks{position:absolute;inset:0;pointer-events:none;opacity:.7}
+    .spark{position:absolute;width:2px;height:2px;background:radial-gradient(circle,var(--accent),transparent 70%);border-radius:50%;animation:fly 6s linear infinite}
+    @keyframes fly{from{transform:translate3d(0,0,0)}to{transform:translate3d(140vw,-40vh,0)}}
+
+    /* Sections */
+    section{ margin: var(--secGap) 0; }
+    .section-title{
+      display:flex; align-items:center; gap:10px;
+      font-family:"Space Grotesk"; font-weight:800;
+      font-size: var(--secTitleSize);
+      letter-spacing:.02em;
+      justify-content:center;
+      text-align:center;
+    }
+    .section-title .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg, var(--brand-1), var(--brand-2)); box-shadow:0 0 18px rgba(124,92,255,.35)}
+    .note{color:var(--muted);font-size:.95rem;margin-top:6px;text-align:center}
+
+    .teaser{
+      display:grid; gap:14px; align-items:center; justify-items:center;
+      border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+      border-radius:16px; padding:14px;
+      text-align:center;
+      width:100%;
+      max-width: var(--figW);
+      margin:0 auto;
+    }
+    .teaser img.scale-90{ width:90% !important; height:auto; }
+
+    img[src$=".png"], img[src$=".jpg"], img[src$=".jpeg"]{display:block;margin:0 auto;max-width:100%;height:auto}
+    .scale-90{width:90% !important; height:auto}
+    .scale-40{width:40% !important; height:auto}
+
+    .fig{
+      width:100%; max-width: var(--figW);
+      border:1px solid rgba(255,255,255,.1); border-radius:12px; overflow:hidden;
+      background:#0d0f17; display:block; padding:10px; margin:0 auto;
+      text-align:center;
+    }
+    .fig img{display:block; height:auto; max-width:100%; margin:0 auto}
+    .fig-caption{color:var(--muted); font-size:.92rem; text-align:center; margin-top:8px}
+
+    /* ===== Carousel ===== */
+    .carousel{position:relative;margin-top:12px}
+    .carousel .track{
+      display:flex;gap:18px;overflow:auto;padding:6px 0;scroll-snap-type:x mandatory;scroll-behavior:smooth;
+      -webkit-overflow-scrolling:touch; /* iOS momentum scroll */
+    }
+    .carousel .track::-webkit-scrollbar{height:8px}
+    .carousel .track::-webkit-scrollbar-thumb{background:linear-gradient(90deg,var(--brand-1),var(--brand-2));border-radius:999px}
+    .slide{flex: 0 0 min(96vw, var(--figW)); scroll-snap-align:center; scroll-snap-stop:always; position:relative;}
+    .carousel .nav{position:absolute;top:50%;transform:translateY(-50%);z-index:10}
+    .carousel .prev{left:6px}
+    .carousel .next{right:6px}
+    .carousel .dots{display:flex;justify-content:center;gap:6px;margin-top:10px}
+    .carousel .dot.active{background:linear-gradient(90deg,var(--brand-1),var(--brand-2));box-shadow:var(--ring)}
+    .carousel .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.35)}
+
+    /* ===== Split compare block ===== */
+    .cmp{
+      position:relative;border-radius:16px;overflow:hidden;background:#000;border:1px solid rgba(255,255,255,.08);
+      aspect-ratio: 16 / 9; max-width: var(--figW); margin: 0 auto;
+      touch-action:none; /* allow precise drag without browser gestures */
+    }
+    .cmp video{display:block;width:100%;height:100%;object-fit:contain}
+    .cmp .layer{position:absolute;inset:0}
+    .cmp .top{--split:50%; clip-path: polygon(0 0, var(--split) 0, var(--split) 100%, 0 100%);}
+    .cmp .handle{position:absolute;top:0;left:50%;transform:translateX(-50%);height:100%;width:2px;background:#fff; z-index:4; }
+    .cmp .knob{position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);width:calc(44px * var(--scale));height:calc(44px * var(--scale));border-radius:50%;background:linear-gradient(180deg,#fff,#cdd6ff);border:2px solid #111;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 30px rgba(0,0,0,.45); z-index:4;touch-action:none}
+    .cmp .knob svg{width:18px;height:18px}
+
+    /* Corner labels */
+    .cmp .labels{position:absolute;left:10px;right:10px;top:10px;display:flex;justify-content:space-between;pointer-events:auto; z-index:5;}
+    .pill{pointer-events:auto;display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(16,18,28,.7);border:1px solid rgba(255,255,255,.12);backdrop-filter: blur(8px); font-weight:700; font-size:.82rem}
+
+    /* Speedup badge */
+    .badge{
+      position:absolute; top:45px; right:10px; z-index:2;
+      padding:6px 10px; border-radius:999px;
+      background:linear-gradient(90deg, rgba(124,92,255,.25), rgba(38,230,164,.25));
+      border:1px solid rgba(255,255,255,.18);
+      font-weight:900; font-size:.82rem; letter-spacing:.02em;
+      box-shadow:0 0 24px rgba(124,92,255,.22), inset 0 0 1px rgba(255,255,255,.25);
+      animation:breath 2.5s ease-in-out infinite;
+      pointer-events:none;
+      backdrop-filter: blur(8px);
+      white-space: pre-line;
+      text-align: center;
+    }
+    @keyframes breath{ 0%,100%{ transform:translateY(0); opacity:.98 } 50%{ transform:translateY(-1px); opacity:1 } }
+
+    /* 仅影响轮播里的左右箭头按钮 */
+    .iconbtn.nav{ color:#fff; border-color:rgba(255,255,255,.4); }
+    .iconbtn.nav svg path{ fill:#fff; }
+
+    .caption{margin-top:8px;color:var(--muted);font-size:.92rem;text-align:center}
+
+    /* Clip 004 crop math */
+    .crop-bottom-hfill .cmp-video{
+      position:absolute;
+      --_S: calc(100 / var(--cropH));
+      --_SHIFT: calc((100 - var(--cropH)) * var(--_S));
+      left:50%; top: calc(-1% * var(--_SHIFT));
+      height: calc(100% * var(--_S)); width: auto;
+      transform: translateX(-50%);
+      object-fit: contain; object-position: center bottom;
+    }
+
+    /* Tabs (only for Comparisons) */
+    .compare-switch{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+    .compare-tab{
+      padding:8px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      cursor:pointer;
+      font-weight:800;
+      color:#fff;
+      transition:color .2s, box-shadow .2s;
+    }
+    .compare-tab:hover{ box-shadow:var(--ring); color:#fff; }
+    .compare-tab.active{ box-shadow:var(--ring); color:#fff; }
+
+    pre.bib{background:#0d0f17;color:#dbe1ff;padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,.08); overflow:auto}
+    .cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+    .cta{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.18);font-weight:700}
+    footer{margin:64px 0 28px; color:var(--muted); font-size:.9rem; display:flex; align-items:center; justify-content:center; text-align:center; padding: 0 16px;}
+    .footer-note{margin-top:6px; font-size:.88rem; opacity:.9;}
+    .footer-note a{ text-decoration: underline; text-underline-offset: 3px; }
+
+    .iconbtn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));cursor:pointer}
+    .iconbtn:hover{box-shadow:var(--ring)}
+    .subsec{max-width:1000px;margin:0 auto;}
+    .subsec h4{ margin:10px 0 6px 0; font-family:'Space Grotesk'; font-weight:800; text-align:center; }
+    .subsec .note{ text-align:left; }
+
+    @media (min-width: 1280px){
+      .slide{ flex-basis: min(96vw, var(--figW)); }
+      .cmp{ max-width: var(--figW); }
+    }
+
+    /* ===== Light Theme Overrides ===== */
+    html[data-theme="light"]{
+      --bg:#fafbff; --panel:#ffffff; --panel-2:#f5f7ff; --text:#0f1222; --muted:#606575;
+      --brand-1:#7c5cff; --brand-2:#26bfa4; --accent:#ffb020;
+      --danger:#e74a4a; --good:#1ea86f;
+      --ring: 0 0 0 2px rgba(124,92,255,.25), 0 0 30px rgba(38,191,164,.12);
+    }
+    html[data-theme="light"] body{
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(124,92,255,.18), transparent 60%),
+        radial-gradient(900px 600px at 110% 10%, rgba(38,230,164,.12), transparent 60%),
+        var(--bg);
+      color:var(--text);
+    }
+    html[data-theme="light"] .topnav{
+      background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,0));
+      border-bottom:1px solid rgba(0,0,0,.08);
+      backdrop-filter:saturate(140%) blur(8px);
+      -webkit-backdrop-filter:saturate(140%) blur(8px);
+    }
+    html[data-theme="light"] .chip{
+      border:1px solid rgba(0,0,0,.12);
+      background:linear-gradient(180deg, rgba(0,0,0,.03), rgba(0,0,0,.01));
+    }
+    html[data-theme="light"] .title-text{ text-shadow:0 0 16px rgba(124,92,255,.14); }
+    html[data-theme="light"] .title-sub{ color:var(--text); opacity:.9; }
+    html[data-theme="light"] .teaser,
+    html[data-theme="light"] .fig{ background:#ffffff; border:1px solid rgba(0,0,0,.08); }
+    html[data-theme="light"] .fig-caption{ color:var(--muted); }
+    html[data-theme="light"] .carousel .track::-webkit-scrollbar-thumb{
+      background:linear-gradient(90deg,var(--brand-1),var(--brand-2));
+    }
+    html[data-theme="light"] .carousel .dot{ background:rgba(0,0,0,.18); border:1px solid rgba(0,0,0,.25); }
+    html[data-theme="light"] .cmp{ background:#fff; border:1px solid rgba(0,0,0,.08); }
+    html[data-theme="light"] .cmp .handle{ background:#111; }
+    html[data-theme="light"] .cmp .knob{ border-color:#e5e7ef; }
+    html[data-theme="light"] .pill{
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(0,0,0,.12);
+      color:var(--text);
+      backdrop-filter: blur(6px);
+    }
+    html[data-theme="light"] .badge{
+      background:linear-gradient(90deg, rgba(124,92,255,.18), rgba(38,230,164,.18));
+      border:1px solid rgba(0,0,0,.12);
+      color:#222;
+    }
+    html[data-theme="light"] .compare-tab{
+      color:#111;
+      border:1px solid rgba(0,0,0,.12);
+      background:linear-gradient(180deg, rgba(0,0,0,.03), rgba(0,0,0,.01));
+    }
+    html[data-theme="light"] .compare-tab:hover,
+    html[data-theme="light"] .compare-tab.active{ box-shadow:var(--ring); color:#111; }
+    html[data-theme="light"] .iconbtn.nav{ color:#111; border-color:rgba(0,0,0,.3); }
+    html[data-theme="light"] .iconbtn.nav svg path{ fill:#111; }
+    html[data-theme="light"] pre.bib{ background:#f6f7fb; color:#2b2f42; border:1px solid rgba(0,0,0,.08); }
+    html[data-theme="light"] footer{ color:#6b7184; }
+
+    /* === Make CTAs crisper in light theme === */
+    html[data-theme="light"] .cta{
+      color: var(--text);
+      border: 1px solid rgba(0,0,0,.22);
+      background: linear-gradient(180deg, #ffffff, #f4f6ff);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.75),
+        0 1px 2px rgba(0,0,0,.06);
+    }
+    html[data-theme="light"] .cta:hover{
+      border-color: rgba(0,0,0,.28);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.85),
+        0 1px 2px rgba(0,0,0,.06),
+        var(--ring);
+    }
+    html[data-theme="light"] .cta:focus-visible{
+      outline: none;
+      box-shadow:
+        0 0 0 3px rgba(124,92,255,.28),
+        0 1px 2px rgba(0,0,0,.06);
+      border-color: rgba(124,92,255,.45);
+    }
+    html[data-theme="light"] .cta:active{
+      transform: translateY(1px);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.65),
+        0 0 0 1px rgba(0,0,0,.04);
+    }
+
+    /* Highlight chip */
+    .hl{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(124,92,255,.25), rgba(38,230,164,.25));
+      border:1px solid rgba(255,255,255,.18);
+      font-weight:900;
+      letter-spacing:.01em;
+      box-shadow:0 0 18px rgba(124,92,255,.22), inset 0 0 1px rgba(255,255,255,.25);
+      backdrop-filter: blur(6px);
+    }
+    html[data-theme="light"] .hl{
+      background:linear-gradient(90deg, rgba(124,92,255,.18), rgba(38,230,164,.18));
+      border:1px solid rgba(0,0,0,.12);
+    }
+
+    /* ====== 视频加载状态 UI（pill 内部） ====== */
+    .pill .vstat{
+      display:inline-flex; align-items:center; gap:6px; margin-left:8px; font-weight:700;
+      opacity:.95;
+    }
+    .pill .vstat .dot{
+      width:8px; height:8px; border-radius:50%;
+      background:rgba(255,255,255,.35);
+      box-shadow:0 0 8px rgba(0,0,0,.25);
+    }
+    .pill .vstat.loading .dot{ background: #aaa; }
+    .pill .vstat.ready   .dot{ background: var(--good); }
+    .pill .vstat.error   .dot{ background: var(--danger); }
+
+    .pill .retry{
+      margin-left:8px; padding:4px 8px; border-radius:8px; cursor:pointer;
+      border:1px solid rgba(255,255,255,.2);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      font-weight:800; font-size:.8rem;
+      display:none;
+    }
+    .pill .retry:hover{ box-shadow: var(--ring); }
+
+    .pill .spinner{
+      width:12px; height:12px; border-radius:50%;
+      border:2px solid rgba(255,255,255,.25);
+      border-top-color:#fff;
+      animation:spin 0.8s linear infinite;
+    }
+    @keyframes spin{ to{ transform:rotate(360deg); } }
+
+    /* ===== Mobile tweaks (robust & consistent with desktop layout) ===== */
+    @media (max-width: 1024px){
+      :root{ --scale: 0.92; --secGap: 44px; --logoH: 64px; }
+      .container{ padding:20px; }
+      .topnav .inner{ padding: 16px 20px; }
+      .title-row{ gap:10px; }
+      .title-text{ font-size: clamp(30px, 6.2vw, 48px); }
+      .title-sub{ font-size: clamp(18px, 3.6vw, 28px); }
+    }
+
+    @media (max-width: 768px){
+      :root{ --scale: 0.86; --secGap: 36px; --logoH: 54px; }
+      .container{ padding:16px; display:grid; justify-items:center; }
+      .topnav nav{
+        overflow-x:auto; gap:8px; justify-content:flex-start;
+        -webkit-overflow-scrolling:touch; scrollbar-width:none;
+      }
+      .topnav nav::-webkit-scrollbar{ display:none; }
+      .title-row{ gap:8px; }
+      .title-text{ font-size: clamp(26px, 7vw, 36px); }
+      .title-sub{ font-size: clamp(15px, 4.5vw, 22px); }
+      .teaser, .fig{ padding:10px; border-radius:12px; }
+      .fig img, .teaser img{ width:100% !important; }
+
+      /* 比较卡片：高度随屏幕自适应，保持与桌面相同的信息密度 */
+      .cmp{
+        aspect-ratio: auto;
+        height: min(58vw, 62vh);
+        max-width: 100%;
+        border-radius:12px;
+      }
+      .cmp .knob{ width:34px; height:34px; }
+      .pill{ padding:5px 8px; font-size:.78rem; }
+
+      /* 居中所有主要容器，避免左右偏移 */
+      section > .teaser,
+      section > .fig,
+      section > .carousel,
+      #compareHost > .carousel,
+      section > .subsec,
+      section > pre.bib,
+      footer{
+        margin-left: auto !important;
+        margin-right: auto !important;
+        max-width: min(100%, var(--figW));
+        width: 100%;
+      }
+      .carousel .slide{
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .caption, .fig-caption, section .note, .cta-row{ text-align: center !important; }
+      .compare-switch{ justify-content: center !important; }
+    }
+
+    @media (max-width: 420px){
+      :root{ --scale: 0.82; }
+      .container{ padding-left: 12px; padding-right: 12px; }
+      .title-text{ font-size: clamp(24px, 7.8vw, 32px); }
+      .title-sub{ font-size: clamp(14px, 4.4vw, 20px); }
+      .cmp{ height: 60vw; }
+    }
+
+    /* TL;DR 行宽与对比度（暗/亮主题统一视觉） */
+    .note.tldr{
+      font-size: inherit;
+      font-weight: 400;
+      line-height: 1.4;
+      max-width: 72ch;
+      margin-left: auto;
+      margin-right: auto;
+      word-break: normal;
+      overflow-wrap: anywhere;
+    }
+    @media (max-width: 1024px){ .note.tldr{ max-width: 60ch; } }
+    @media (max-width: 768px){ .note.tldr{ max-width: 46ch; padding-left: 12px; padding-right: 12px; } }
+
+    html[data-theme="dark"] .tldr,
+    html[data-theme="dark"] .tldr *{
+      color: var(--text) !important;
+      opacity: .95 !important;
+      text-shadow: none !important;
+    }
+    html[data-theme="light"] .tldr,
+    html[data-theme="light"] .tldr *{
+      color: var(--text) !important;
+      opacity: 1 !important;
+      text-shadow: none !important;
+    }
+    /* ======= 修复：手机端目录栏与页面宽度 ======= */
+
+    /* 让容器在移动端占满屏宽，而不是受 max-width 限制 */
+    @media (max-width: 1024px){
+      :root{
+        /* figW 和 maxW 改为随视口自适应，避免“中间一条” */
+        --maxW: 100vw;
+        --figW: min(100vw - 24px, 1120px);
+      }
+      .container{
+        max-width: 100% !important;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      .topnav .inner{
+        max-width: 100% !important;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+    }
+
+    @media (max-width: 768px){
+      :root{
+        /* 更紧凑一点，给两侧留 16px 安全边距 */
+        --maxW: 100vw;
+        --figW: calc(100vw - 32px);
+      }
+
+      /* 顶栏改为两行：第一行 logo，第二行整行放导航标签 */
+      .topnav .inner{
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        grid-auto-rows: auto;
+        row-gap: 10px;
+        align-items: center;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      /* nav 占满一整行、可横向滚动、默认居中 */
+      .topnav nav{
+        grid-column: 1 / -1;
+        order: 2;
+        display: flex;
+        width: 100%;
+        justify-content: center;           /* 居中 */
+        gap: 8px;
+        overflow-x: auto;                  /* 可横向滚动 */
+        -webkit-overflow-scrolling: touch; /* iOS 惯性滚动 */
+        scrollbar-width: none;             /* Firefox 隐藏滚动条 */
+        padding: 0 4px;
+        margin: 0 auto;
+        mask-image: linear-gradient(to right, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+      }
+      .topnav nav::-webkit-scrollbar{ display:none; }
+
+      /* logo 单独一行并居中 */
+      .topnav a.logo{
+        order: 1;
+        justify-self: center;
+      }
+
+      /* 让“中间内容”真正铺满可用宽度 */
+      .container{
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      /* 走马灯中的 slide 与对比卡片按屏宽自适应，避免显得太窄 */
+      .slide{ flex-basis: min(96vw, var(--figW)) !important; }
+      .cmp{
+        max-width: 100% !important;
+        width: 100% !important;
+        border-radius: 12px;
+      }
+    }
+
+    /* 超小屏再紧一点边距 */
+    @media (max-width: 420px){
+      .container{ padding-left: 12px; padding-right: 12px; }
+      .topnav .inner{ padding-left: 12px; padding-right: 12px; }
+      .topnav nav{ mask-image: linear-gradient(to right, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%); }
+    }
+    /* ======= 修复：桌面端右侧空白的横向溢出 ======= */
+
+    /* 全局禁止页面级别的横向滚动（内部可横向滚动的容器不受影响） */
+    html, body {
+      overflow-x: hidden !important;
+    }
+
+    /* 避免标题区装饰元素造成潜在溢出（如 sparks 等绝对定位动画） */
+    .title-wrap {
+      overflow: hidden; /* 只裁剪装饰，不影响内容 */
+    }
+
+    /* 轮播左右箭头不要探出容器（之前 -6px 可能造成页面级别溢出） */
+    .carousel .prev { left: 6px !important; }
+    .carousel .next { right: 6px !important; }
+
+    /* 让走马灯的滚动仅在自身内部，不把页面撑宽 */
+    .carousel .track {
+      overflow-x: auto;    /* 已有——这里再次强调覆盖 */
+      overscroll-behavior-x: contain; /* 防止滚到页面层 */
+    }
+
+    /* 对比卡片成为布局边界，不把外层撑宽 */
+    .cmp {
+      max-width: 100%;
+      contain: layout paint; /* 限定布局/绘制边界，防溢出 */
+    }
+
+    /* 容器自身也不允许把内容挤出页面（保险） */
+    .container {
+      overflow-x: clip; /* 现代浏览器更稳妥的裁剪 */
+    }
+
+    /* 若你在移动端把顶栏 nav 做了负外边距/遮罩，也防止波及桌面 */
+    @media (min-width: 1025px){
+      .topnav .inner {
+        max-width: var(--maxW); /* 保持与 container 一致 */
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+
+    /* ====== 修复：移动端正文被挤到右侧不可见 ====== */
+
+    /* A. “禁止横向滚动”仅在桌面端生效；移动端允许横向拖拽自救 */
+    @media (min-width: 1025px){
+      html, body { overflow-x: hidden !important; }
+    }
+
+    /* B. 关键容器的宽度与最小宽度护栏，防止被内部子项撑出屏幕 */
+    html, body { width: 100%; min-width: 0; }
+    .container, section, .carousel, .carousel .track, #compareHost {
+      width: 100%;
+      min-width: 0;           /* ← 网格/弹性容器最容易缺这个导致溢出 */
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* C. 移动端把版心与图/视频容器放宽到 100% 屏宽 */
+    @media (max-width: 1024px){
+      :root{
+        --maxW: 100%;
+        --figW: 100%;
+      }
+      .container{
+        max-width: 100% !important;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+      /* 轮播轨道不再额外撑宽页面 */
+      .carousel .track{
+        padding-left: 0;
+        padding-right: 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      /* 每个 slide 跟随屏宽 */
+      .slide{ flex-basis: 100% !important; max-width: 100% !important; }
+      /* 对比卡片占满可用宽度，避免 off-canvas */
+      .cmp{ max-width: 100% !important; width: 100% !important; }
+    }
+
+    /* D. 顶栏（移动端）避免产生 off-canvas 与遮罩副作用 */
+    @media (max-width: 768px){
+      .topnav .inner{
+        max-width: 100% !important;
+        width: 100%;
+        display: grid !important;
+        grid-template-columns: 1fr;
+        row-gap: 10px;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+      .topnav nav{
+        width: 100%;
+        min-width: 0;
+        justify-content: center;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: 0 4px;
+        margin: 0 auto;
+        /* 如怀疑遮罩导致渲染异常，可直接注释下一行 */
+        mask-image: none;
+      }
+      .topnav nav::-webkit-scrollbar{ display:none; }
+      .topnav a.logo{ justify-self: center; }
+    }
+
+    /* E. 任何绝对定位的装饰都不再把页面撑宽（sparks/knob等） */
+    .title-wrap{ overflow: hidden; }
+    .carousel .prev { left: 6px !important; }
+    .carousel .next { right: 6px !important; }
+
+    /* F. 保险：图片/视频永远不超过容器宽度 */
+    img, video{ max-width: 100%; height: auto; }
+
+
+
+  </style>
+</head>
+
+<body>
+  <!-- Sticky top nav -->
+  <div class="topnav">
+    <div class="inner">
+      <a class="logo" href="#top" aria-label="Go to top">
+        <img src="./logo.png" alt="FlashVSR logo">
+        <span>FlashVSR</span>
+      </a>
+      <nav>
+        <a class="chip" href="#abs">Abstract</a>
+        <a class="chip" href="#method">Method</a>
+        <a class="chip" href="#vsr120k">VSR-120K Dataset</a>
+        <a class="chip" href="#s1">Real</a>
+        <a class="chip" href="#s2">AIGC</a>
+        <a class="chip" href="#s3">Long Video</a>
+        <a class="chip" href="#s4">Comparisons</a>
+        <a class="chip" href="#s5">Ablations</a>
+        <a class="chip" href="#bib">BibTeX</a>
+      </nav>
+      <div class="top-actions"></div>
+    </div>
+  </div>
+
+  <div class="container" id="top">
+    <header class="hero">
+      <div class="title-wrap">
+        <div class="sparks" aria-hidden="true"></div>
+        <div class="title-row" role="img" aria-label="FLASHVSR">
+          <img src="./logo.png" class="logo" alt="FlashVSR logo">
+          <div class="title-text">FLASHVSR</div>
+        </div>
+        <div class="title-sub">Towards Real-Time Diffusion-Based Streaming Video Super-Resolution</div>
+      </div>
+
+      <div class="paper-meta">
+        <div class="authors" style="text-align:center">
+          <a href="https://zhuang2002.github.io/" target="_blank" rel="noopener noreferrer">Junhao Zhuang</a><sup>1, 2</sup> ·
+          <a href="https://guoshi28.github.io/" target="_blank" rel="noopener noreferrer">Shi Guo</a><sup>2</sup><sup>†</sup> ·
+          <a href="https://caixin98.github.io/" target="_blank" rel="noopener noreferrer">Xin Cai</a><sup>3</sup> ·
+          <a href="https://github.com/xh9998" target="_blank" rel="noopener noreferrer">Xiaohui Li</a><sup>4</sup> ·
+          <a href="https://lyh-18.github.io/" target="_blank" rel="noopener noreferrer">Yihao Liu</a><sup>2</sup> ·
+          <a href="https://scholar.google.com.hk/citations?user=fYdxi2sAAAAJ&hl=en" target="_blank" rel="noopener noreferrer">Chun Yuan</a><sup>1</sup><sup>†</sup> ·
+          <a href="https://tianfan.info/" target="_blank" rel="noopener noreferrer">Tianfan Xue</a><sup>3</sup>
+        </div>
+        <div class="affils" style="margin-top:6px;text-align:center">
+          <sup>1</sup>Tsinghua University · <sup>2</sup>Shanghai Artificial Intelligence Laboratory · 
+          <sup>3</sup>The Chinese University of Hong Kong · <sup>4</sup>Shanghai Jiao Tong University
+        </div>
+        <div class="note" style="margin-top:4px;text-align:center;opacity:.85">
+          † Corresponding author
+        </div>
+
+        <div class="cta-row" role="group" aria-label="resources">
+          <a class="cta" href="https://arxiv.org/abs/2510.12747" target="_blank" rel="noopener noreferrer" title="Paper on arXiv">📄 Paper</a>
+          <a class="cta" href="https://github.com/OpenImagingLab/FlashVSR" target="_blank" rel="noopener noreferrer" title="Source code on GitHub">🐙 Code</a>
+          <a class="cta" href="https://huggingface.co/JunhaoZhuang/FlashVSR" target="_blank" rel="noopener noreferrer" title="Models on Hugging Face">🤗 Model</a>
+          <a class="cta pending" href="javascript:void(0)" aria-disabled="true" title="Dataset — pending release">🗃️ Dataset (Pending release)</a>
+        </div>        
+        <div class="note tldr" style="margin-top:10px; text-align:center;">
+          <span style="opacity:.9;">TL;DR —</span>
+          <span style="opacity:.95;">
+            FlashVSR is a streaming, one-step diffusion-based video super-resolution framework with
+            block-sparse attention and a Tiny Conditional Decoder. It reaches ~17 FPS at 768×1408
+            on a single A100 GPU. A Locality-Constrained Attention design further improves generalization
+            and perceptual quality on ultra-high-resolution videos.
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Abstract -->
+    <section id="abs" aria-labelledby="abs-title">
+      <div class="section-title" id="abs-title"><span class="dot"></span> Abstract</div>
+      <div class="teaser">
+        <img src="./teaser.png" alt="Teaser figure for FlashVSR" class="scale-90" width="1600" height="900" loading="lazy" decoding="async">
+        <p class="note" style="max-width:1000px;margin:0 auto;text-align:left;">
+          Diffusion models have recently advanced video restoration, but applying them to real-world video super-resolution (VSR) remains challenging due to high latency, prohibitive computation, and poor generalization to ultra-high resolutions. Our goal in this work is to make diffusion-based VSR practical by achieving efficiency, scalability, and real-time performance. To this end, we propose <strong><span class="hl">FlashVSR</span></strong>, the first diffusion-based one-step streaming framework towards real-time VSR. FlashVSR runs at <span class="hl">∼17 FPS for 768 × 1408 videos on a single A100 GPU</span> by combining three complementary innovations: (i) a train-friendly three-stage distillation pipeline that enables streaming super-resolution, (ii) locality-constrained sparse attention that cuts redundant computation while bridging the train–test resolution gap, and (iii) a tiny conditional decoder that accelerates reconstruction without sacrificing quality. To support large-scale training, we also construct <strong><span class="hl">VSR-120K</span></strong>, a new dataset with 120k videos and 180k images. Extensive experiments show that <strong>FlashVSR</strong> scales reliably to ultra-high resolutions and achieves state-of-the-art performance with up to <strong><span class="hl">∼12× speedup</span></strong> over prior one-step diffusion VSR models. We will release code, models, and the dataset to foster future research in efficient diffusion-based VSR.
+        </p>
+      </div>
+    </section>
+
+    <!-- Method (brief) -->
+    <section id="method" aria-labelledby="method-title">
+      <div class="section-title" id="method-title"><span class="dot"></span> Method </div>
+      <p class="note" style="max-width:1000px;margin-left:auto;margin-right:auto;">
+        We distill a full-attention teacher into a sparse-causal, one-step student for streaming VSR. The model runs causally with
+        a KV cache and uses locality-constrained sparse attention to cut redundant computation and close the train–inference
+        resolution gap. A <strong>Tiny Conditional Decoder (TC Decoder)</strong> leverages LR frames + latents to reconstruct HR frames efficiently.
+      </p>
+      <div class="fig" aria-label="Method flowchart">
+        <img src="./flowchart.jpg" alt="Three-stage distillation to sparse-causal one-step VSR" class="scale-90" width="1600" height="900" loading="lazy" decoding="async">
+      </div>
+      <div class="fig-caption">Figure: Three-stage distillation → Sparse-causal one-step VSR with streaming inference.</div>
+
+      <div class="subsec" style="margin-top:22px">
+        <h4>Locality-Constrained Sparse Attention</h4>
+        <p class="note">
+          When models trained on medium-resolution data are applied to ultra-high-resolution inputs, they often exhibit repeated textures and blurring.
+          This degradation stems from the periodicity of positional encodings—for instance, in RoPE, when inference spans exceed the positional range encountered during training, the rotational angles wrap around periodically, causing aliasing and pattern repetition along specific spatial dimensions.
+          To mitigate this, we constrain each query to attend only within a local spatial window, ensuring that the positional range during inference remains consistent with that seen in training.
+          Building upon this locality constraint, we further adopt sparse attention that concentrates computation on the top-k most relevant regions rather than across the entire spatial dimensions, significantly improving computational efficiency and perceptual quality at high resolutions.
+        </p>
+        <div class="fig" aria-label="Local attention illustration">
+          <img src="./LocalAttn.jpg" alt="Local window mask with block selection" class="scale-90" width="1600" height="900" loading="lazy" decoding="async">
+        </div>
+        <div class="fig-caption">Figure: Local windows align positional ranges between training and inference to avoid artifacts.</div>
+      </div>
+      
+      <div class="subsec" style="margin-top:22px">
+        <h4>Tiny Conditional Decoder (TC Decoder)</h4>
+        <p class="note">
+          Compared with the original <strong>WanVAE</strong> decoder, the proposed <strong>Tiny Conditional (TC) Decoder</strong> takes not only the latent representations but also the corresponding low-resolution (LR) frames as additional conditioning inputs. 
+          By leveraging these LR signals, the TC Decoder effectively simplifies the high-resolution (HR) reconstruction process, achieving a <strong>7× acceleration in decoding speed</strong> while maintaining <strong>virtually indistinguishable visual quality</strong> from the original VAE decoder.
+        </p>
+        <div class="fig" aria-label="TC Decoder illustration">
+          <img src="./TCDecoder.jpg" alt="TC Decoder training and conditioning overview" class="scale-40" width="1400" height="900" loading="lazy" decoding="async">
+        </div>
+        <div class="fig-caption">Figure: Training pipeline of the TC Decoder.</div>        
+      </div>
+    </section>
+
+    <section id="vsr120k" aria-labelledby="vsr120k-title">
+      <div class="section-title" id="vsr120k-title"><span class="dot"></span> VSR-120K Dataset</div>
+      <p class="note" style="max-width:1000px;margin-left:auto;margin-right:auto;text-align:left;">
+        We construct <strong>VSR-120K</strong>, a large-scale dataset designed for high-quality video super-resolution training.
+        The dataset contains around <strong>120k</strong> video clips (average &gt;350 frames) and <strong>180k</strong> high-resolution images
+        collected from open platforms.
+        To ensure data quality, we filter all samples using <em>LAION-Aesthetic</em> and <em>MUSIQ</em> predictors for visual quality assessment,
+        and apply <em>RAFT</em> to remove segments with insufficient motion.
+        Only videos with resolutions higher than 1080p and adequate temporal dynamics are retained.
+        After multi-stage filtering, we obtain a clean, diverse corpus suitable for large-scale joint image–video super-resolution training.
+      </p>
+      <p class="note" style="max-width:1000px;margin:8px auto 0; text-align:left;">
+        <strong>Release note:</strong> We are currently organizing (curating) <strong>VSR-120K</strong> and will open-source the dataset in a future release.
+      </p>
+    </section>
+    
+    <!-- Real -->
+    <section aria-labelledby="s1">
+      <div class="section-title" id="s1"><span class="dot"></span> Real-World Videos Super-Resolution </div>
+      <p class="note">Drag the vertical bar: left = <strong>LR</strong>, right = <strong>Ours</strong>.</p>
+      <div class="carousel" data-carousel>
+        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+        <div class="track" id="gal-real"></div>
+        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+        <div class="dots" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- AIGC -->
+    <section aria-labelledby="s2">
+      <div class="section-title" id="s2"><span class="dot"></span> AIGC Videos Enhancement </div>
+      <div class="carousel" data-carousel>
+        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+        <div class="track" id="gal-aigc"></div>
+        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+        <div class="dots" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- Long -->
+    <section aria-labelledby="s3">
+      <div class="section-title" id="s3"><span class="dot"></span> Long Videos Super-Resolution </div>
+      <div class="carousel" data-carousel>
+        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+        <div class="track" id="gal-long"></div>
+        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+        <div class="dots" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- Comparisons -->
+    <section aria-labelledby="s4">
+      <div class="section-title" id="s4"><span class="dot"></span> Ours vs. Others </div>
+      <p class="note">Switch methods via tabs; each page shows Clips 001–004 (left: baseline, right: Ours).</p>
+
+      <div class="compare-switch" id="compareSwitch">
+        <button class="compare-tab" data-method="LR" type="button">vs. LR</button>
+        <button class="compare-tab" data-method="RealViformer" type="button">vs. RealViformer</button>
+        <button class="compare-tab" data-method="DOVE" type="button">vs. DOVE</button>
+        <button class="compare-tab" data-method="SeedVR2" type="button">vs. SeedVR2</button>
+      </div>
+      <div id="compareHost"></div>
+    </section>
+
+    <!-- Ablations (NO pagination) -->
+    <section aria-labelledby="s5">
+      <div class="section-title" id="s5"><span class="dot"></span> Ablations</div>
+      <p class="note">Two key ablations: (1) Global sparse attention vs. Local-constrained sparse attention; (2) Reconstruction Comparison: WanVAE Decoder vs. TC Decoder.</p>
+
+      <!-- Ablation 1: Global vs. Local -->
+      <div class="carousel" data-carousel>
+        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+        <div class="track" id="gal-ablation-attn"></div>
+        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+        <div class="dots" aria-hidden="true"></div>
+      </div>
+
+      <!-- Ablation 2: WanVAE decoder vs. TC Decoder -->
+      <div class="carousel" data-carousel style="margin-top:18px">
+        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+        <div class="track" id="gal-ablation-decoder"></div>
+        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+        <div class="dots" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- BibTeX -->
+    <section id="bib" aria-labelledby="s-bib">
+      <div class="section-title" id="s-bib"><span class="dot"></span> BibTeX</div>
+      <pre class="bib" aria-label="BibTeX entry"><code>@misc{zhuang2025flashvsrrealtimediffusionbasedstreaming,
+      title={FlashVSR: Towards Real-Time Diffusion-Based Streaming Video Super-Resolution}, 
+      author={Junhao Zhuang and Shi Guo and Xin Cai and Xiaohui Li and Yihao Liu and Chun Yuan and Tianfan Xue},
+      year={2025},
+      eprint={2510.12747},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2510.12747}, 
+}</code></pre>
+    </section>
+
+    <footer>
+      <div>
+        © 2025 FlashVSR Authors
+        <div class="footer-note">
+          The <span class="hl">source code</span> of this page is open for reuse.  
+          Please provide <span class="hl">proper attribution</span> and include a  
+          link to the <a href="https://zhuang2002.github.io/FlashVSR/" target="_blank" rel="noopener">FlashVSR project page</a> when using or adapting it.
+        </div>
+      </div>
+    </footer>    
+  </div>
+
+  <!-- Tooltip (reserved) -->
+  <div class="tip" id="tip" role="tooltip" style="display:none"></div>
+
+  <script>
+    /* ===== URL scale param ===== */
+    (function applyScaleFromQuery(){
+      const sp = new URLSearchParams(location.search).get('scale');
+      if(!sp) return;
+      const val = Math.max(0.6, Math.min(2.5, parseFloat(sp)));
+      if(!isNaN(val)) document.documentElement.style.setProperty('--scale', String(val));
+    })();
+
+    const $  = (s, r=document) => r.querySelector(s);
+    const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+    /* ===== sparks ===== */
+    (function mountSparks(){
+      const wrap = $('.title-wrap');
+      if(!wrap) return;
+      const sparksWrap = document.createElement('div');
+      sparksWrap.className='sparks';
+      wrap.prepend(sparksWrap);
+      for(let i=0;i<22;i++){
+        const s=document.createElement('div');
+        s.className='spark';
+        s.style.left=(Math.random()*80+5)+'%';
+        s.style.top=(Math.random()*80+5)+'%';
+        s.style.animationDelay=(Math.random()*6)+'s';
+        s.style.opacity=(Math.random()*0.5+0.35).toFixed(2);
+        sparksWrap.appendChild(s);
+      }
+    })();
+
+    /* ===== 状态 UI 构建 & 绑定 ===== */
+    function buildStatusInsidePill(pillEl, initialText='Loading…'){
+      const stat = document.createElement('span');
+      stat.className = 'vstat loading';
+      const spin = document.createElement('span'); spin.className='spinner';
+      const dot  = document.createElement('span'); dot.className='dot';
+      const txt  = document.createElement('em');  txt.textContent = initialText;
+      stat.appendChild(spin); stat.appendChild(dot); stat.appendChild(txt);
+
+      const retry = document.createElement('button');
+      retry.className = 'retry';
+      retry.type = 'button';
+      retry.textContent = '↻';
+
+      pillEl.appendChild(stat);
+      pillEl.appendChild(retry);
+
+      const setState = (state, text) => {
+        stat.classList.remove('loading','ready','error');
+        stat.classList.add(state);
+        if (text) txt.textContent = text;
+        spin.style.display = (state === 'loading') ? 'inline-block' : 'none';
+        retry.style.display = (state === 'error') ? 'inline-flex' : 'none';
+      };
+
+      return { stat, setState, retry };
+    }
+
+    function wireVideoStatus(videoEl, ui){
+      ui.setState('loading', 'Loading…');
+
+      const toReady   = () => ui.setState('ready', 'Ready');
+      const toPlaying = () => ui.setState('ready', 'Playing');
+      const toLoading = () => ui.setState('loading', 'Buffering…');
+      const toError   = () => ui.setState('error', 'Failed');
+
+      videoEl.addEventListener('loadstart',   () => ui.setState('loading', 'Loading…'));
+      videoEl.addEventListener('waiting',     toLoading);
+      videoEl.addEventListener('stalled',     toLoading);
+      videoEl.addEventListener('loadeddata',  toReady);
+      videoEl.addEventListener('canplay',     toReady);
+      videoEl.addEventListener('playing',     toPlaying);
+      videoEl.addEventListener('error',       toError);
+
+      ui.retry.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        ui.setState('loading', 'Reloading…');
+        const src = videoEl.currentSrc || videoEl.src;
+        videoEl.src = '';
+        setTimeout(()=>{ videoEl.src = src; videoEl.load(); videoEl.play().catch(()=>{}); }, 30);
+      });
+    }
+
+    // 判定是否交互元素（点击这些不触发拖拽）
+    const isInteractiveTarget = (el) => {
+      return !!el.closest('.labels, .pill, .retry, .compare-tab, .iconbtn, a, button, .dots');
+    };
+
+    /* ===== vertical split builder ===== */
+    function makeSplitCard({
+      leftSrc, rightSrc,
+      leftLabel='Other', rightLabel='Ours',
+      caption, cropBottomHFill=false,
+      badgeText=null
+    }){
+      const card = document.createElement('div');
+      card.className='slide';
+
+      const wrap = document.createElement('div');
+      wrap.className='cmp';
+      wrap.tabIndex = 0;
+
+      // base (RIGHT = Ours)
+      const base = document.createElement('video');
+      base.src = rightSrc;
+      base.autoplay = true; base.muted = true; base.loop = true; base.playsInline = true; base.preload = 'auto';
+      base.className='cmp-video';
+
+      // top (LEFT = baseline)
+      const top = document.createElement('div');
+      top.className='layer top';
+      top.style.setProperty('--split','50%');
+      const vTop = document.createElement('video');
+      vTop.src = leftSrc;
+      vTop.autoplay = true; vTop.muted = true; vTop.loop = true; vTop.playsInline = true; vTop.preload = 'auto';
+      vTop.className='cmp-video';
+      top.appendChild(vTop);
+
+      // labels
+      const labels = document.createElement('div');
+      labels.className='labels';
+      const leftP = document.createElement('span');
+      leftP.className='pill';
+      leftP.textContent = leftLabel;
+      const rightP = document.createElement('span');
+      rightP.className='pill';
+      rightP.textContent = rightLabel;
+      labels.appendChild(leftP);
+      labels.appendChild(rightP);
+
+      // 状态点/文字/重试 与视频绑定
+      const uiLeft  = buildStatusInsidePill(leftP,  'Loading…');
+      const uiRight = buildStatusInsidePill(rightP, 'Loading…');
+      wireVideoStatus(vTop,  uiLeft);
+      wireVideoStatus(base,  uiRight);
+
+      // optional badge
+      let badge = null;
+      if(badgeText){
+        badge = document.createElement('div');
+        badge.className = 'badge';
+        badge.textContent = badgeText;
+      }
+
+      // handle/knob
+      const handle = document.createElement('div');
+      handle.className='handle';
+      const knob = document.createElement('div');
+      knob.className='knob';
+      knob.innerHTML = `
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="#111" d="M9 6 3 12l6 6V6Zm6 0v12l6-6-6-6Z"/>
+        </svg>
+      `;
+
+      wrap.appendChild(base);
+      wrap.appendChild(top);
+      wrap.appendChild(handle);
+      wrap.appendChild(knob);
+      if(badge) wrap.appendChild(badge);
+      wrap.appendChild(labels);
+
+      if(cropBottomHFill){
+        wrap.classList.add('crop-bottom-hfill');
+      }
+
+      if(caption){
+        const cap=document.createElement('div');
+        cap.className='caption';
+        cap.textContent=caption;
+        card.appendChild(wrap);
+        card.appendChild(cap);
+      } else {
+        card.appendChild(wrap);
+      }
+
+      // === 拖拽行为（交互元素豁免 + 仅作用当前卡片） ===
+      const setSplit = (pct)=>{
+        pct = Math.max(0, Math.min(100, pct));
+        top.style.setProperty('--split', pct + '%');
+        // ✅ 只更新当前卡片的把手与旋钮
+        handle.style.left = pct + '%';
+        knob.style.left = pct + '%';
+      };
+      setSplit(50);
+
+      const move = (clientX)=>{
+        const rect = wrap.getBoundingClientRect();
+        const pct = (clientX - rect.left) / rect.width * 100;
+        setSplit(pct);
+      };
+
+      let active=false;
+      const start = (e)=>{
+        if(isInteractiveTarget(e.target)) return; // 点击交互元素不触发拖拽
+        active=true;
+        move(e.touches ? e.touches[0].clientX : e.clientX);
+        e.preventDefault();
+      };
+      const onMove = (e)=>{
+        if(!active) return;
+        move(e.touches ? e.touches[0].clientX : e.clientX);
+      };
+      const end = ()=> active=false;
+
+      // 全区域拖拽（已做交互元素豁免）
+      wrap.addEventListener('mousedown', start);
+      wrap.addEventListener('touchstart', start, {passive:false});
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('touchmove', onMove, {passive:false});
+      window.addEventListener('mouseup', end);
+      window.addEventListener('touchend', end);
+
+      // 也允许仅拖动把手/旋钮
+      knob.addEventListener('mousedown', start);
+      knob.addEventListener('touchstart', start, {passive:false});
+      handle.addEventListener('mousedown', start);
+      handle.addEventListener('touchstart', start, {passive:false});
+
+      // iOS autoplay nudge (muted inline autoplay requires a play() call sometimes)
+      const ensurePlay = (v)=> v.play().catch(()=>{ /* ignore */ });
+      ensurePlay(base); ensurePlay(vTop);
+
+      card._videos = [base, vTop];
+      return card;
+    }
+
+    /* datasets (non-compare) */
+    const DATASETS = {
+      real: [
+        { lq: './videos/real_LQ_001.mp4',  ours: './videos/real_ours_001.mp4',  caption: 'Real • Clip 1' },
+        { lq: './videos/real_LQ_005.mp4', ours: './videos/real_ours_005.mp4', caption: 'Real • Clip 2' },
+        { lq: './videos/real_LQ_003.mp4', ours: './videos/real_ours_003.mp4', caption: 'Real • Clip 3' },
+        { lq: './videos/real_LQ_002.mp4', ours: './videos/real_ours_002.mp4', caption: 'Real • Clip 4' },
+        { lq: './videos/real_LQ_004.mp4', ours: './videos/real_ours_004.mp4', caption: 'Real • Clip 5' },
+      ],
+      aigc: [
+        { lq: './videos/AIGC_LQ_001.mp4', ours: './videos/AIGC_ours_001.mp4', caption: 'AIGC • Clip 1' },
+        { lq: './videos/AIGC_LQ_002.mp4', ours: './videos/AIGC_ours_002.mp4', caption: 'AIGC • Clip 2' },
+        { lq: './videos/AIGC_LQ_003.mp4', ours: './videos/AIGC_ours_003.mp4', caption: 'AIGC • Clip 3' },
+        { lq: './videos/AIGC_LQ_004.mp4', ours: './videos/AIGC_ours_004.mp4', caption: 'AIGC • Clip 4' },
+        { lq: './videos/AIGC_LQ_005.mp4', ours: './videos/AIGC_ours_005.mp4', caption: 'AIGC • Clip 5' },
+      ],
+      long: [
+        { lq: './videos/long_LQ_001.mp4', ours: './videos/long_ours_001.mp4', caption: 'Long • Clip 1 (237 frames)' },
+        { lq: './videos/long_LQ_002.mp4', ours: './videos/long_ours_002.mp4', caption: 'Long • Clip 2 (301 frames)' },
+      ]
+    };
+
+    function mountCarouselSplit(rootId, list){
+      const root = document.getElementById(rootId);
+      if(!root) return;
+      const frag = document.createDocumentFragment();
+      list.forEach(({lq, ours, caption})=>{
+        frag.appendChild(
+          makeSplitCard({ leftSrc: lq, rightSrc: ours, leftLabel: 'LR', rightLabel: 'Ours', caption })
+        );
+      });
+      root.appendChild(frag);
+    }
+    mountCarouselSplit('gal-real', DATASETS.real);
+    mountCarouselSplit('gal-aigc', DATASETS.aigc);
+    mountCarouselSplit('gal-long', DATASETS.long);
+
+    /* Comparisons (pagination 001–004) */
+    const METHOD_TO_FILE = {
+      'LR': 'compare_LQ_',
+      'DOVE': 'compare_dove_',
+      'SeedVR2': 'compare_seedvr2_',
+      'RealViformer': 'compare_realviformer_',
+      'Ours': 'compare_ours_'
+    };
+    const vpath = (method, id) => `./videos/${METHOD_TO_FILE[method]}${id}.mp4`;
+
+    const compareHost = document.getElementById('compareHost');
+    const compareSwitch = document.getElementById('compareSwitch');
+    const IDS = ['001','002','003','004'];
+
+    function buildCarouselShell(){
+      const car = document.createElement('div');
+      car.className = 'carousel';
+      car.setAttribute('data-carousel','');
+      car.innerHTML = `
+        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+        <div class="track"></div>
+        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+        <div class="dots" aria-hidden="true"></div>
+      `;
+      return car;
+    }
+
+    function initCarousel(car){
+      const track = car.querySelector('.track');
+      const prev = car.querySelector('.prev');
+      const next = car.querySelector('.next');
+      const dotsC = car.querySelector('.dots');
+      const slides = Array.from(track.children);
+      if(slides.length === 0){
+        // still ensure padding to center when slides appended later
+        return;
+      }
+
+      function setEdgePadding(){
+        const first = slides[0];
+        if(!first) return;
+        const slideW = first.getBoundingClientRect().width;
+        const pad = Math.max(0, (track.clientWidth - slideW) / 2);
+        track.style.paddingLeft = pad + 'px';
+        track.style.paddingRight = pad + 'px';
+      }
+      function centerIndex(idx){
+        const i = Math.max(0, Math.min(idx, slides.length - 1));
+        const s = slides[i];
+        const left = s.offsetLeft - (track.clientWidth - s.clientWidth)/2;
+        track.scrollTo({ left, behavior: 'smooth' });
+      }
+      function currentIndex(){
+        const mid = track.scrollLeft + track.clientWidth/2;
+        let idx = 0, min = Infinity;
+        slides.forEach((s,i)=>{
+          const c = Math.abs((s.offsetLeft + s.clientWidth/2) - mid);
+          if(c < min){ min = c; idx = i; }
+        });
+        return idx;
+      }
+
+      dotsC.innerHTML = '';
+      slides.forEach((_,i)=>{
+        const d=document.createElement('button');
+        d.className='dot'+(i===0?' active':'');
+        d.setAttribute('aria-label','Go to slide '+(i+1));
+        d.type='button';
+        d.onclick=()=>centerIndex(i);
+        dotsC.appendChild(d);
+      });
+      const dots=[...dotsC.children];
+      const updateDots=()=>{
+        const idx = currentIndex();
+        dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
+      };
+      track.addEventListener('scroll', updateDots, {passive:true});
+
+      // vertical wheel -> horizontal scroll
+      track.addEventListener('wheel', (e)=>{
+        if(Math.abs(e.deltaX) < Math.abs(e.deltaY)){
+          track.scrollLeft += e.deltaY;
+          e.preventDefault();
+        }
+      }, {passive:false});
+
+      // drag-scroll
+      let isDown=false, startX=0, scrollL=0;
+      track.addEventListener('pointerdown', e=>{
+        isDown=true; startX=e.clientX; scrollL=track.scrollLeft; track.setPointerCapture(e.pointerId);
+      });
+      track.addEventListener('pointermove', e=>{
+        if(!isDown) return;
+        track.scrollLeft = scrollL - (e.clientX-startX);
+      });
+      const endDrag = ()=> isDown=false;
+      track.addEventListener('pointerup', endDrag);
+      track.addEventListener('pointercancel', endDrag);
+      track.addEventListener('pointerleave', endDrag);
+
+      prev.onclick = ()=> centerIndex(currentIndex() - 1);
+      next.onclick = ()=> centerIndex(currentIndex() + 1);
+
+      setEdgePadding();
+      new ResizeObserver(setEdgePadding).observe(track);
+      centerIndex(0);
+      updateDots();
+    }
+
+    function renderComparePage(method){
+      $$('.compare-tab', compareSwitch).forEach(b=> b.classList.toggle('active', b.dataset.method === method));
+      compareHost.innerHTML = '';
+      const car = buildCarouselShell();
+      const track = car.querySelector('.track');
+
+      IDS.forEach(id=>{
+        const leftSrc = vpath(method, id);
+        const rightSrc = vpath('Ours', id);
+        const caption = `Clips ${id} — ${method} vs. Ours`;
+        const card = makeSplitCard({
+          leftSrc, rightSrc,
+          leftLabel: method, rightLabel: 'Ours',
+          caption,
+          cropBottomHFill: id === '004'
+        });
+        track.appendChild(card);
+      });
+
+      compareHost.appendChild(car);
+      initCarousel(car);
+    }
+
+    compareSwitch.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.compare-tab');
+      if(!btn) return;
+      renderComparePage(btn.dataset.method);
+    });
+
+    // default comparisons page
+    renderComparePage('RealViformer');
+
+    /* Ablations (NO pagination) */
+    const ABL_ATTENTION = [
+      {
+        left: './videos/ablation_mask_global.mp4',
+        right: './videos/ablation_mask_local.mp4',
+        leftLabel: 'Global Sparse',
+        rightLabel: 'Local-Constrained Sparse (Ours)',
+        caption: 'Global vs. Local-Constrained Sparse Attention (2688×1536 High-Resolution Video Super-Resolution Result).',
+      },
+    ];
+
+    const ABL_DECODER = [
+      {
+        left: './videos/ablation_WanVAE.mp4',
+        right: './videos/ablation_TCDecoder.mp4',
+        leftLabel: 'WanVAE Decoder',
+        rightLabel: 'TC Decoder',
+        caption: 'WanVAE Decoder vs. TC Decoder — quality is nearly indistinguishable, while the TC Decoder is ~7× faster.',
+        badgeText: '~7× speedup'
+      },
+    ];
+
+    function mountAblationSplit(trackId, items) {
+      const track = document.getElementById(trackId);
+      if (!track) return;
+      const frag = document.createDocumentFragment();
+      items.forEach(({ left, right, leftLabel, rightLabel, caption, badgeText }) => {
+        frag.appendChild(
+          makeSplitCard({
+            leftSrc: left,
+            rightSrc: right,
+            leftLabel,
+            rightLabel,
+            caption,
+            badgeText
+          })
+        );
+      });
+      track.appendChild(frag);
+    }
+    mountAblationSplit('gal-ablation-attn', ABL_ATTENTION);
+    mountAblationSplit('gal-ablation-decoder', ABL_DECODER);
+
+    // init carousels already in DOM (non-compare)
+    document.querySelectorAll('[data-carousel]').forEach(initCarousel);
+
+    // iOS viewport bounce guard for video drag (prevents page scroll hijack)
+    document.addEventListener('gesturestart', e => e.preventDefault());
+  </script>
+</body>
+</html>
