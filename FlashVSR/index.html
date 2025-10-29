@@ -85,10 +85,6 @@
     .authors a { color: var(--text); text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,.2); }
     .authors a:hover { color: #fff; border-bottom-color: #fff; }
 
-    /* 仅“Ours vs. Others”区块使用 scale = 1.0 */
-    section[aria-labelledby="s4"] { --scale: 1 !important; }
-    #compareHost { --scale: 1 !important; }
-
     /* ===== Header ===== */
     header.hero{position:relative;display:grid;grid-template-columns:1fr;gap:12px;align-items:center}
     .title-wrap{position:relative;padding:6px 0 2px 0;background:none;border:none;box-shadow:none;overflow:visible}
@@ -221,21 +217,6 @@
       object-fit: contain; object-position: center bottom;
     }
 
-    /* Tabs (only for Comparisons) */
-    .compare-switch{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0}
-    .compare-tab{
-      padding:8px 14px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.18);
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      cursor:pointer;
-      font-weight:800;
-      color:#fff;
-      transition:color .2s, box-shadow .2s;
-    }
-    .compare-tab:hover{ box-shadow:var(--ring); color:#fff; }
-    .compare-tab.active{ box-shadow:var(--ring); color:#fff; }
-
     pre.bib{background:#0d0f17;color:#dbe1ff;padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,.08); overflow:auto}
     .cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
     .cta{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.18);font-weight:700}
@@ -301,13 +282,6 @@
       border:1px solid rgba(0,0,0,.12);
       color:#222;
     }
-    html[data-theme="light"] .compare-tab{
-      color:#111;
-      border:1px solid rgba(0,0,0,.12);
-      background:linear-gradient(180deg, rgba(0,0,0,.03), rgba(0,0,0,.01));
-    }
-    html[data-theme="light"] .compare-tab:hover,
-    html[data-theme="light"] .compare-tab.active{ box-shadow:var(--ring); color:#111; }
     html[data-theme="light"] .iconbtn.nav{ color:#111; border-color:rgba(0,0,0,.3); }
     html[data-theme="light"] .iconbtn.nav svg path{ fill:#111; }
     html[data-theme="light"] pre.bib{ background:#f6f7fb; color:#2b2f42; border:1px solid rgba(0,0,0,.08); }
@@ -429,7 +403,6 @@
       section > .teaser,
       section > .fig,
       section > .carousel,
-      #compareHost > .carousel,
       section > .subsec,
       section > pre.bib,
       footer{
@@ -443,7 +416,6 @@
         margin-right: auto;
       }
       .caption, .fig-caption, section .note, .cta-row{ text-align: center !important; }
-      .compare-switch{ justify-content: center !important; }
     }
 
     @media (max-width: 420px){
@@ -614,7 +586,7 @@
 
     /* B. 关键容器的宽度与最小宽度护栏，防止被内部子项撑出屏幕 */
     html, body { width: 100%; min-width: 0; }
-    .container, section, .carousel, .carousel .track, #compareHost {
+    .container, section, .carousel, .carousel .track {
       width: 100%;
       min-width: 0;           /* ← 网格/弹性容器最容易缺这个导致溢出 */
       margin-left: auto;
@@ -700,8 +672,8 @@
         <a class="chip" href="#s1">Real</a>
         <a class="chip" href="#s2">AIGC</a>
         <a class="chip" href="#s3">Long Video</a>
-        <a class="chip" href="#s4">Comparisons</a>
-        <a class="chip" href="#s5">Ablations</a>
+        <a class="chip" href="comparisons.html">Comparisons</a>
+        <a class="chip" href="ablations.html">Ablations</a>
         <a class="chip" href="#bib">BibTeX</a>
       </nav>
       <div class="top-actions"></div>
@@ -759,7 +731,7 @@
     <section id="abs" aria-labelledby="abs-title">
       <div class="section-title" id="abs-title"><span class="dot"></span> Abstract</div>
       <div class="teaser">
-        <img src="./teaser.jpg" alt="Teaser figure for FlashVSR" class="scale-90" width="1600" height="900" loading="lazy" decoding="async">
+        <img src="./teaser.png" alt="Teaser figure for FlashVSR" class="scale-90" width="1600" height="900" loading="lazy" decoding="async">
         <p class="note" style="max-width:1000px;margin:0 auto;text-align:left;">
           Diffusion models have recently advanced video restoration, but applying them to real-world video super-resolution (VSR) remains challenging due to high latency, prohibitive computation, and poor generalization to ultra-high resolutions. Our goal in this work is to make diffusion-based VSR practical by achieving efficiency, scalability, and real-time performance. To this end, we propose <strong><span class="hl">FlashVSR</span></strong>, the first diffusion-based one-step streaming framework towards real-time VSR. FlashVSR runs at <span class="hl">∼17 FPS for 768 × 1408 videos on a single A100 GPU</span> by combining three complementary innovations: (i) a train-friendly three-stage distillation pipeline that enables streaming super-resolution, (ii) locality-constrained sparse attention that cuts redundant computation while bridging the train–test resolution gap, and (iii) a tiny conditional decoder that accelerates reconstruction without sacrificing quality. To support large-scale training, we also construct <strong><span class="hl">VSR-120K</span></strong>, a new dataset with 120k videos and 180k images. Extensive experiments show that <strong>FlashVSR</strong> scales reliably to ultra-high resolutions and achieves state-of-the-art performance with up to <strong><span class="hl">∼12× speedup</span></strong> over prior one-step diffusion VSR models. We will release code, models, and the dataset to foster future research in efficient diffusion-based VSR.
         </p>
@@ -856,39 +828,17 @@
       </div>
     </section>
 
-    <!-- Comparisons -->
-    <section aria-labelledby="s4">
-      <div class="section-title" id="s4"><span class="dot"></span> Ours vs. Others </div>
-      <p class="note">Switch methods via tabs; each page shows Clips 001–004 (left: baseline, right: Ours).</p>
-
-      <div class="compare-switch" id="compareSwitch">
-        <button class="compare-tab" data-method="LR" type="button">vs. LR</button>
-        <button class="compare-tab" data-method="RealViformer" type="button">vs. RealViformer</button>
-        <button class="compare-tab" data-method="DOVE" type="button">vs. DOVE</button>
-        <button class="compare-tab" data-method="SeedVR2" type="button">vs. SeedVR2</button>
-      </div>
-      <div id="compareHost"></div>
-    </section>
-
-    <!-- Ablations (NO pagination) -->
-    <section aria-labelledby="s5">
-      <div class="section-title" id="s5"><span class="dot"></span> Ablations</div>
-      <p class="note">Two key ablations: (1) Global sparse attention vs. Local-constrained sparse attention; (2) Reconstruction Comparison: WanVAE Decoder vs. TC Decoder.</p>
-
-      <!-- Ablation 1: Global vs. Local -->
-      <div class="carousel" data-carousel>
-        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
-        <div class="track" id="gal-ablation-attn"></div>
-        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
-        <div class="dots" aria-hidden="true"></div>
-      </div>
-
-      <!-- Ablation 2: WanVAE decoder vs. TC Decoder -->
-      <div class="carousel" data-carousel style="margin-top:18px">
-        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
-        <div class="track" id="gal-ablation-decoder"></div>
-        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
-        <div class="dots" aria-hidden="true"></div>
+    <!-- Links to Comparisons & Ablations -->
+    <section style="text-align:center;padding:40px 0;">
+      <div class="section-title"><span class="dot"></span> Comparisons & Ablations</div>
+      <p class="note" style="margin-bottom:20px;">View detailed comparisons with other methods and ablation studies</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+        <a class="cta" href="comparisons.html" style="font-size:1.05rem;padding:12px 24px;">
+          🔍 View Comparisons →
+        </a>
+        <a class="cta" href="ablations.html" style="font-size:1.05rem;padding:12px 24px;">
+          🔬 View Ablations →
+        </a>
       </div>
     </section>
 
@@ -1186,33 +1136,7 @@
     mountCarouselSplit('gal-aigc', DATASETS.aigc);
     mountCarouselSplit('gal-long', DATASETS.long);
 
-    /* Comparisons (pagination 001–004) */
-    const METHOD_TO_FILE = {
-      'LR': 'compare_LQ_',
-      'DOVE': 'compare_dove_',
-      'SeedVR2': 'compare_seedvr2_',
-      'RealViformer': 'compare_realviformer_',
-      'Ours': 'compare_ours_'
-    };
-    const vpath = (method, id) => `./videos/${METHOD_TO_FILE[method]}${id}.mp4`;
-
-    const compareHost = document.getElementById('compareHost');
-    const compareSwitch = document.getElementById('compareSwitch');
-    const IDS = ['001','002','003','004'];
-
-    function buildCarouselShell(){
-      const car = document.createElement('div');
-      car.className = 'carousel';
-      car.setAttribute('data-carousel','');
-      car.innerHTML = `
-        <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
-        <div class="track"></div>
-        <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
-        <div class="dots" aria-hidden="true"></div>
-      `;
-      return car;
-    }
-
+    /* Carousel initialization */
     function initCarousel(car){
       const track = car.querySelector('.track');
       const prev = car.querySelector('.prev');
@@ -1220,7 +1144,6 @@
       const dotsC = car.querySelector('.dots');
       const slides = Array.from(track.children);
       if(slides.length === 0){
-        // still ensure padding to center when slides appended later
         return;
       }
 
@@ -1264,7 +1187,6 @@
       };
       track.addEventListener('scroll', updateDots, {passive:true});
 
-      // vertical wheel -> horizontal scroll
       track.addEventListener('wheel', (e)=>{
         if(Math.abs(e.deltaX) < Math.abs(e.deltaY)){
           track.scrollLeft += e.deltaY;
@@ -1272,7 +1194,6 @@
         }
       }, {passive:false});
 
-      // drag-scroll
       let isDown=false, startX=0, scrollL=0;
       track.addEventListener('pointerdown', e=>{
         isDown=true; startX=e.clientX; scrollL=track.scrollLeft; track.setPointerCapture(e.pointerId);
@@ -1295,82 +1216,7 @@
       updateDots();
     }
 
-    function renderComparePage(method){
-      $$('.compare-tab', compareSwitch).forEach(b=> b.classList.toggle('active', b.dataset.method === method));
-      compareHost.innerHTML = '';
-      const car = buildCarouselShell();
-      const track = car.querySelector('.track');
-
-      IDS.forEach(id=>{
-        const leftSrc = vpath(method, id);
-        const rightSrc = vpath('Ours', id);
-        const caption = `Clips ${id} — ${method} vs. Ours`;
-        const card = makeSplitCard({
-          leftSrc, rightSrc,
-          leftLabel: method, rightLabel: 'Ours',
-          caption,
-          cropBottomHFill: id === '004'
-        });
-        track.appendChild(card);
-      });
-
-      compareHost.appendChild(car);
-      initCarousel(car);
-    }
-
-    compareSwitch.addEventListener('click', (e)=>{
-      const btn = e.target.closest('.compare-tab');
-      if(!btn) return;
-      renderComparePage(btn.dataset.method);
-    });
-
-    // default comparisons page
-    renderComparePage('RealViformer');
-
-    /* Ablations (NO pagination) */
-    const ABL_ATTENTION = [
-      {
-        left: './videos/ablation_mask_global.mp4',
-        right: './videos/ablation_mask_local.mp4',
-        leftLabel: 'Global Sparse',
-        rightLabel: 'Local-Constrained Sparse (Ours)',
-        caption: 'Global vs. Local-Constrained Sparse Attention (2688×1536 High-Resolution Video Super-Resolution Result).',
-      },
-    ];
-
-    const ABL_DECODER = [
-      {
-        left: './videos/ablation_WanVAE.mp4',
-        right: './videos/ablation_TCDecoder.mp4',
-        leftLabel: 'WanVAE Decoder',
-        rightLabel: 'TC Decoder',
-        caption: 'WanVAE Decoder vs. TC Decoder — quality is nearly indistinguishable, while the TC Decoder is ~7× faster.',
-        badgeText: '~7× speedup'
-      },
-    ];
-
-    function mountAblationSplit(trackId, items) {
-      const track = document.getElementById(trackId);
-      if (!track) return;
-      const frag = document.createDocumentFragment();
-      items.forEach(({ left, right, leftLabel, rightLabel, caption, badgeText }) => {
-        frag.appendChild(
-          makeSplitCard({
-            leftSrc: left,
-            rightSrc: right,
-            leftLabel,
-            rightLabel,
-            caption,
-            badgeText
-          })
-        );
-      });
-      track.appendChild(frag);
-    }
-    mountAblationSplit('gal-ablation-attn', ABL_ATTENTION);
-    mountAblationSplit('gal-ablation-decoder', ABL_DECODER);
-
-    // init carousels already in DOM (non-compare)
+    // init carousels in DOM
     document.querySelectorAll('[data-carousel]').forEach(initCarousel);
 
     // iOS viewport bounce guard for video drag (prevents page scroll hijack)
