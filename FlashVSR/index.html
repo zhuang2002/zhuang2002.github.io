@@ -977,7 +977,7 @@
       // base (RIGHT = Ours)
       const base = document.createElement('video');
       base.src = rightSrc;
-      base.autoplay = true; base.muted = true; base.loop = true; base.playsInline = true; base.preload = 'auto';
+      base.autoplay = false; base.muted = true; base.loop = true; base.playsInline = true; base.preload = false; base.controls = false;
       base.className='cmp-video';
 
       // top (LEFT = baseline)
@@ -986,9 +986,42 @@
       top.style.setProperty('--split','50%');
       const vTop = document.createElement('video');
       vTop.src = leftSrc;
-      vTop.autoplay = true; vTop.muted = true; vTop.loop = true; vTop.playsInline = true; vTop.preload = 'auto';
+      vTop.autoplay = false; vTop.muted = true; vTop.loop = true; vTop.playsInline = true; vTop.preload = false; vTop.controls = true;
       vTop.className='cmp-video';
       top.appendChild(vTop);
+
+      vTop.addEventListener('play', () => {
+         base.play();
+      });
+
+      // When the master video pauses, tell the secondary video to pause.
+      vTop.addEventListener('pause', () => {
+          base.pause();
+      });
+
+      // 2. Link Seeking/Scrubbing (Jump to a new time)
+      // When the user drags the scrubber or seeks on the master video, 
+      // immediately set the secondary video's position to match.
+      vTop.addEventListener('seeking', () => {
+          base.currentTime = vTop.currentTime;
+      });
+      
+      // Also sync the current time on 'seeked' for better accuracy
+      vTop.addEventListener('seeked', () => {
+          base.currentTime = vTop.currentTime;
+      });
+
+      // 3. Keep the secondary video in sync after seeking
+      // When the master video is ready to play, check and sync the time one last time.
+      vTop.addEventListener('canplay', () => {
+          base.currentTime = vTop.currentTime;
+      });
+      vTop.addEventListener('timeupdate', () => {
+          // Only seek if the difference is noticeable (e.g., > 100ms)
+          if (Math.abs(vTop.currentTime - base.currentTime) > 0.1) {
+              base.currentTime = vTop.currentTime;
+          }
+      }); 
 
       // labels
       const labels = document.createElement('div');
@@ -1092,8 +1125,8 @@
       handle.addEventListener('touchstart', start, {passive:false});
 
       // iOS autoplay nudge (muted inline autoplay requires a play() call sometimes)
-      const ensurePlay = (v)=> v.play().catch(()=>{ /* ignore */ });
-      ensurePlay(base); ensurePlay(vTop);
+      // const ensurePlay = (v)=> v.play().catch(()=>{ /* ignore */ });
+      // ensurePlay(base); ensurePlay(vTop);
 
       card._videos = [base, vTop];
       return card;
@@ -1160,6 +1193,13 @@
         const s = slides[i];
         const left = s.offsetLeft - (track.clientWidth - s.clientWidth)/2;
         track.scrollTo({ left, behavior: 'smooth' });
+        // Stop all videos when center a video
+        slides.forEach(slide => {
+          const videos = slide.querySelectorAll('video');
+          videos.forEach(video => {
+            video.pause();
+          });
+        });        
       }
       function currentIndex(){
         const mid = track.scrollLeft + track.clientWidth/2;
@@ -1167,7 +1207,7 @@
         slides.forEach((s,i)=>{
           const c = Math.abs((s.offsetLeft + s.clientWidth/2) - mid);
           if(c < min){ min = c; idx = i; }
-        });
+        });        
         return idx;
       }
 
