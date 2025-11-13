@@ -57,6 +57,12 @@ My research interests lie in *Computer Vision*, particularly in *image and video
     <a href="https://zhuang2002.github.io/FlashVSR/">[Project Page]</a>
     <a href="https://github.com/OpenImagingLab/FlashVSR">[Code]</a>
     <br>
+    <a href="https://github.com/OpenImagingLab/FlashVSR">
+      <img src="https://img.shields.io/github/stars/OpenImagingLab/FlashVSR?style=social" />
+    </a>
+    <a href="https://github.com/OpenImagingLab/FlashVSR/forks">
+      <img src="https://img.shields.io/github/forks/OpenImagingLab/FlashVSR?style=social" />
+    </a>
     <p> FlashVSR is a streaming, one-step diffusion-based video super-resolution framework with block-sparse attention and a Tiny Conditional Decoder. It reaches ~17 FPS at 768×1408 on a single A100 GPU. A Locality-Constrained Attention design further improves generalization and perceptual quality on ultra-high-resolution videos.</p>
   </td>
 </tr>	
@@ -77,6 +83,12 @@ My research interests lie in *Computer Vision*, particularly in *image and video
     <a href="https://zhuang2002.github.io/Cobra/">[Project Page]</a>
     <a href="https://github.com/Zhuang2002/Cobra">[Code]</a>
     <br>
+    <a href="https://github.com/Zhuang2002/Cobra">
+      <img src="https://img.shields.io/github/stars/Zhuang2002/Cobra?style=social" />
+    </a>
+    <a href="https://github.com/Zhuang2002/Cobra/forks">
+      <img src="https://img.shields.io/github/forks/Zhuang2002/Cobra?style=social" />
+    </a>
     <p> Cobra is a novel efficient long-context fine-grained ID preservation framework for line art colorization, achieving high precision, efficiency, and flexible usability for comic colorization. By effectively integrating extensive contextual references, it transforms black-and-white line art into vibrant illustrations.</p>
   </td>
 </tr>	
@@ -97,6 +109,12 @@ My research interests lie in *Computer Vision*, particularly in *image and video
     <a href="https://shiyi-zh0408.github.io/projectpages/FlexiAct/">[Project Page]</a>
     <a href="https://github.com/shiyi-zh0408/FlexiAct">[Code]</a>
     <br>
+    <a href="https://github.com/shiyi-zh0408/FlexiAct">
+      <img src="https://img.shields.io/github/stars/shiyi-zh0408/FlexiAct?style=social" />
+    </a>
+    <a href="https://github.com/shiyi-zh0408/FlexiAct/forks">
+      <img src="https://img.shields.io/github/forks/shiyi-zh0408/FlexiAct?style=social" />
+    </a>
     <p> We achieve action transfer in heterogeneous scenarios with varying spatial structures or cross-domain subjects.</p>
   </td>
 </tr>	
@@ -117,6 +135,12 @@ My research interests lie in *Computer Vision*, particularly in *image and video
     <a href="https://powerpaint.github.io/">[Project Page]</a> 
     <a href="https://github.com/open-mmlab/PowerPaint">[Code]</a>
     <br>
+    <a href="https://github.com/open-mmlab/PowerPaint">
+      <img src="https://img.shields.io/github/stars/open-mmlab/PowerPaint?style=social" />
+    </a>
+    <a href="https://github.com/open-mmlab/PowerPaint/forks">
+      <img src="https://img.shields.io/github/forks/open-mmlab/PowerPaint?style=social" />
+    </a>
     <p> PowerPaint is the first versatile image inpainting model that simultaneously achieves state-of-the-art results in various inpainting tasks such as text-guided object inpainting, context-aware image inpainting, shape-guided object inpainting with controllable shape-fitting, and outpainting.</p>
   </td>
 </tr>	
@@ -175,6 +199,12 @@ My research interests lie in *Computer Vision*, particularly in *image and video
     <a href="https://zhuang2002.github.io/ColorFlow/">[Project Page]</a> 
     <a href="https://github.com/TencentARC/ColorFlow">[Code]</a>
     <br>
+    <a href="https://github.com/TencentARC/ColorFlow">
+      <img src="https://img.shields.io/github/stars/TencentARC/ColorFlow?style=social" />
+    </a>
+    <a href="https://github.com/TencentARC/ColorFlow/forks">
+      <img src="https://img.shields.io/github/forks/TencentARC/ColorFlow?style=social" />
+    </a>
     <p> ColorFlow is the first model designed for fine-grained ID preservation in image sequence colorization, utilizing contextual information. Given a reference image pool, ColorFlow accurately generates colors for various elements in black and white image sequences, including the hair color and attire of characters, ensuring color consistency with the reference images.  </p>
   </td>
 </tr>	
