@@ -83,6 +83,12 @@ My research interests lie in *Computer Vision*, particularly in *image and video
     <a href="https://zhuang2002.github.io/Cobra/">[Project Page]</a>
     <a href="https://github.com/Zhuang2002/Cobra">[Code]</a>
     <br>
+    <a href="https://github.com/Zhuang2002/Cobra">
+      <img src="https://img.shields.io/github/stars/Zhuang2002/Cobra?style=social" />
+    </a>
+    <a href="https://github.com/Zhuang2002/Cobra/forks">
+      <img src="https://img.shields.io/github/forks/Zhuang2002/Cobra?style=social" />
+    </a>
     <p> Cobra is a novel efficient long-context fine-grained ID preservation framework for line art colorization, achieving high precision, efficiency, and flexible usability for comic colorization. By effectively integrating extensive contextual references, it transforms black-and-white line art into vibrant illustrations.</p>
   </td>
 </tr>	
@@ -103,6 +109,12 @@ My research interests lie in *Computer Vision*, particularly in *image and video
     <a href="https://shiyi-zh0408.github.io/projectpages/FlexiAct/">[Project Page]</a>
     <a href="https://github.com/shiyi-zh0408/FlexiAct">[Code]</a>
     <br>
+    <a href="https://github.com/shiyi-zh0408/FlexiAct">
+      <img src="https://img.shields.io/github/stars/shiyi-zh0408/FlexiAct?style=social" />
+    </a>
+    <a href="https://github.com/shiyi-zh0408/FlexiAct/forks">
+      <img src="https://img.shields.io/github/forks/shiyi-zh0408/FlexiAct?style=social" />
+    </a>
     <p> We achieve action transfer in heterogeneous scenarios with varying spatial structures or cross-domain subjects.</p>
   </td>
 </tr>	
