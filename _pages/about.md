@@ -41,6 +41,33 @@ My research interests lie in *Computer Vision*, particularly in *image and video
 \* indicates equal contribution
 <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>	
 
+
+<!--FlashVSR-->
+<tr>
+  <td style="padding:20px;width:30%;max-width:30%" align="center">
+    <img style="width:100%;max-width:100%" src="https://zhuang2002.github.io/FlashVSR/flowchart.jpg" alt="dise">
+  </td>
+  <td width="75%" valign="center">
+    <papertitle>FlashVSR: Towards Real-Time Diffusion-Based Streaming Video Super-Resolution</papertitle>
+    <br>
+    <b>Junhao Zhuang</b>, Shi Guo, Xin Cai, Xiaohui Li, Yihao Liu, Chun Yuan and Tianfan Xue
+    <br>
+    <em>arXiv preprint arXiv:2510.12747 2025</em>
+    <br>
+    <a href="https://arxiv.org/abs/2510.12747">[PDF]</a> 
+    <a href="https://zhuang2002.github.io/FlashVSR/">[Project Page]</a>
+    <a href="https://github.com/OpenImagingLab/FlashVSR">[Code]</a>
+    <br>
+    <a href="https://github.com/OpenImagingLab/FlashVSR">
+      <img src="https://img.shields.io/github/stars/OpenImagingLab/FlashVSR?style=social" />
+    </a>
+    <a href="https://github.com/OpenImagingLab/FlashVSR/forks">
+      <img src="https://img.shields.io/github/forks/OpenImagingLab/FlashVSR?style=social" />
+    </a>
+    <p> FlashVSR is a streaming, one-step diffusion-based video super-resolution framework with block-sparse attention and a Tiny Conditional Decoder. It reaches ~17 FPS at 768×1408 on a single A100 GPU. A Locality-Constrained Attention design further improves generalization and perceptual quality on ultra-high-resolution videos.</p>
+  </td>
+</tr>	
+
 <!--Cobra-->
 <tr>
   <td style="padding:20px;width:30%;max-width:30%" align="center">
@@ -180,32 +207,6 @@ My research interests lie in *Computer Vision*, particularly in *image and video
       <img src="https://img.shields.io/github/forks/TencentARC/ColorFlow?style=social" />
     </a>
     <p> ColorFlow is the first model designed for fine-grained ID preservation in image sequence colorization, utilizing contextual information. Given a reference image pool, ColorFlow accurately generates colors for various elements in black and white image sequences, including the hair color and attire of characters, ensuring color consistency with the reference images.  </p>
-  </td>
-</tr>	
-
-<!--FlashVSR-->
-<tr>
-  <td style="padding:20px;width:30%;max-width:30%" align="center">
-    <img style="width:100%;max-width:100%" src="https://zhuang2002.github.io/FlashVSR/flowchart.jpg" alt="dise">
-  </td>
-  <td width="75%" valign="center">
-    <papertitle>FlashVSR: Towards Real-Time Diffusion-Based Streaming Video Super-Resolution</papertitle>
-    <br>
-    <b>Junhao Zhuang</b>, Shi Guo, Xin Cai, Xiaohui Li, Yihao Liu, Chun Yuan and Tianfan Xue
-    <br>
-    <em>arXiv preprint arXiv:2510.12747 2025</em>
-    <br>
-    <a href="https://arxiv.org/abs/2510.12747">[PDF]</a> 
-    <a href="https://zhuang2002.github.io/FlashVSR/">[Project Page]</a>
-    <a href="https://github.com/OpenImagingLab/FlashVSR">[Code]</a>
-    <br>
-    <a href="https://github.com/OpenImagingLab/FlashVSR">
-      <img src="https://img.shields.io/github/stars/OpenImagingLab/FlashVSR?style=social" />
-    </a>
-    <a href="https://github.com/OpenImagingLab/FlashVSR/forks">
-      <img src="https://img.shields.io/github/forks/OpenImagingLab/FlashVSR?style=social" />
-    </a>
-    <p> FlashVSR is a streaming, one-step diffusion-based video super-resolution framework with block-sparse attention and a Tiny Conditional Decoder. It reaches ~17 FPS at 768×1408 on a single A100 GPU. A Locality-Constrained Attention design further improves generalization and perceptual quality on ultra-high-resolution videos.</p>
   </td>
 </tr>	
 
