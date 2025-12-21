@@ -236,6 +236,11 @@ My research interests lie in *Computer Vision*, particularly in *image and video
 
 # 💼 Experience
 
+**Kuaishou / KlingAI** — *Research Intern*  
+Sep 2025 – Present  
+Supervised by [Yunyao Mao](http://home.ustc.edu.cn/~myy2016/), [Xintao Wang](https://xinntao.github.io/)  
+Topics: Video Generation
+
 **Shanghai Artificial Intelligence Laboratory** — *Research Intern*  
 May 2025 – Sep 2025  
 Supervised by [Shi Guo](https://guoshi28.github.io/), [Tianfan Xue](https://tianfan.info/)  
