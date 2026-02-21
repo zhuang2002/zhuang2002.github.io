@@ -29,6 +29,7 @@ My research interests lie in *Computer Vision*, particularly in *image and video
 ---
 # ✨ News
 ---
+* <span style="font-size: smaller;">2026-02: One paper is accepted to [CVPR 2025](https://cvpr.thecvf.com/)</span>
 * <span style="font-size: smaller;">2025-09: One paper is accepted to [NeurIPS 2025](https://neurips.cc/)</span>
 * <span style="font-size: smaller;">2025-04: Two papers are accepted to [SIGGRAPH 2025](https://www.siggraph.org/siggraph-events/conferences/)</span>
 * <span style="font-size: smaller;">2024-12: One paper is accepted to [ICASSP 2025](https://2025.ieeeicassp.org/important-dates/)</span>
