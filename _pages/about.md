@@ -52,7 +52,7 @@ My research interests lie in *Computer Vision*, particularly in *image and video
     <br>
     <b>Junhao Zhuang</b>, Shi Guo, Xin Cai, Xiaohui Li, Yihao Liu, Chun Yuan and Tianfan Xue
     <br>
-    <em>arXiv preprint arXiv:2510.12747 2025</em>
+    <em>Proceedings of IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2026</em>
     <br>
     <a href="https://arxiv.org/abs/2510.12747">[PDF]</a> 
     <a href="https://zhuang2002.github.io/FlashVSR/">[Project Page]</a>
