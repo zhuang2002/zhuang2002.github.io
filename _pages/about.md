@@ -245,7 +245,7 @@ My research interests lie in *Computer Vision*, particularly in *image and video
     <em>IEEE Transactions on Pattern Analysis and Machine Intelligence (<strong>TPAMI</strong>), 2025</em>
     <br>
     <a href="https://arxiv.org/abs/2412.10316">[PDF]</a> 
-    <a href="https://liyaowei-stu.github.io/project/brushedit">[Project Page]</a>
+    <a href="https://liyaowei-stu.github.io/project/BrushEdit/">[Project Page]</a>
     <a href="https://github.com/TencentARC/BrushEdit">[Code]</a>
     <br>
     <a href="https://github.com/TencentARC/BrushEdit">
