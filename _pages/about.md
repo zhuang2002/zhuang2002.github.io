@@ -232,6 +232,32 @@ My research interests lie in *Computer Vision*, particularly in *image and video
   </td>
 </tr>	
 
+<!--BrushEdit-->
+<tr>
+  <td style="padding:20px;width:30%;max-width:30%" align="center">
+    <img style="width:100%;max-width:100%" src="../images/BrushEdit.jpg" alt="BrushEdit">
+  </td>
+  <td width="75%" valign="center">
+    <papertitle>BrushEdit: All-In-One Image Inpainting and Editing</papertitle>
+    <br>
+    Yaowei Li, Yuxuan Bian, Xuan Ju, Zhaoyang Zhang, <b>Junhao Zhuang</b>, Ying Shan, Yuexian Zou, Qiang Xu
+    <br>
+    <em>IEEE Transactions on Pattern Analysis and Machine Intelligence (<strong>TPAMI</strong>), 2025</em>
+    <br>
+    <a href="https://arxiv.org/abs/2412.10316">[PDF]</a> 
+    <a href="https://liyaowei-stu.github.io/project/brushedit">[Project Page]</a>
+    <a href="https://github.com/TencentARC/BrushEdit">[Code]</a>
+    <br>
+    <a href="https://github.com/TencentARC/BrushEdit">
+      <img src="https://img.shields.io/github/stars/TencentARC/BrushEdit?style=social" />
+    </a>
+    <a href="https://github.com/TencentARC/BrushEdit/forks">
+      <img src="https://img.shields.io/github/forks/TencentARC/BrushEdit?style=social" />
+    </a>
+    <p>BrushEdit is an all-in-one image inpainting and editing framework that combines multimodal large language models (MLLMs) with the enhanced dual-branch diffusion inpainting model BrushNetX. It supports free-form instruction-guided interactive editing, achieves superior performance in background preservation and text alignment, and provides a user-friendly multi-round editing experience.</p>
+  </td>
+</tr>
+
 </tbody></table>
 
 ---
