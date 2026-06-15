@@ -44,7 +44,34 @@ My research interests lie in *Computer Vision*, particularly in *image and video
 \* indicates equal contribution
 <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>	
 
-<!--FlashVSR-->
+
+<!--shotstream-->
+<tr>
+  <td style="padding:20px;width:30%;max-width:30%" align="center">
+    <img style="width:100%;max-width:100%" src="../images/shotstream_logo.png" alt="dise">
+  </td>
+  <td width="75%" valign="center">
+    <papertitle>ShotStream: Streaming Multi-Shot Video Generation for Interactive Storytelling</papertitle>
+    <br>
+    Yawen Luo, Xiaoyu Shi, <b>Junhao Zhuang</b>, Yutian Chen, Quande Liu, Xintao Wang, Pengfei Wan, Tianfan Xue
+    <br>
+    <em>Technical Report</em>
+    <br>
+    <a href="https://arxiv.org/pdf/2603.25746">[PDF]</a> 
+    <a href="https://luo0207.github.io/ShotStream/">[Project Page]</a>
+    <a href="https://github.com/KlingAIResearch/ShotStream">[Code]</a>
+    <br>
+    <a href="https://github.com/KlingAIResearch/ShotStream">
+      <img src="https://img.shields.io/github/stars/KlingAIResearch/ShotStream?style=social" />
+    </a>
+    <a href="https://github.com/KlingAIResearch/ShotStream/forks">
+      <img src="https://img.shields.io/github/forks/KlingAIResearch/ShotStream?style=social" />
+    </a>
+    <p> ShotStream is a novel causal multi-shot architecture that enables interactive storytelling and efficient on-the-fly frame generation, achieving 16 FPS on a single NVIDIA GPU.</p>
+  </td>
+</tr>	
+
+<!--Joyai Echo-->
 <tr>
   <td style="padding:20px;width:30%;max-width:30%" align="center">
     <img style="width:100%;max-width:100%" src="../images/joyai_echo.png" alt="dise">
@@ -58,7 +85,7 @@ My research interests lie in *Computer Vision*, particularly in *image and video
     <br>
     <a href="https://www.researchgate.net/publication/405770309_JoyAI-Echo_Pushing_the_Frontier_of_Long_Audio-Visual_Generation">[PDF]</a> 
     <a href="https://echo-team-joy-future-academy-jd.github.io/Echo-LongVideo-Page/">[Project Page]</a>
-    <a href="https://github.com/jd-opensource/JoyAI-Echo#citation">[Code]</a>
+    <a href="https://github.com/jd-opensource/JoyAI-Echo">[Code]</a>
     <br>
     <a href="https://github.com/jd-opensource/JoyAI-Echo">
       <img src="https://img.shields.io/github/stars/jd-opensource/JoyAI-Echo?style=social" />
@@ -66,7 +93,7 @@ My research interests lie in *Computer Vision*, particularly in *image and video
     <a href="https://github.com/jd-opensource/JoyAI-Echo/forks">
       <img src="https://img.shields.io/github/forks/jd-opensource/JoyAI-Echo?style=social" />
     </a>
-    <p> JoyAI-Echo is an interactive long video generation framework with boosted speed, stable audio-visual consistency and real-time editing, outperforming baseline models; code and weights will be open-sourced.</p>
+    <p> JoyAI-Echo is an interactive long video generation framework with boosted speed, stable audio-visual consistency and real-time editing, outperforming baseline models.</p>
   </td>
 </tr>	
 
