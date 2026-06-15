@@ -44,6 +44,31 @@ My research interests lie in *Computer Vision*, particularly in *image and video
 \* indicates equal contribution
 <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>	
 
+<!--FlashVSR-->
+<tr>
+  <td style="padding:20px;width:30%;max-width:30%" align="center">
+    <img style="width:100%;max-width:100%" src="../images/joyai_echo.jpg" alt="dise">
+  </td>
+  <td width="75%" valign="center">
+    <papertitle>JoyAI-Echo: Pushing the Frontier of Long Audio-Visual Generation</papertitle>
+    <br>
+    Echo Team
+    <br>
+    <em>Technical Report</em>
+    <br>
+    <a href="https://www.researchgate.net/publication/405770309_JoyAI-Echo_Pushing_the_Frontier_of_Long_Audio-Visual_Generation">[PDF]</a> 
+    <a href="https://echo-team-joy-future-academy-jd.github.io/Echo-LongVideo-Page/">[Project Page]</a>
+    <a href="https://github.com/jd-opensource/JoyAI-Echo#citation">[Code]</a>
+    <br>
+    <a href="https://github.com/jd-opensource/JoyAI-Echo">
+      <img src="https://img.shields.io/github/stars/jd-opensource/JoyAI-Echo?style=social" />
+    </a>
+    <a href="https://github.com/jd-opensource/JoyAI-Echo/forks">
+      <img src="https://img.shields.io/github/forks/jd-opensource/JoyAI-Echo?style=social" />
+    </a>
+    <p> JoyAI-Echo is an interactive long video generation framework with boosted speed, stable audio-visual consistency and real-time editing, outperforming baseline models; code and weights will be open-sourced.</p>
+  </td>
+</tr>	
 
 <!--FlashVSR-->
 <tr>
