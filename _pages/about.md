@@ -82,7 +82,7 @@ My research interests lie in *Computer Vision*, particularly in *image and video
     <br>
     Yawen Luo, Xiaoyu Shi, <b>Junhao Zhuang</b>, Yutian Chen, Quande Liu, Xintao Wang, Pengfei Wan, Tianfan Xue
     <br>
-    <em>Technical Report</em>
+    <em>Under Review, 2026</em>
     <br>
     <a href="https://arxiv.org/pdf/2603.25746">[PDF]</a> 
     <a href="https://luo0207.github.io/ShotStream/">[Project Page]</a>
