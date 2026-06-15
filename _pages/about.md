@@ -47,7 +47,7 @@ My research interests lie in *Computer Vision*, particularly in *image and video
 <!--FlashVSR-->
 <tr>
   <td style="padding:20px;width:30%;max-width:30%" align="center">
-    <img style="width:100%;max-width:100%" src="../images/joyai_echo.jpg" alt="dise">
+    <img style="width:100%;max-width:100%" src="../images/joyai_echo.png" alt="dise">
   </td>
   <td width="75%" valign="center">
     <papertitle>JoyAI-Echo: Pushing the Frontier of Long Audio-Visual Generation</papertitle>
