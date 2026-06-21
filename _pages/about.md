@@ -29,6 +29,7 @@ My research interests lie in *Computer Vision*, particularly in *image and video
 ---
 # ✨ News
 ---
+* <span style="font-size: smaller;">2026-05: One paper is accepted to [ECCV 2026](https://eccv.ecva.net/)</span>
 * <span style="font-size: smaller;">2026-05: One paper is accepted to [ICML 2026](https://icml.cc/)</span>
 * <span style="font-size: smaller;">2026-05: One paper is accepted to [IEEE TPAMI](https://www.computer.org/csdl/journal/tp)</span>
 * <span style="font-size: smaller;">2026-02: One paper is accepted to [CVPR 2026](https://cvpr.thecvf.com/)</span>
@@ -82,7 +83,7 @@ My research interests lie in *Computer Vision*, particularly in *image and video
     <br>
     Yawen Luo, Xiaoyu Shi, <b>Junhao Zhuang</b>, Yutian Chen, Quande Liu, Xintao Wang, Pengfei Wan, Tianfan Xue
     <br>
-    <em>Under Review, 2026</em>
+    <em>European Conference on Computer Vision (<strong>ECCV</strong>)</em>, 2026
     <br>
     <a href="https://arxiv.org/pdf/2603.25746">[PDF]</a> 
     <a href="https://luo0207.github.io/ShotStream/">[Project Page]</a>
