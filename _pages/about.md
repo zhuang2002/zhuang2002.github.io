@@ -319,11 +319,11 @@ My research interests lie in *Computer Vision*, particularly in *image and video
 ---
 
 # 🏆 Honors & Awards
-
-* <span style="font-size: smaller;">Outstanding Graduate, Tsinghua University</span>
-* <span style="font-size: smaller;">Outstanding Master's Thesis, Tsinghua University</span>
+---
+* <span style="font-size: smaller;">Excellent Graduate, Tsinghua University</span>
+* <span style="font-size: smaller;">Outstanding Master's Degree Thesis, Tsinghua University</span>
 * <span style="font-size: smaller;">Comprehensive Excellence Scholarship, Tsinghua University (2024, 2025)</span>
-* <span style="font-size: smaller;">Outstanding Bachelor's Thesis, University of Electronic Science and Technology of China</span>
+* <span style="font-size: smaller;">Outstanding Bachelor's Degree Thesis, University of Electronic Science and Technology of China</span>
 * <span style="font-size: smaller;">Outstanding Student Scholarship, University of Electronic Science and Technology of China (2020, 2021, 2022)</span>
 
 ---
@@ -356,6 +356,11 @@ Topics: Image Inpainting · Diffusion
 # 🌎 Visitor Map
 <div style="display: flex; justify-content: center; margin: 20px 0;">
   <div style="width: 100px; height: 100px;">
-    <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=YcEGNdlapjfGw9-NBcj1CQW4sNbZoUSTRXAL3tOqhSM"></script>
+    <script type="text/javascript" id="clstr_globe" src="https://clustrmaps.com/globe.js?d=YcEGNdlapjfGw9-NBcj1CQW4sNbZoUSTRXAL3tOqhSM"></script>
+    <noscript>
+      <a href="https://clustrmaps.com/site/1c6c9" title="Visit tracker">
+        <img src="https://www.clustrmaps.com/map_v2.png?d=YcEGNdlapjfGw9-NBcj1CQW4sNbZoUSTRXAL3tOqhSM&cl=ffffff" alt="Visitor Map" style="width:100%;border:0;" />
+      </a>
+    </noscript>
   </div>
 </div>
