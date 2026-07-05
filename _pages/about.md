@@ -317,6 +317,15 @@ My research interests lie in *Computer Vision*, particularly in *image and video
 </tbody></table>
 
 ---
+# 🏆 Honors & Awards
+---
+* <span style="font-size: smaller;">Outstanding Graduate, Tsinghua University</span>
+* <span style="font-size: smaller;">Outstanding Master's Thesis, Tsinghua University</span>
+* <span style="font-size: smaller;">Comprehensive Excellence Scholarship, Tsinghua University (2024, 2025)</span>
+* <span style="font-size: smaller;">Outstanding Bachelor's Thesis, University of Electronic Science and Technology of China</span>
+* <span style="font-size: smaller;">Outstanding Student Scholarship, University of Electronic Science and Technology of China (2020, 2021, 2022)</span>
+
+---
 
 # 💼 Experience
 
