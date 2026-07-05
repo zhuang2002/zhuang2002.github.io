@@ -354,7 +354,7 @@ Topics: Image Inpainting · Diffusion
 
 # 🌎 Visitor Map
 <div style="display: flex; justify-content: center; margin: 20px 0;">
-  <div style="width: 100px; height: 100px;">
-    <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=YcEGNdlapjfGw9-NBcj1CQW4sNbZoUSTRXAL3tOqhSM"></script>
-  </div>
+  <a href="https://clustrmaps.com/site/1c6c9" title="Visit tracker">
+    <img src="https://www.clustrmaps.com/map_v2.png?d=YcEGNdlapjfGw9-NBcj1CQW4sNbZoUSTRXAL3tOqhSM&cl=ffffff" style="width: 100%; max-width: 260px; border: 0;" alt="Visitor Map" />
+  </a>
 </div>
