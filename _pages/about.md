@@ -29,6 +29,7 @@ My research interests lie in *Computer Vision*, particularly in *image and video
 ---
 # ✨ News
 ---
+* <span style="font-size: smaller;">2026-05: Two papers are accepted to [SIGGRAPH asia 2026](https://asia.siggraph.org/2026/)</span>
 * <span style="font-size: smaller;">2026-05: One paper is accepted to [ECCV 2026](https://eccv.ecva.net/)</span>
 * <span style="font-size: smaller;">2026-05: One paper is accepted to [ICML 2026](https://icml.cc/)</span>
 * <span style="font-size: smaller;">2026-05: One paper is accepted to [IEEE TPAMI](https://www.computer.org/csdl/journal/tp)</span>
