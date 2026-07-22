@@ -1,0 +1,1410 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Self Gradient Forcing: Native Long Video Extrapolation</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --scale: 0.9;
+      --bg:#0a0b10;
+      --panel:#12131b; --panel-2:#0e0f16;
+      --text:#eaeaf2; --muted:#aeb2c7;
+      /* SGF palette: teal → violet → amber (distinct from FlashVSR) */
+      --brand-1:#4cc9f0; --brand-2:#b76cff; --accent:#ffb020;
+      --danger:#ff6b6b; --good:#32d296;
+      --radius:20px;
+      --ring: 0 0 0 2px rgba(183,108,255,.35), 0 0 40px rgba(76,201,240,.15);
+      --secGap: 56px;
+      --secTitleSize: clamp(22px, 28px * var(--scale), 36px);
+      --titleGap: 6px;
+      --maxW: calc(1440px * var(--scale));
+      --figW: calc(1120px * var(--scale));
+      --videoFigW: calc(var(--figW) * 0.8);
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(76,201,240,.22), transparent 60%),
+        radial-gradient(900px 600px at 110% 10%, rgba(183,108,255,.20), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+      -webkit-text-size-adjust:100%;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width: var(--maxW); margin:0 auto; padding:28px}
+
+    /* Sticky Nav */
+    .topnav{
+      position: sticky; top:0; z-index:30;
+      background: linear-gradient(180deg,var(--bg),rgba(0,0,0,0));
+      backdrop-filter: saturate(150%) blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      -webkit-backdrop-filter: saturate(150%) blur(8px);
+    }
+    .topnav .inner{
+      width: 100%; max-width: var(--maxW);
+      margin: 0 auto; padding: 12px 28px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .topnav a.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-family:Space Grotesk;
+      background:linear-gradient(90deg, var(--brand-1), var(--brand-2));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      letter-spacing:.06em;
+    }
+    .topnav nav{
+      display:flex;gap:14px;flex:1;flex-wrap:wrap;justify-content:center;
+      min-width: 0;
+    }
+    .chip{
+      padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      white-space:nowrap;
+    }
+    .chip:hover{ box-shadow: var(--ring); }
+    .top-actions{display:flex;gap:8px}
+
+    /* Authors */
+    .authors sup { font-size: 0.7em; vertical-align: super; opacity: 0.85; }
+    .authors a { color: var(--text); text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,.2); }
+    .authors a:hover { color: #fff; border-bottom-color: #fff; }
+
+    /* Header */
+    header.hero{position:relative;display:grid;grid-template-columns:1fr;gap:12px;align-items:center}
+    .title-wrap{position:relative;padding:6px 0 2px 0;background:none;border:none;box-shadow:none;overflow:hidden}
+    .title-row{ display:flex; align-items:center; justify-content:center; gap: var(--titleGap); }
+    .title-text{
+      display:flex; align-items:center; letter-spacing:.02em;
+      font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+      font-weight:900; line-height:1.37; white-space:nowrap; overflow:visible; text-overflow:clip;
+      font-size:clamp(34px, calc(64px * var(--scale)), 74px);
+      background:linear-gradient(90deg, var(--brand-1), var(--brand-2), var(--accent));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      text-shadow:0 0 24px rgba(183,108,255,.18);
+      text-align:center;
+    }
+    .title-sub{
+      margin-top:10px;
+      font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+      font-weight:800; letter-spacing:.01em; line-height:1.15;
+      font-size:clamp(20px, calc(30px * var(--scale)), 40px);
+      color:var(--text); opacity:.95; text-align:center;
+      padding: 0 16px;
+    }
+
+    /* Sparks */
+    .sparks{position:absolute;inset:0;pointer-events:none;opacity:.7}
+    .spark{position:absolute;width:2px;height:2px;background:radial-gradient(circle,var(--accent),transparent 70%);border-radius:50%;animation:fly 6s linear infinite}
+    @keyframes fly{from{transform:translate3d(0,0,0)}to{transform:translate3d(140vw,-40vh,0)}}
+
+    /* Sections */
+    section{ margin: var(--secGap) 0; }
+    .section-title{
+      display:flex; align-items:center; gap:10px;
+      font-family:"Space Grotesk"; font-weight:800;
+      font-size: var(--secTitleSize);
+      letter-spacing:.02em;
+      justify-content:center;
+      text-align:center;
+    }
+    .section-title .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg, var(--brand-1), var(--brand-2)); box-shadow:0 0 18px rgba(183,108,255,.35)}
+    .note{color:var(--muted);font-size:.95rem;margin-top:6px;text-align:center}
+
+    .teaser{
+      display:grid; gap:14px; align-items:center; justify-items:center;
+      border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+      border-radius:16px; padding:14px;
+      text-align:center;
+      width:100%;
+      max-width: var(--figW);
+      margin:0 auto;
+    }
+    .teaser img.scale-90{ width:90% !important; height:auto; }
+    .teaser img.scale-100{ width:100% !important; height:auto; }
+
+    img[src$=".png"], img[src$=".jpg"], img[src$=".jpeg"]{display:block;margin:0 auto;max-width:100%;height:auto}
+    .scale-90{width:90% !important; height:auto}
+    .scale-70{width:70% !important; height:auto}
+    .scale-50{width:50% !important; height:auto}
+
+    .fig{
+      width:100%; max-width: var(--figW);
+      border:1px solid rgba(255,255,255,.1); border-radius:12px; overflow:hidden;
+      background:#0d0f17; display:block; padding:10px; margin:0 auto;
+      text-align:center;
+    }
+    .fig img{display:block; height:auto; max-width:100%; margin:0 auto}
+    .fig-caption{color:var(--muted); font-size:.92rem; text-align:center; margin-top:8px}
+
+    /* Carousel */
+    .carousel{position:relative;margin-top:12px}
+    .carousel .track{
+      display:flex;gap:18px;overflow:auto;padding:6px 0;scroll-snap-type:x mandatory;scroll-behavior:smooth;
+      -webkit-overflow-scrolling:touch;
+    }
+    .carousel .track::-webkit-scrollbar{height:8px}
+    .carousel .track::-webkit-scrollbar-thumb{background:linear-gradient(90deg,var(--brand-1),var(--brand-2));border-radius:999px}
+    .slide{flex: 0 0 min(96vw, var(--videoFigW)); scroll-snap-align:center; scroll-snap-stop:always; position:relative;}
+    .carousel .nav{position:absolute;top:50%;transform:translateY(-50%);z-index:10}
+    .carousel .prev{left:6px}
+    .carousel .next{right:6px}
+    .carousel .dots{display:flex;justify-content:center;gap:6px;margin-top:10px;flex-wrap:wrap}
+    .carousel .dot.active{background:linear-gradient(90deg,var(--brand-1),var(--brand-2));box-shadow:var(--ring)}
+    .carousel .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.35);cursor:pointer;padding:0}
+
+    .pill{pointer-events:auto;display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(16,18,28,.7);border:1px solid rgba(255,255,255,.12);backdrop-filter: blur(8px); font-weight:700; font-size:.82rem}
+    .pill.baseline{ color:#ffd1d1; border-color:rgba(255,107,107,.35); }
+    .pill.ours{ color:#c6f8e7; border-color:rgba(50,210,150,.35); }
+
+    .iconbtn.nav{ color:#fff; border-color:rgba(255,255,255,.4); }
+    .iconbtn.nav svg path{ fill:#fff; }
+
+    .caption{margin-top:8px;color:var(--muted);font-size:.92rem;text-align:center;max-width:100%;padding:0 4px;overflow-wrap:anywhere}
+
+    pre.bib{background:#0d0f17;color:#dbe1ff;padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,.08); overflow:auto}
+    .cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+    .cta{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.18);font-weight:700}
+    .cta:hover{box-shadow:var(--ring)}
+    .cta.pending{ opacity:.65; cursor:not-allowed; }
+
+    footer{margin:64px 0 28px; color:var(--muted); font-size:.9rem; display:flex; align-items:center; justify-content:center; text-align:center; padding: 0 16px;}
+    .footer-note{margin-top:6px; font-size:.88rem; opacity:.9;}
+    .footer-note a{ text-decoration: underline; text-underline-offset: 3px; }
+
+    .iconbtn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));cursor:pointer}
+    .iconbtn:hover{box-shadow:var(--ring)}
+
+    .subsec{max-width:1000px;margin:0 auto;}
+    .subsec h4{ margin:14px 0 8px 0; font-family:'Space Grotesk'; font-weight:800; text-align:center; font-size:1.15rem;
+      background:linear-gradient(90deg, var(--brand-1), var(--brand-2));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+    .subsec .note{ text-align:left; }
+
+    /* Highlight chip */
+    .hl{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(76,201,240,.25), rgba(183,108,255,.25));
+      border:1px solid rgba(255,255,255,.18);
+      font-weight:900;
+      letter-spacing:.01em;
+      box-shadow:0 0 18px rgba(183,108,255,.22), inset 0 0 1px rgba(255,255,255,.25);
+      backdrop-filter: blur(6px);
+    }
+
+    /* video status pill */
+    .pill .vstat{
+      display:inline-flex; align-items:center; gap:6px; margin-left:8px; font-weight:700;
+      opacity:.95;
+    }
+    .pill .vstat .dot{
+      width:8px; height:8px; border-radius:50%;
+      background:rgba(255,255,255,.35);
+      box-shadow:0 0 8px rgba(0,0,0,.25);
+    }
+    .pill .vstat.loading .dot{ background: #aaa; }
+    .pill .vstat.ready   .dot{ background: var(--good); }
+    .pill .vstat.error   .dot{ background: var(--danger); }
+    .pill .retry{
+      margin-left:8px; padding:4px 8px; border-radius:8px; cursor:pointer;
+      border:1px solid rgba(255,255,255,.2);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      font-weight:800; font-size:.8rem;
+      display:none;
+    }
+    .pill .retry:hover{ box-shadow: var(--ring); }
+    .pill .spinner{
+      width:12px; height:12px; border-radius:50%;
+      border:2px solid rgba(255,255,255,.25);
+      border-top-color:#fff;
+      animation:spin 0.8s linear infinite;
+    }
+    @keyframes spin{ to{ transform:rotate(360deg); } }
+
+    /* Figure block (subtitle + description + image) */
+    .fig-block{
+      max-width: var(--figW);
+      margin: 0 auto 8px;
+      text-align:center;
+    }
+    .fig-subtitle{
+      margin: 0 0 6px 0;
+      font-family:'Space Grotesk', Inter, system-ui, sans-serif;
+      font-weight: 800;
+      font-size: clamp(16px, calc(20px * var(--scale)), 24px);
+      background:linear-gradient(90deg, var(--brand-1), var(--brand-2));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      letter-spacing:.01em;
+    }
+    .fig-desc{
+      color: var(--muted);
+      font-size: .95rem;
+      line-height: 1.55;
+      max-width: 1000px;
+      margin: 0 auto 10px;
+      text-align: left;
+    }
+    .paper-table-block{
+      max-width: var(--figW);
+      margin: 20px auto 0;
+    }
+    .paper-table-title{
+      margin: 0 0 8px;
+      font-family:'Space Grotesk', Inter, system-ui, sans-serif;
+      font-weight: 800;
+      font-size: clamp(15px, calc(18px * var(--scale)), 22px);
+      color: var(--text);
+      text-align: left;
+    }
+    .paper-table-caption{
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.55;
+      margin: 0 0 10px;
+      text-align: left;
+    }
+    .paper-table-wrap{
+      overflow-x: auto;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:12px;
+      background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015));
+    }
+    .paper-table{
+      width:100%;
+      min-width:720px;
+      border-collapse:collapse;
+      color:var(--text);
+      font-size:.88rem;
+    }
+    .paper-table th,
+    .paper-table td{
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      text-align:center;
+      white-space:nowrap;
+    }
+    .paper-table th:first-child,
+    .paper-table td:first-child{ text-align:left; }
+    .paper-table thead th{
+      font-weight:800;
+      color:#f4f5ff;
+      background:rgba(255,255,255,.045);
+    }
+    .paper-table tbody tr:last-child td{ border-bottom:none; }
+    .paper-table .status-ok{ color:var(--good); font-weight:800; }
+    .paper-table .status-bad{ color:var(--danger); font-weight:800; }
+    .placeholder{
+      display:inline-block;
+      padding: 1px 8px;
+      border-radius: 6px;
+      font-size:.75rem;
+      font-weight: 800;
+      letter-spacing:.06em;
+      color:#0a0b10;
+      background: linear-gradient(90deg, var(--accent), #ffd66b);
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* 4-way quad grid for chunk-wise comparisons */
+    .quad-grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      max-width: var(--videoFigW);
+      margin: 0 auto;
+    }
+    .quad-cell{
+      position: relative;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.08);
+      aspect-ratio: 16 / 9;
+    }
+    .quad-cell video{
+      width: 100%; height: 100%; object-fit: contain; display: block;
+    }
+    .quad-label{
+      position: absolute; top: 10px; left: 10px;
+      padding: 5px 10px; border-radius: 999px;
+      background: rgba(16,18,28,.72); border: 1px solid rgba(255,255,255,.14);
+      -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+      font-weight: 800; font-size: .78rem; z-index: 3;
+      letter-spacing:.02em;
+    }
+    .quad-label.ours{
+      color: #c6f8e7;
+      border-color: rgba(50,210,150,.45);
+      background: linear-gradient(180deg, rgba(50,210,150,.22), rgba(16,18,28,.72));
+      box-shadow: 0 0 18px rgba(50,210,150,.18);
+    }
+    .quad-label.baseline{
+      color: #ffd1d1;
+      border-color: rgba(255,107,107,.35);
+    }
+    .quad-badge{
+      position: absolute; top: 10px; right: 10px;
+      padding: 4px 8px; border-radius: 6px;
+      background: rgba(16,18,28,.7); border: 1px solid rgba(255,255,255,.1);
+      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+      font-size: .7rem; font-weight: 700; z-index: 3;
+      color: var(--muted);
+    }
+    @media (max-width: 768px){
+      .quad-grid{ grid-template-columns: 1fr; gap: 8px; }
+      .quad-label{ font-size: .72rem; padding: 4px 8px; }
+      /* Pair grid stays side-by-side on mobile — 2 cells still fit legibly */
+      .pair-grid{ grid-template-columns: 1fr 1fr !important; gap: 6px !important; }
+      .pair-grid .quad-label{ font-size: .68rem; padding: 3px 7px; }
+    }
+
+    /* Quad block wrapper (subtitle + duration pill + mount) */
+    .quad-block{
+      max-width: var(--videoFigW);
+      margin: 14px auto 22px;
+    }
+    .quad-title{
+      display: flex; align-items: center; gap: 10px;
+      justify-content: center;
+      font-family: 'Space Grotesk', Inter, system-ui, sans-serif;
+      font-weight: 700;
+      font-size: clamp(14px, calc(17px * var(--scale)), 20px);
+      color: var(--text);
+      margin: 0 0 10px 0;
+      text-align: center;
+      line-height: 1.35;
+      padding: 0 8px;
+    }
+    .dur-pill{
+      display: inline-flex; align-items: center;
+      padding: 3px 10px; border-radius: 999px;
+      font-family: 'Space Grotesk', Inter, sans-serif;
+      font-weight: 800; font-size: .8rem;
+      background: linear-gradient(90deg, rgba(76,201,240,.28), rgba(183,108,255,.28));
+      border: 1px solid rgba(255,255,255,.22);
+      color: #fff;
+      letter-spacing: .04em;
+      box-shadow: 0 0 12px rgba(183,108,255,.18);
+    }
+
+    /* Results tabs (per-init switch) */
+    .tabs{
+      display:flex; flex-wrap:wrap; justify-content:center; gap:8px;
+      margin: 6px auto 14px; max-width: var(--figW);
+    }
+    .tab-btn{
+      padding:8px 14px; border-radius:999px; cursor:pointer;
+      border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      color:var(--text); font-weight:700; font-size:.9rem;
+    }
+    .tab-btn:hover{ box-shadow: var(--ring); }
+    .tab-btn.active{
+      background:linear-gradient(90deg, rgba(76,201,240,.25), rgba(183,108,255,.25));
+      border-color: rgba(255,255,255,.35);
+      box-shadow: var(--ring);
+    }
+    .panel{ display:none; }
+    .panel.active{ display:block; }
+
+    /* Responsive */
+    @media (max-width: 1024px){
+      :root{ --scale: 0.92; --secGap: 44px; --maxW: 100vw; --figW: min(100vw - 24px, 1120px); }
+      .container{ padding:20px; max-width:100% !important; padding-left:20px; padding-right:20px; }
+      .topnav .inner{ padding: 16px 20px; max-width:100% !important; }
+      .title-text{ font-size: clamp(30px, 6.2vw, 52px); }
+      .title-sub{ font-size: clamp(18px, 3.6vw, 28px); }
+    }
+    @media (max-width: 768px){
+      :root{ --scale: 0.86; --secGap: 36px; --maxW:100vw; --figW: calc(100vw - 32px); }
+      .container{ padding:16px; display:grid; justify-items:center; }
+      .topnav .inner{
+        display:grid !important; grid-template-columns:1fr;
+        row-gap:10px; padding:12px 16px;
+      }
+      .topnav nav{
+        grid-column:1/-1; order:2; width:100%;
+        overflow-x:auto; -webkit-overflow-scrolling:touch;
+        scrollbar-width:none;
+        justify-content:flex-start; padding: 0 4px;
+      }
+      .topnav nav::-webkit-scrollbar{display:none}
+      .topnav a.logo{ order:1; justify-self:center; }
+      .title-text{ font-size: clamp(26px, 7vw, 40px); }
+      .title-sub{ font-size: clamp(15px, 4.5vw, 22px); }
+      .teaser, .fig{ padding:10px; border-radius:12px; }
+      .fig img, .teaser img{ width:100% !important; }
+      .pill{ padding:5px 8px; font-size:.78rem; }
+      .slide{ flex-basis: 100% !important; max-width:100% !important; }
+    }
+    @media (max-width: 420px){
+      :root{ --scale: 0.82; }
+      .container{ padding-left:12px; padding-right:12px; }
+      .topnav .inner{ padding-left:12px; padding-right:12px; }
+      .title-text{ font-size: clamp(24px, 7.8vw, 34px); }
+      .title-sub{ font-size: clamp(14px, 4.4vw, 20px); }
+    }
+
+    html, body { width: 100%; min-width: 0; }
+    @media (min-width: 1025px){ html, body { overflow-x: hidden !important; } }
+    .container, section, .carousel, .carousel .track { width: 100%; min-width: 0; margin-left:auto; margin-right:auto; }
+    img, video{ max-width: 100%; height: auto; }
+    .title-wrap{ overflow:hidden; }
+    .container { overflow-x: clip; }
+  </style>
+</head>
+
+<body>
+  <!-- Sticky top nav -->
+  <div class="topnav">
+    <div class="inner">
+      <!-- <a class="logo" href="#top" aria-label="Go to top">
+        <span>SGF</span>
+      </a> -->
+      <nav>
+        <a class="chip" href="#abs">Abstract</a>
+        <a class="chip" href="#method">Method</a>
+        <a class="chip" href="#chunkwise">Chunk-wise</a>
+        <a class="chip" href="#framewise">Frame-wise</a>
+        <a class="chip" href="#analysis">Analysis</a>
+        <a class="chip" href="#bib">BibTeX</a>
+      </nav>
+      <div class="top-actions"></div>
+    </div>
+  </div>
+
+  <div class="container" id="top">
+    <header class="hero">
+      <div class="title-wrap">
+        <div class="sparks" aria-hidden="true"></div>
+        <div class="title-row" role="img" aria-label="Self Gradient Forcing">
+          <div class="title-text">Self Gradient Forcing</div>
+        </div>
+        <div class="title-sub">Native Long Video Extrapolation</div>
+      </div>
+
+      <div class="paper-meta">
+        <div class="authors" style="text-align:center; margin-top:14px; line-height:1.7;">
+          <a href="https://zhuang2002.github.io/" target="_blank" rel="noopener noreferrer">Junhao Zhuang</a> ·
+          Shiyi Zhang ·
+          Yuxuan Bian ·
+          Yaowei Li ·
+          Yawen Luo ·
+          Weiyang Jin ·
+          Songchun Zhang ·<br>
+          Xianglong He ·
+          Xuying Zhang ·
+          Haoran Li ·
+          Haoyang Huang ·
+          Zeyue Xue ·
+          Nan Duan
+        </div>
+        <div class="affils" style="margin-top:8px;text-align:center; opacity:.9;">
+          Joy Future Academy, JD
+        </div>
+
+        <div class="cta-row" role="group" aria-label="resources">
+          <a class="cta pending" href="javascript:void(0)" aria-disabled="true" title="Paper — pending release">📄 Paper (Coming soon)</a>
+          <a class="cta" href="https://github.com/OpenImagingLab/Self_Gradient_Forcing" target="_blank" rel="noopener noreferrer" title="Code repository">🐙 Code</a>
+          <a class="cta" href="https://huggingface.co/JunhaoZhuang/Self_Gradient_Forcing" target="_blank" rel="noopener noreferrer" title="Model repository">🤗 Model</a>
+        </div>
+        <div class="note" style="margin-top:14px; text-align:center; max-width:72ch; margin-left:auto; margin-right:auto; line-height:1.55; font-size:1rem;">
+          <span style="opacity:.85;">TL;DR —</span>
+          <span style="opacity:.98;">
+            <strong>Self Gradient Forcing (SGF)</strong> recovers the missing context-gradient path for self-generated causal memory through a bounded two-pass replay, enabling models trained with only a
+            5-second window to extrapolate to minute-scale videos with stronger identity, layout, and temporal stability.
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Teaser -->
+    <section id="abs" aria-labelledby="abs-title">
+      <div class="section-title" id="abs-title"><span class="dot"></span> Abstract</div>
+
+      <!-- <div class="fig-block">
+        <div class="fig-subtitle">Long-horizon consistency, one prompt, one seed</div>
+        <p class="fig-desc">
+          Under a matched prompt, seed, and TF initialization, <strong>Self Forcing</strong> stays locally plausible for many
+          frames but gradually accumulates <strong>view jumps</strong>, <strong>scene breaks</strong>, and
+          <strong>identity drift</strong>: its self-generated K/V memory becomes progressively less useful for later latents.
+          <strong>Self Gradient Forcing (SGF)</strong> restores a bounded context-gradient path for self-generated memory
+          writing and preserves subject identity, pose, and scene layout over the full 240-second rollout.
+        </p>
+      </div> -->
+
+      <div class="teaser">
+        <img src="./page/teaser.jpg" alt="SGF teaser: long-horizon consistency comparison" class="scale-100" loading="lazy" decoding="async">
+        <p class="note" style="max-width:1000px;margin:0 auto;text-align:left;">
+          Recent autoregressive video diffusion methods are increasingly built upon <em>Self Forcing</em>, where the student is
+          trained on histories produced by its own rollout rather than ground-truth video contexts. This reduces exposure bias,
+          but the historical key-value cache is still used by future frames only as <strong>frozen rollout state</strong>. As a
+          result, future losses cannot supervise how earlier generated latents should be written into more useful keys and
+          values for later video-latent generation. We call this the
+          <strong><span class="hl">historical context-gradient gap</span></strong>. We propose
+          <strong>Self Gradient Forcing (SGF)</strong>, a <strong>two-pass training strategy</strong> that restores this
+          missing supervision signal without backpropagating through the full serial rollout. Pass&nbsp;1 performs a no-gradient
+          autoregressive rollout matching inference and, at a sampled denoising exit step, records both the self-generated
+          context and the noisy latents fed to the model. Pass&nbsp;2 performs <strong>parallel context-gradient
+          reconstruction</strong> for the recorded exit step: the generated context is used as stop-gradient clean-latent
+          input, while the model recomputes the context KV representations and future-to-context causal attention. Thus, SGF
+          provides the missing memory-writing supervision within the native autoregressive training objective, using losses on
+          future video latents to train the model to encode context into more effective causal memory. Across extensive
+          long-horizon frame-wise and chunk-wise experiments under different initializations, SGF achieves stronger native
+          long-video extrapolation than Self Forcing, especially in subject identity, background/layout consistency, and
+          temporal stability. Remarkably, using only a <strong><span class="hl">5-second training window</span></strong>, SGF can extrapolate to
+          videos lasting <strong><span class="hl">several minutes</span></strong>. 
+        </p>
+      </div>
+    </section>
+
+    <!-- Method -->
+    <section id="method" aria-labelledby="method-title">
+      <div class="section-title" id="method-title"><span class="dot"></span> Method </div>
+      <p class="note" style="max-width:1000px;margin:0 auto 4px;">
+        <!-- SGF turns the serial cache-gradient problem into a bounded parallel recomputation problem. It keeps the ordinary
+        autoregressive rollout untouched and adds a second, gradient-enabled pass that <em>reconstructs</em> only the
+        sampled exit step — so future losses can supervise how self-generated latents are written into causal K/V memory,
+        <em>without</em> retaining a backward graph over the full rollout. -->
+        <!-- <strong>From frozen-cache Self Forcing to Self Gradient Forcing.</strong> -->
+        Self Forcing trains on self-generated histories but treats historical K/V entries as detached cache state.
+        SGF keeps the no-gradient rollout unchanged and adds a parallel reconstruction pass, where detached context latents are re-encoded at the clean context timestep so future DMD losses supervise K/V writing without serial rollout backpropagation.
+      </p>
+
+      <!-- <div class="fig-block" style="margin-top:14px">
+        <div class="fig-subtitle">Two-pass training pipeline</div>
+        <p class="fig-desc">
+          <strong>Pass&nbsp;1 — no-gradient self-rollout.</strong> The causal DiT is run exactly as at inference: for each
+          block <em>i</em>, it denoises with the current historical K/V cache and, at a sampled denoising exit step
+          <em>t<sup>&#x22C6;</sup></em>, we record both the noisy latent <em>z</em><sup>&#x22C6;</sup> and the predicted
+          clean latent <em>x̃<sub>i</sub></em>. The clean latent is then processed at the clean-context timestep
+          <em>t</em><sub>ctx</sub>=0 to update the serial K/V cache. Every operation in this pass runs with autograd
+          disabled, so no rollout graph is retained.<br><br>
+          <strong>Pass&nbsp;2 — parallel context-gradient reconstruction.</strong> We discard the rollout cache and re-run
+          the sampled exit step in parallel under a static causal mask <em>M</em><sub>rec</sub>. The recorded clean context
+          latents enter as <em>stop-gradient</em> inputs; the recorded noisy latents are fed again as prediction inputs.
+          Crucially, the model <em>recomputes</em> the context hidden states, K/V projections, and future-to-context
+          causal attention with gradients enabled — so the DMD loss on future video latents supervises the same shared
+          parameters that write clean-timestep K/V memory during rollout.
+        </p>
+      </div> -->
+      <div class="fig" aria-label="SGF method flowchart">
+        <img src="./page/flowchat.jpg" alt="SGF training pipeline flowchart" class="scale-90" loading="lazy" decoding="async">
+      </div>
+      <div class="fig-caption">Figure 1: From frozen-cache Self Forcing to Self Gradient Forcing.</div>
+    </section>
+
+    <!-- ================= CHUNK-WISE ================= -->
+    <section id="chunkwise" aria-labelledby="chunkwise-title">
+      <div class="section-title" id="chunkwise-title"><span class="dot"></span> Chunk-wise Long-Horizon Generation </div>
+      <p class="note" style="max-width:1000px;margin:6px auto 10px;">
+        Four-way comparison per sample — <strong>SGF (Ours)</strong>, <strong>Self Forcing (SF)</strong>,
+        <strong>SF + Bi-directional ODE</strong>, <strong>SF + Causal ODE</strong>.
+        All four tiles play in lock-step; use the controls on the SGF (Ours) tile to play, pause, or scrub.
+        Pick a duration, then switch the AR / CD initialization.
+      </p>
+
+      <!-- ===== Chunk-wise 60s ===== -->
+      <div class="subsec" style="margin-top:22px">
+        <h4><span class="dur-pill">60s</span> Chunk-wise Long Video</h4>
+        <div class="tabs" role="tablist" aria-label="Chunk-wise 60s init">
+          <button class="tab-btn active" data-group="cw60" data-target="cw60-ar">AR</button>
+          <button class="tab-btn" data-group="cw60" data-target="cw60-cd">CD</button>
+        </div>
+        <div class="panel active" id="cw60-ar">
+          <div class="carousel" data-carousel>
+            <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+            <div class="track" id="quad-cw60-ar"></div>
+            <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+            <div class="dots" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="panel" id="cw60-cd">
+          <div class="carousel" data-carousel>
+            <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+            <div class="track" id="quad-cw60-cd"></div>
+            <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+            <div class="dots" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Chunk-wise 240s ===== -->
+      <div class="subsec" style="margin-top:36px">
+        <h4><span class="dur-pill">240s</span> Chunk-wise Long Video</h4>
+        <div class="tabs" role="tablist" aria-label="Chunk-wise 240s init">
+          <button class="tab-btn active" data-group="cw240" data-target="cw240-ar">AR</button>
+          <button class="tab-btn" data-group="cw240" data-target="cw240-cd">CD</button>
+        </div>
+        <div class="panel active" id="cw240-ar">
+          <div class="carousel" data-carousel>
+            <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+            <div class="track" id="quad-cw240-ar"></div>
+            <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+            <div class="dots" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="panel" id="cw240-cd">
+          <div class="carousel" data-carousel>
+            <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+            <div class="track" id="quad-cw240-cd"></div>
+            <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+            <div class="dots" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FRAME-WISE ================= -->
+    <section id="framewise" aria-labelledby="framewise-title">
+      <div class="section-title" id="framewise-title"><span class="dot"></span> Frame-wise Long-Horizon Generation </div>
+      <p class="note" style="max-width:1000px;margin:6px auto 10px;">
+        Two-way lock-step comparison per sample: <strong>SGF (Ours)</strong> vs <strong>Self Forcing</strong>.
+        The SGF (Ours) tile carries the video controls; the Self Forcing tile follows it in play, pause, and scrub.
+        Pick a duration, then switch the AR / CD / ODE initialization.
+      </p>
+
+      <!-- ===== Frame-wise 60s ===== -->
+      <div class="subsec" style="margin-top:22px">
+        <h4><span class="dur-pill">60s</span> Frame-wise Long Video</h4>
+        <div class="tabs" role="tablist" aria-label="Frame-wise 60s init">
+          <button class="tab-btn active" data-group="fw60" data-target="fw60-ar">AR</button>
+          <button class="tab-btn" data-group="fw60" data-target="fw60-cd">CD</button>
+          <button class="tab-btn" data-group="fw60" data-target="fw60-ode">ODE</button>
+        </div>
+        <div class="panel active" id="fw60-ar">
+          <div class="carousel" data-carousel>
+            <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+            <div class="track" id="gal-fw60-ar"></div>
+            <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+            <div class="dots" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="panel" id="fw60-cd">
+          <div class="carousel" data-carousel>
+            <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+            <div class="track" id="gal-fw60-cd"></div>
+            <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+            <div class="dots" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="panel" id="fw60-ode">
+          <div class="carousel" data-carousel>
+            <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+            <div class="track" id="gal-fw60-ode"></div>
+            <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+            <div class="dots" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Frame-wise 240s ===== -->
+      <div class="subsec" style="margin-top:36px">
+        <h4><span class="dur-pill">240s</span> Frame-wise Long Video</h4>
+        <div class="tabs" role="tablist" aria-label="Frame-wise 240s init">
+          <button class="tab-btn active" data-group="fw240" data-target="fw240-ar">AR</button>
+          <button class="tab-btn" data-group="fw240" data-target="fw240-cd">CD</button>
+          <button class="tab-btn" data-group="fw240" data-target="fw240-ode">ODE</button>
+        </div>
+        <div class="panel active" id="fw240-ar">
+          <div class="carousel" data-carousel>
+            <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+            <div class="track" id="gal-fw240-ar"></div>
+            <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+            <div class="dots" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="panel" id="fw240-cd">
+          <div class="carousel" data-carousel>
+            <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+            <div class="track" id="gal-fw240-cd"></div>
+            <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+            <div class="dots" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="panel" id="fw240-ode">
+          <div class="carousel" data-carousel>
+            <button class="iconbtn nav prev" aria-label="Previous" type="button">◀</button>
+            <div class="track" id="gal-fw240-ode"></div>
+            <button class="iconbtn nav next" aria-label="Next" type="button">▶</button>
+            <div class="dots" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ANALYSIS ================= -->
+    <section id="analysis" aria-labelledby="analysis-title">
+      <div class="section-title" id="analysis-title"><span class="dot"></span> Analysis </div>
+
+      <!-- Training feasibility and two-pass recovery -->
+      <div class="subsec">
+        <div class="paper-table-block">
+          <div class="paper-table-title">Table 1: Training feasibility of context-gradient recovery</div>
+          <p class="paper-table-caption">
+            Direct differentiable-cache training keeps the serial cache-formation graph and runs out of memory.
+            SGF uses bounded parallel context-gradient reconstruction at the sampled exit step, restoring context K/V
+            gradients with modest peak-memory and runtime overhead.
+          </p>
+          <div class="paper-table-wrap">
+            <table class="paper-table">
+              <thead>
+                <tr>
+                  <th>Training variant</th>
+                  <th>Peak memory</th>
+                  <th>Stable memory</th>
+                  <th>Time / 5 steps</th>
+                  <th>Outcome</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Self Forcing, frozen historical K/V cache</td>
+                  <td>79.01GB</td>
+                  <td>79.01GB</td>
+                  <td>10.39s</td>
+                  <td class="status-ok">trains</td>
+                </tr>
+                <tr>
+                  <td>SGF, serial Pass&nbsp;1 + parallel Pass&nbsp;2</td>
+                  <td>87.01GB</td>
+                  <td>63.73GB</td>
+                  <td>11.71s</td>
+                  <td class="status-ok">trains</td>
+                </tr>
+                <tr>
+                  <td>Self Forcing, differentiable historical K/V cache</td>
+                  <td>OOM</td>
+                  <td>OOM</td>
+                  <td>--</td>
+                  <td class="status-bad">OOM</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="fig-block" style="margin-top:28px">
+          <div class="fig-subtitle">Pass-1 / Pass-2 recovery fidelity</div>
+          <p class="fig-desc">
+            SGF relies on Pass&nbsp;2 faithfully replaying the sampled exit computation from Pass&nbsp;1. Figure&nbsp;2
+            and Table&nbsp;2 are the same recovery diagnostic: the decoded pairs are visually nearly indistinguishable,
+            while the latent metrics show low relative L2 error and near-unity cosine similarity across exit steps.
+          </p>
+        </div>
+        <div class="fig" aria-label="Decoded Pass-1 and Pass-2 recovery comparison">
+          <img src="./page/twopass.jpg" alt="Decoded Pass-1 and Pass-2 recovery comparison" class="scale-90" loading="lazy" decoding="async">
+        </div>
+        <div class="fig-caption">
+          Figure 2: Decoded Pass-1 and Pass-2 recovery comparison. Rows show paired decoded outputs from Pass&nbsp;1
+          and Pass&nbsp;2 at exit steps 1000, 750, 500, and 250; the decoded pairs are visually nearly indistinguishable,
+          matching the latent-space recovery results in Table&nbsp;2.
+        </div>
+
+        <div class="paper-table-block">
+          <div class="paper-table-title">Table 2: Pass-1 versus Pass-2 latent recovery fidelity</div>
+          <p class="paper-table-caption">
+            Metrics are averaged over 24 prompts for each exit step. Overall averages are computed over all 96
+            prompt/exit comparisons. We also report the relative L2 error normalized by the bf16 relative precision
+            &epsilon;<sub>bf16</sub> = 2<sup>-7</sup>.
+          </p>
+          <div class="paper-table-wrap">
+            <table class="paper-table">
+              <thead>
+                <tr>
+                  <th>Exit step</th>
+                  <th># comparisons</th>
+                  <th>MSE</th>
+                  <th>RMSE</th>
+                  <th>Mean abs.</th>
+                  <th>Max abs.</th>
+                  <th>Rel. L2</th>
+                  <th>Rel. L2 / &epsilon;<sub>bf16</sub></th>
+                  <th>Cosine</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1000</td>
+                  <td>24</td>
+                  <td>3.123e-4</td>
+                  <td>0.01745</td>
+                  <td>0.01093</td>
+                  <td>0.58396</td>
+                  <td>0.02133</td>
+                  <td>2.73</td>
+                  <td>0.999766</td>
+                </tr>
+                <tr>
+                  <td>750</td>
+                  <td>24</td>
+                  <td>2.148e-4</td>
+                  <td>0.01449</td>
+                  <td>0.00884</td>
+                  <td>0.58189</td>
+                  <td>0.01566</td>
+                  <td>2.00</td>
+                  <td>0.999874</td>
+                </tr>
+                <tr>
+                  <td>500</td>
+                  <td>24</td>
+                  <td>1.141e-4</td>
+                  <td>0.01064</td>
+                  <td>0.00693</td>
+                  <td>0.49110</td>
+                  <td>0.01125</td>
+                  <td>1.44</td>
+                  <td>0.999936</td>
+                </tr>
+                <tr>
+                  <td>250</td>
+                  <td>24</td>
+                  <td>6.041e-5</td>
+                  <td>0.00774</td>
+                  <td>0.00535</td>
+                  <td>0.29028</td>
+                  <td>0.00812</td>
+                  <td>1.04</td>
+                  <td>0.999967</td>
+                </tr>
+                <tr>
+                  <td><strong>Overall</strong></td>
+                  <td>96</td>
+                  <td>1.754e-4</td>
+                  <td>0.01258</td>
+                  <td>0.00801</td>
+                  <td>0.48681</td>
+                  <td>0.01409</td>
+                  <td>1.80</td>
+                  <td>0.999886</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BibTeX -->
+    <section id="bib" aria-labelledby="s-bib">
+      <div class="section-title" id="s-bib"><span class="dot"></span> BibTeX</div>
+      <pre class="bib" aria-label="BibTeX entry"><code>@article{zhuang2026sgf,
+  title  = {Self Gradient Forcing: Native Long Video Extrapolation},
+  author = {Zhuang, Junhao and Zhang, Shiyi and Bian, Yuxuan and Li, Yaowei
+            and Luo, Yawen and Jin, Weiyang and Zhang, Songchun and He, Xianglong
+            and Zhang, Xuying and Li, Haoran and Huang, Haoyang and Xue, Zeyue
+            and Duan, Nan},
+  journal = {arXiv preprint},
+  year    = {2026}
+}</code></pre>
+    </section>
+
+    <footer>
+      <div>
+        © 2026 SGF Authors — Joy Future Academy, JD
+        <div class="footer-note">
+          The <span class="hl">source code</span> of this page is open for reuse.
+          Please provide <span class="hl">proper attribution</span> and include a link to the
+          <a href="https://zhuang2002.github.io/SGF/" target="_blank" rel="noopener">SGF project page</a> when reusing or adapting it.
+        </div>
+        <div class="footer-browser" style="margin-top:6px;">
+          Recommended browsers: Safari / Chrome / Microsoft Edge for the best playback experience.
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    /* ===== URL scale param ===== */
+    (function applyScaleFromQuery(){
+      const sp = new URLSearchParams(location.search).get('scale');
+      if(!sp) return;
+      const val = Math.max(0.6, Math.min(2.5, parseFloat(sp)));
+      if(!isNaN(val)) document.documentElement.style.setProperty('--scale', String(val));
+    })();
+
+    const $  = (s, r=document) => r.querySelector(s);
+    const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+    /* ===== sparks ===== */
+    (function mountSparks(){
+      const wrap = $('.title-wrap');
+      if(!wrap) return;
+      const sparksWrap = document.createElement('div');
+      sparksWrap.className='sparks';
+      wrap.prepend(sparksWrap);
+      for(let i=0;i<22;i++){
+        const s=document.createElement('div');
+        s.className='spark';
+        s.style.left=(Math.random()*80+5)+'%';
+        s.style.top=(Math.random()*80+5)+'%';
+        s.style.animationDelay=(Math.random()*6)+'s';
+        s.style.opacity=(Math.random()*0.5+0.35).toFixed(2);
+        sparksWrap.appendChild(s);
+      }
+    })();
+
+    /* ===== Video load state UI (inside pill) ===== */
+    function buildStatusInsidePill(pillEl, initialText='Loading…'){
+      const stat = document.createElement('span');
+      stat.className = 'vstat loading';
+      const spin = document.createElement('span'); spin.className='spinner';
+      const dot  = document.createElement('span'); dot.className='dot';
+      const txt  = document.createElement('em');  txt.textContent = initialText;
+      stat.appendChild(spin); stat.appendChild(dot); stat.appendChild(txt);
+      const retry = document.createElement('button');
+      retry.className='retry'; retry.type='button'; retry.textContent='↻';
+      pillEl.appendChild(stat); pillEl.appendChild(retry);
+      const setState = (state, text)=>{
+        stat.classList.remove('loading','ready','error');
+        stat.classList.add(state);
+        if (text) txt.textContent = text;
+        spin.style.display = (state==='loading')?'inline-block':'none';
+        retry.style.display = (state==='error')?'inline-flex':'none';
+      };
+      return { stat, setState, retry };
+    }
+    function wireVideoStatus(videoEl, ui){
+      ui.setState('loading','Loading…');
+      videoEl.addEventListener('loadstart', ()=>ui.setState('loading','Loading…'));
+      videoEl.addEventListener('waiting',   ()=>ui.setState('loading','Buffering…'));
+      videoEl.addEventListener('stalled',   ()=>ui.setState('loading','Buffering…'));
+      videoEl.addEventListener('loadeddata',()=>ui.setState('ready','Ready'));
+      videoEl.addEventListener('canplay',   ()=>ui.setState('ready','Ready'));
+      videoEl.addEventListener('playing',   ()=>ui.setState('ready','Playing'));
+      videoEl.addEventListener('error',     ()=>ui.setState('error','Failed'));
+      ui.retry.addEventListener('click', (e)=>{
+        e.stopPropagation(); e.preventDefault();
+        ui.setState('loading','Reloading…');
+        const src = videoEl.currentSrc || videoEl.src;
+        videoEl.src=''; setTimeout(()=>{ videoEl.src=src; videoEl.load(); videoEl.play().catch(()=>{}); },30);
+      });
+    }
+    const isInteractiveTarget = (el) => !!el.closest('.labels, .pill, .retry, .iconbtn, a, button, .dots');
+
+    /* ===== Datasets ===== */
+    // Frame-wise: paired SF vs SGF, rendered as 2-way lock-step grids in a carousel.
+    // Files at the section root are 60s; files under /240s/ are 240s.
+    const DATASETS = {
+      // ---------- Frame-wise 240s ----------
+      'gal-fw240-ar': [
+        { sf: "./page/frame_ar/240s/SF_Cartoon-style vibrant illustration of a fluffy white cat with big round eyes and a mischievous grin, sitting in a red toy car, driving down a busy downtown street. The cat's ears f__idx00050_82a8c7c5ef90-0.mp4", sgf: "./page/frame_ar/240s/SGF_Cartoon-style vibrant illustration of a fluffy white cat with big round eyes and a mischievous grin, sitting in a red toy car, driving down a busy downtown street. The cat's ears f__idx00050_82a8c7c5ef90-0.mp4", caption: "Cartoon-style vibrant illustration of a fluffy white cat with big round eyes and a mischievous grin, sitting in a red toy car, driving down a busy downtown street. The cat's ears flap in the wind as the car's wheels spin forward, zipping past tall skyscrapers and bustling pedestrians. Bright, saturated colors, smooth cartoony textures, and dynamic motion lines enhance the lively urban energy. Slightly elevated camera angle captures the playful scene in full action." },
+        { sf: "./page/frame_ar/240s/SF_Cinematic 35mm film-style extreme close-up of a thoughtful 60s gray-haired man with a full beard, wearing glasses and a brown beret, seated at a Parisian café. He gazes off-screen__idx00029_997e2bc988f5-0.mp4", sgf: "./page/frame_ar/240s/SGF_Cinematic 35mm film-style extreme close-up of a thoughtful 60s gray-haired man with a full beard, wearing glasses and a brown beret, seated at a Parisian café. He gazes off-screen__idx00029_997e2bc988f5-0.mp4", caption: "Cinematic 35mm film-style extreme close-up of a thoughtful 60s gray-haired man with a full beard, wearing glasses and a brown beret, seated at a Parisian café. He gazes off-screen, lost in deep contemplation about the universe’s history, a subtle closed-mouth smile revealing quiet revelation. Dressed in a woolen suit coat and button-down shirt, his weathered, professorial face is softly lit by golden hour light. The bustling Parisian streets blur behind him, rendered in warm bokeh with rich depth of field. Slight overhead angle, medium close-up, evoking introspective stillness amid urban motion." },
+        { sf: "./page/frame_ar/240s/SF_Macro close-up of a young freckled woman with intense focus, searching intently. Her wide, slightly squinted eyes show determination, freckles scattered playfully across her cheeks__idx00095_884adde5774c-0.mp4", sgf: "./page/frame_ar/240s/SGF_Macro close-up of a young freckled woman with intense focus, searching intently. Her wide, slightly squinted eyes show determination, freckles scattered playfully across her cheeks__idx00095_884adde5774c-0.mp4", caption: "Macro close-up of a young freckled woman with intense focus, searching intently. Her wide, slightly squinted eyes show determination, freckles scattered playfully across her cheeks and nose. Soft, loose hair frames her face, strands falling over her forehead. Smooth skin with a natural rosy glow, subtle texture visible. Shallow depth of field, blurred desk background with faint outlines of objects. Extreme close-up, eye-level angle, capturing delicate details and quiet concentration." },
+      ],
+      'gal-fw240-cd': [
+        { sf: "./page/frame_cd/240s/SF_A charming watercolor illustration of a young white rabbit with soft fur, large round ears, and gentle curious eyes, wearing glasses and reading a newspaper. The rabbit sits uprigh__idx00068_1c4641835ce7-0.mp4", sgf: "./page/frame_cd/240s/SGF_A charming watercolor illustration of a young white rabbit with soft fur, large round ears, and gentle curious eyes, wearing glasses and reading a newspaper. The rabbit sits uprigh__idx00068_1c4641835ce7-0.mp4", caption: "A charming watercolor illustration of a young white rabbit with soft fur, large round ears, and gentle curious eyes, wearing glasses and reading a newspaper. The rabbit sits upright in a cozy armchair, one paw holding the paper, the other resting on its knee, showing focused interest with a slight smile. Warm living room background with a crackling fireplace, books on a side table, and a blurred window view of falling autumn leaves. Close-up, slightly elevated angle highlighting detailed fur, glasses, and newspaper headlines. Soft brushstrokes and gentle light enhance the serene, storybook atmosphere." },
+        { sf: "./page/frame_cd/240s/SF_A vibrant anime-style illustration in thick, expressive brushwork depicting a young man in his 20s with short messy black hair and warm brown eyes, deeply engrossed in reading a cl__idx00008_ce2beb4e522e-0.mp4", sgf: "./page/frame_cd/240s/SGF_A vibrant anime-style illustration in thick, expressive brushwork depicting a young man in his 20s with short messy black hair and warm brown eyes, deeply engrossed in reading a cl__idx00008_ce2beb4e522e-0.mp4", caption: "A vibrant anime-style illustration in thick, expressive brushwork depicting a young man in his 20s with short messy black hair and warm brown eyes, deeply engrossed in reading a classic leather-bound book. He sits casually on a fluffy white cloud floating in a radiant evening sky, one leg crossed over the other, wearing a simple white t-shirt and blue jeans. The background bursts with soft cotton-like clouds bathed in a golden sunset glow, casting a warm orange hue across the dreamy, ethereal atmosphere. Rendered in rich, painterly textures with a medium shot from a slightly downward angle, emphasizing his serene focus and the tranquil skyward setting." },
+        { sf: "./page/frame_cd/240s/SF_Close-up of a steaming cappuccino in a ceramic cup with rich brown foam and delicate milk swirl, white handle, light brown body, warm café background with wooden tables, soft ligh__idx00057_af6b266f0e18-0.mp4", sgf: "./page/frame_cd/240s/SGF_Close-up of a steaming cappuccino in a ceramic cup with rich brown foam and delicate milk swirl, white handle, light brown body, warm café background with wooden tables, soft ligh__idx00057_af6b266f0e18-0.mp4", caption: "Close-up of a steaming cappuccino in a ceramic cup with rich brown foam and delicate milk swirl, white handle, light brown body, warm café background with wooden tables, soft light, patrons chatting, fresh morning vibe, gentle steam rising, cozy atmosphere." },
+      ],
+      'gal-fw240-ode': [
+        { sf: "./page/frame_ode/240s/SF_A charming watercolor illustration of a young white rabbit with soft fur, large round ears, and gentle curious eyes, wearing glasses and reading a newspaper. The rabbit sits uprigh__idx00068_1c4641835ce7-0.mp4", sgf: "./page/frame_ode/240s/SGF_A charming watercolor illustration of a young white rabbit with soft fur, large round ears, and gentle curious eyes, wearing glasses and reading a newspaper. The rabbit sits uprigh__idx00068_1c4641835ce7-0.mp4", caption: "A charming watercolor illustration of a young white rabbit with soft fur, large round ears, and gentle curious eyes, wearing glasses and reading a newspaper. The rabbit sits upright in a cozy armchair, one paw holding the paper, the other resting on its knee, showing focused interest with a slight smile. Warm living room background with a crackling fireplace, books on a side table, and a blurred window view of falling autumn leaves. Close-up, slightly elevated angle highlighting detailed fur, glasses, and newspaper headlines. Soft brushstrokes and gentle light enhance the serene, storybook atmosphere." },
+        { sf: "./page/frame_ode/240s/SF_A vibrant cartoon-style illustration of a joyful kangaroo dancing disco with energetic fluidity, wearing a glittery sequined top and pants that sparkle under colorful lights. The k__idx00012_f255d2da233d-0.mp4", sgf: "./page/frame_ode/240s/SGF_A vibrant cartoon-style illustration of a joyful kangaroo dancing disco with energetic fluidity, wearing a glittery sequined top and pants that sparkle under colorful lights. The k__idx00012_f255d2da233d-0.mp4", caption: "A vibrant cartoon-style illustration of a joyful kangaroo dancing disco with energetic fluidity, wearing a glittery sequined top and pants that sparkle under colorful lights. The kangaroo has large expressive eyes, a mischievous grin, and a fluffed tail swaying mid-motion, one foot lifted and the other stepping forward. Set on a blurred dance floor with glowing lights and silhouettes of dancing figures, the background pulses with festive energy. Rendered in smooth, hand-drawn style with exaggerated proportions, the scene is captured in a dynamic close-up from a slightly elevated angle, emphasizing the rhythm and fun." },
+        { sf: "./page/frame_ode/240s/SF_Cinematic 35mm film-style extreme close-up of a thoughtful 60s gray-haired man with a full beard, wearing glasses and a brown beret, seated at a Parisian café. He gazes off-screen__idx00029_997e2bc988f5-0.mp4", sgf: "./page/frame_ode/240s/SGF_Cinematic 35mm film-style extreme close-up of a thoughtful 60s gray-haired man with a full beard, wearing glasses and a brown beret, seated at a Parisian café. He gazes off-screen__idx00029_997e2bc988f5-0.mp4", caption: "Cinematic 35mm film-style extreme close-up of a thoughtful 60s gray-haired man with a full beard, wearing glasses and a brown beret, seated at a Parisian café. He gazes off-screen, lost in deep contemplation about the universe’s history, a subtle closed-mouth smile revealing quiet revelation. Dressed in a woolen suit coat and button-down shirt, his weathered, professorial face is softly lit by golden hour light. The bustling Parisian streets blur behind him, rendered in warm bokeh with rich depth of field. Slight overhead angle, medium close-up, evoking introspective stillness amid urban motion." },
+      ],
+
+      // Chunk-wise pairs live in QUAD_DATASETS below (4-way comparison, not paired).
+
+      // ---------- Frame-wise 60s ----------
+      'gal-fw60-ar': [
+        { sf: "./page/frame_ar/SF_a banana and a keyboard-0.mp4", sgf: "./page/frame_ar/SGF_a banana and a keyboard-0.mp4", caption: "A close-up view of a ripe yellow banana and a black keyboard lying side by side on a wooden table. The banana is curved with a few spots, indicating it is just right for eating. The keyboard has a sleek design with white keys and black letters. The banana is positioned closer to the front of the frame, while the keyboard is slightly behind it, creating depth. The background is blurred, focusing attention on these two items. The banana appears fresh and inviting, contrasting with the utilitarian nature of the keyboard. Static scene, no camera movement." },
+        { sf: "./page/frame_ar/SF_a car on the right of a motorcycle, front view-0.mp4", sgf: "./page/frame_ar/SGF_a car on the right of a motorcycle, front view-0.mp4", caption: "A front view of a car positioned to the right of a motorcycle on a clean, empty road. The car is a sleek, modern sedan with polished metallic paint, and the motorcycle is a sport model with a shiny black finish. Both vehicles are parked with their fronts facing the viewer, showcasing their headlights, grills, and windshields. The car's headlights are slightly angled towards the motorcycle, creating a dynamic composition. The scene should be captured from a wide shot to include both vehicles prominently, emphasizing the spatial relationship between them. Static shot." },
+      ],
+      'gal-fw60-cd': [
+        { sf: "./page/frame_cd/SF_a green car-0.mp4", sgf: "./page/frame_cd/SGF_a green car-0.mp4", caption: "A sleek, modern green sports car driving down a scenic coastal road. The car has a glossy exterior with minimalistic design elements, such as smooth lines and a streamlined silhouette. The sun is setting, casting a warm golden glow over the ocean in the background. The car's headlights and taillights are illuminated, adding a touch of elegance. The camera follows the car from a distance, capturing its speed and grace as it moves along the winding road. Wide shot, maintaining a steady focus on the car throughout the scene." },
+        { sf: "./page/frame_cd/SF_a green chair-0.mp4", sgf: "./page/frame_cd/SGF_a green chair-0.mp4", caption: "A single modern green armchair placed in a minimalist living room. The chair has sleek lines and a soft fabric upholstery. The room is sparsely decorated, with light wooden flooring and neutral-colored walls. The lighting is warm and ambient, casting gentle shadows on the floor. The camera focuses on the chair in a close-up shot, emphasizing the smooth texture and vibrant color of the green fabric. Static scene." },
+      ],
+      'gal-fw60-ode': [
+        { sf: "./page/frame_ode/SF_Gwen Stacy reading a book, oil painting-0.mp4", sgf: "./page/frame_ode/SGF_Gwen Stacy reading a book, oil painting-0.mp4", caption: "Oil painting style, featuring Gwen Stacy reading a book. Gwen is portrayed with her iconic red hair tied up, wearing a classic Victorian-style dress with intricate lace details and a cameo brooch. She sits in a cozy armchair by a fireplace, surrounded by soft candlelight and bookshelves filled with old books. Her expression is serene as she focuses intently on the book in her hands. The background showcases a detailed room interior with warm, rich colors and textures. Medium close-up shot, capturing Gwen's thoughtful demeanor." },
+        { sf: "./page/frame_ode/SF_a clock on the left of a vase, front view-0.mp4", sgf: "./page/frame_ode/SGF_a clock on the left of a vase, front view-0.mp4", caption: "A front view of a vase placed on the right side of the frame, with a clock positioned to the left of the vase. The clock and vase are clearly visible, with the clock displaying a realistic time and having intricate details such as roman numerals and a wooden frame. The vase is elegant, made of ceramic with floral patterns and a slight curve at the top. Both objects rest on a wooden table, which adds to the homey and traditional feel of the scene. The background is blurred, focusing the viewer's attention on the central arrangement of the clock and vase. Static shot, medium close-up." },
+      ],
+    };
+
+    function mountCarouselSplit(rootId, list){
+      const root = document.getElementById(rootId);
+      if(!root || !list) return;
+      const frag = document.createDocumentFragment();
+      list.forEach(({sf, sgf, caption})=>{
+        frag.appendChild(makePairCard({ sgf, sf, caption }));
+      });
+      root.appendChild(frag);
+    }
+    Object.keys(DATASETS).forEach(id => mountCarouselSplit(id, DATASETS[id]));
+
+    /* ===== 2-way pair grid (SGF | SF) — lock-step, controls on SGF ===== */
+    function makePairCard({sgf, sf, caption}){
+      const card = document.createElement('div');
+      card.className = 'slide';
+
+      const grid = document.createElement('div');
+      grid.className = 'quad-grid pair-grid';
+
+      const cells = [
+        { src: sgf, label: 'SGF (Ours)',   klass: 'ours',     controls: true  },
+        { src: sf,  label: 'Self Forcing', klass: 'baseline', controls: false },
+      ];
+
+      const videos = [];
+      let master = null;
+
+      cells.forEach(({src, label, klass, controls}) => {
+        const cell = document.createElement('div');
+        cell.className = 'quad-cell';
+
+        const lab = document.createElement('span');
+        lab.className = 'quad-label ' + klass;
+        lab.textContent = label;
+        cell.appendChild(lab);
+
+        if (!src){
+          const badge = document.createElement('span');
+          badge.className = 'quad-badge';
+          badge.textContent = 'N/A';
+          cell.appendChild(badge);
+          const ph = document.createElement('div');
+          ph.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.85rem;padding:16px;text-align:center;';
+          ph.textContent = 'Sample not available';
+          cell.appendChild(ph);
+        } else {
+          const v = document.createElement('video');
+          v.src = encodeURI(src);
+          v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'none';
+          v.controls = controls;
+          videos.push(v);
+          if (controls) master = v;
+          cell.appendChild(v);
+        }
+
+        grid.appendChild(cell);
+      });
+
+      if (!master && videos.length){
+        master = videos[0];
+        master.controls = true;
+      }
+
+      if (master){
+        const followers = videos.filter(v => v !== master);
+        master.addEventListener('play',    () => followers.forEach(v => v.play().catch(()=>{})));
+        master.addEventListener('pause',   () => followers.forEach(v => v.pause()));
+        master.addEventListener('seeking', () => followers.forEach(v => v.currentTime = master.currentTime));
+        master.addEventListener('seeked',  () => followers.forEach(v => v.currentTime = master.currentTime));
+        master.addEventListener('canplay', () => followers.forEach(v => v.currentTime = master.currentTime));
+        master.addEventListener('timeupdate', () => {
+          followers.forEach(v => {
+            if (Math.abs(v.currentTime - master.currentTime) > 0.15) v.currentTime = master.currentTime;
+          });
+        });
+      }
+
+      card.appendChild(grid);
+      if (caption){
+        const cap = document.createElement('div');
+        cap.className = 'caption';
+        cap.textContent = caption;
+        card.appendChild(cap);
+      }
+      card._videos = videos;
+      return card;
+    }
+
+    /* ===== 4-way quad grid (SGF | SF | SF Bi-ODE | Causal ODE) ===== */
+    function makeQuadCard({sgf, sf, biode, ode, caption}){
+      const card = document.createElement('div');
+      card.className = 'slide';
+
+      const grid = document.createElement('div');
+      grid.className = 'quad-grid';
+
+      // Cell order: SGF (Ours) top-left; SF top-right; SF Bi-ODE bottom-left; SF + Causal ODE bottom-right.
+      const cells = [
+        { src: sgf,   label: 'SGF (Ours)',        klass: 'ours',     controls: true  },
+        { src: sf,    label: 'Self Forcing',      klass: 'baseline', controls: false },
+        { src: biode, label: 'SF + Bi-dir ODE',   klass: 'baseline', controls: false },
+        { src: ode,   label: 'SF + Causal ODE',   klass: 'baseline', controls: false },
+      ];
+
+      const videos = [];
+      let master = null;
+      const missing = [];
+
+      cells.forEach(({src, label, klass, controls}) => {
+        const cell = document.createElement('div');
+        cell.className = 'quad-cell';
+
+        const lab = document.createElement('span');
+        lab.className = 'quad-label ' + klass;
+        lab.textContent = label;
+        cell.appendChild(lab);
+
+        if (!src){
+          const badge = document.createElement('span');
+          badge.className = 'quad-badge';
+          badge.textContent = 'N/A';
+          cell.appendChild(badge);
+          const ph = document.createElement('div');
+          ph.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.85rem;padding:16px;text-align:center;';
+          ph.textContent = 'Sample not available';
+          cell.appendChild(ph);
+          missing.push(label);
+        } else {
+          const v = document.createElement('video');
+          v.src = encodeURI(src);
+          v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'none';
+          v.controls = controls;
+          videos.push(v);
+          if (controls) master = v;
+          cell.appendChild(v);
+        }
+
+        grid.appendChild(cell);
+      });
+
+      // Fallback master if SGF is missing: first available video takes controls.
+      if (!master && videos.length){
+        master = videos[0];
+        master.controls = true;
+      }
+
+      // Sync playback: master drives followers.
+      if (master){
+        const followers = videos.filter(v => v !== master);
+        master.addEventListener('play',    () => followers.forEach(v => v.play().catch(()=>{})));
+        master.addEventListener('pause',   () => followers.forEach(v => v.pause()));
+        master.addEventListener('seeking', () => followers.forEach(v => v.currentTime = master.currentTime));
+        master.addEventListener('seeked',  () => followers.forEach(v => v.currentTime = master.currentTime));
+        master.addEventListener('canplay', () => followers.forEach(v => v.currentTime = master.currentTime));
+        master.addEventListener('timeupdate', () => {
+          followers.forEach(v => {
+            if (Math.abs(v.currentTime - master.currentTime) > 0.15) v.currentTime = master.currentTime;
+          });
+        });
+      }
+
+      card.appendChild(grid);
+      if (caption){
+        const cap = document.createElement('div');
+        cap.className = 'caption';
+        cap.textContent = caption;
+        card.appendChild(cap);
+      }
+      card._videos = videos;
+      return card;
+    }
+
+
+
+    /* Chunk-wise: 4-way (SGF vs SF vs SF Bi-ODE vs Causal ODE), rendered as quad-cards in a carousel. */
+    const QUAD_DATASETS = {
+      // ---------- Chunk-wise 60s ----------
+      'quad-cw60-ar': [
+        {
+          sgf:   "./page/chunk_ar/SGF_A panda drinking coffee in a cafe in Paris, Van Gogh style-0.mp4",
+          sf:    "./page/chunk_ar/SF_A panda drinking coffee in a cafe in Paris, Van Gogh style-0.mp4",
+          biode: "./page/chunk_ar/SF_biode_A panda drinking coffee in a cafe in Paris, Van Gogh style-0.mp4",
+          ode:   "./page/chunk_ar/SF_ode_A panda drinking coffee in a cafe in Paris, Van Gogh style-0.mp4",
+          caption: "A panda sitting in a cozy café in Paris, drinking coffee in a Van Gogh-inspired painting style. The panda is wearing a small beret and a casual outfit, sitting at a wooden table with a steaming cup of coffee in front of it. The café has vintage decor with exposed brick walls and warm lighting. The background includes other patrons and tables, all painted with swirling brushstrokes and vibrant colors typical of Van Gogh’s work. The panda looks content and relaxed, sipping from the cup. The scene captures the essence of a lively Parisian café with a dreamy, artistic touch. Medium close-up shot, focusing on the panda and the coffee."
+        },
+        {
+          sgf:   "./page/chunk_ar/SGF_A person is filling eyebrows-0.mp4",
+          sf:    "./page/chunk_ar/SF_A person is filling eyebrows-0.mp4",
+          biode: "./page/chunk_ar/SF_biode_A person is filling eyebrows-0.mp4",
+          ode:   "./page/chunk_ar/SF_ode_A person is filling eyebrows-0.mp4",
+          caption: "A close-up of a person getting their eyebrows filled in a beauty salon. The person is sitting comfortably in a chair with a mirror in front of them, their face tilted upwards towards the beautician who is carefully applying makeup to fill in and shape the eyebrows. The person has a calm expression, and the focus is on the detailed work being done on their eyebrows. The scene includes subtle lighting highlighting the area of work, and the beautician’s hand and tools can be seen in the frame. The background shows parts of the salon, including shelves with beauty products and a professional aesthetic. The scene emphasizes the precise and gentle motions of the beautician's hands as they work."
+        },
+        {
+          sgf:   "./page/chunk_ar/SGF_A person is peeling apples-0.mp4",
+          sf:    "./page/chunk_ar/SF_A person is peeling apples-0.mp4",
+          biode: "./page/chunk_ar/SF_biode_A person is peeling apples-0.mp4",
+          ode:   "./page/chunk_ar/SF_ode_A person is peeling apples-0.mp4",
+          caption: "A person with a warm and friendly expression is peeling apples at a wooden kitchen countertop. They are wearing casual, cozy clothes suitable for cooking. The person holds an apple in one hand and a peeler in the other, skillfully removing the peel in smooth, continuous strokes. The countertop is cluttered with other peeled apples and a knife. Sunlight streams in from a nearby window, casting a gentle glow over the scene. The background includes simple kitchen elements like a few utensils and a small potted plant. Medium close-up view, static shot."
+        },
+      ],
+      'quad-cw60-cd': [
+        {
+          sgf:   "./page/chunk_cd/SGF_A couple in formal evening wear going home get caught in a heavy downpour with umbrellas, animated style-0.mp4",
+          sf:    "./page/chunk_cd/SF_A couple in formal evening wear going home get caught in a heavy downpour with umbrellas, animated style-0.mp4",
+          biode: "./page/chunk_cd/SF_biode_A couple in formal evening wear going home get caught in a heavy downpour with umbrellas, animated style-0.mp4",
+          ode:   "./page/chunk_cd/SF_ode_A couple in formal evening wear going home get caught in a heavy downpour with umbrellas, animated style-0.mp4",
+          caption: "Animated style, a well-dressed couple in formal evening wear is walking down a bustling city street as a sudden heavy downpour begins. They quickly pull out their umbrellas, the vibrant colors contrasting against the dark, rain-soaked environment. The man, wearing a black tuxedo and bow tie, holds his umbrella over the woman, who is adorned in a flowing, elegant red gown. Both have expressions of surprise and amusement as they navigate the slippery sidewalk. The background showcases a busy urban scene with neon lights reflecting off the rainwater. Medium shot capturing the couple from the waist up, emphasizing their interaction and the rain falling around them."
+        },
+      ],
+
+      // ---------- Chunk-wise 240s ----------
+      'quad-cw240-ar': [
+        {
+          sgf:   "./page/chunk_ar/240s/SGF_A Chinese boy with neatly combed hair wears glasses and sits in a warm, inviting fast food restaurant, eyes closed as he takes a big bite of a juicy cheeseburger. He holds the burg__idx00053_d25d3f3d74c3-0.mp4",
+          sf:    "./page/chunk_ar/240s/SF_A Chinese boy with neatly combed hair wears glasses and sits in a warm, inviting fast food restaurant, eyes closed as he takes a big bite of a juicy cheeseburger. He holds the burg__idx00053_d25d3f3d74c3-0.mp4",
+          biode: "./page/chunk_ar/240s/SF_biode_A Chinese boy with neatly combed hair wears glasses and sits in a warm, inviting fast food restaurant, eyes closed as he takes a big bite of a juicy cheeseburger. He holds the burg__idx00053_d25d3f3d74c3-0.mp4",
+          ode:   "./page/chunk_ar/240s/SF_ode_A Chinese boy with neatly combed hair wears glasses and sits in a warm, inviting fast food restaurant, eyes closed as he takes a big bite of a juicy cheeseburger. He holds the burg__idx00053_d25d3f3d74c3-0.mp4",
+          caption: "A Chinese boy with neatly combed hair wears glasses and sits in a warm, inviting fast food restaurant, eyes closed as he takes a big bite of a juicy cheeseburger. He holds the burger with both hands, savoring the moment with a slightly dreamy, joyful expression. Soft golden light enhances the cozy atmosphere, while blurred diners and a vibrant menu board fill the background. Close-up shot from a low angle, capturing his delight in vivid detail."
+        },
+        {
+          sgf:   "./page/chunk_ar/240s/SGF_Cinematic 70mm film shot, extreme close-up of a 24-year-old woman's almond-shaped eye gently blinking at magic hour in Marrakech. Warm golden sunlight bathes the scene, casting vib__idx00011_f254c14c0eed-0.mp4",
+          sf:    "./page/chunk_ar/240s/SF_Cinematic 70mm film shot, extreme close-up of a 24-year-old woman's almond-shaped eye gently blinking at magic hour in Marrakech. Warm golden sunlight bathes the scene, casting vib__idx00011_f254c14c0eed-0.mp4",
+          biode: "./page/chunk_ar/240s/SF_biode_Cinematic 70mm film shot, extreme close-up of a 24-year-old woman's almond-shaped eye gently blinking at magic hour in Marrakech. Warm golden sunlight bathes the scene, casting vib__idx00011_f254c14c0eed-0.mp4",
+          ode:   "./page/chunk_ar/240s/SF_ode_Cinematic 70mm film shot, extreme close-up of a 24-year-old woman's almond-shaped eye gently blinking at magic hour in Marrakech. Warm golden sunlight bathes the scene, casting vib__idx00011_f254c14c0eed-0.mp4",
+          caption: "Cinematic 70mm film shot, extreme close-up of a 24-year-old woman's almond-shaped eye gently blinking at magic hour in Marrakech. Warm golden sunlight bathes the scene, casting vibrant hues across bustling market stalls and ornate architecture. Her dark lashes frame the eye perfectly, reflecting the lively city atmosphere with rich textures and deep, immersive colors. Slightly elevated medium shot emphasizes natural eye movement and intricate details, shallow depth of field enhancing realism and intimacy."
+        },
+      ],
+      'quad-cw240-cd': [
+        {
+          sgf:   "./page/chunk_cd/240s/SGF_A cinematic 35mm film shot of a young man with short, tousled brown hair and intense, determined eyes sprinting down a neon-lit city street, arms driving powerfully, face focused a__idx00033_12bbec4b64fd-0.mp4",
+          sf:    "./page/chunk_cd/240s/SF_A cinematic 35mm film shot of a young man with short, tousled brown hair and intense, determined eyes sprinting down a neon-lit city street, arms driving powerfully, face focused a__idx00033_12bbec4b64fd-0.mp4",
+          biode: "./page/chunk_cd/240s/SF_bi-ode_A cinematic 35mm film shot of a young man with short, tousled brown hair and intense, determined eyes sprinting down a neon-lit city street, arms driving powerfully, face focused a__idx00033_12bbec4b64fd-0.mp4",
+          ode:   "./page/chunk_cd/240s/SF_ode_A cinematic 35mm film shot of a young man with short, tousled brown hair and intense, determined eyes sprinting down a neon-lit city street, arms driving powerfully, face focused a__idx00033_12bbec4b64fd-0.mp4",
+          caption: "A cinematic 35mm film shot of a young man with short, tousled brown hair and intense, determined eyes sprinting down a neon-lit city street, arms driving powerfully, face focused and energetic. The camera follows closely from a low, slightly behind-the-subject angle, capturing dynamic step-printing motion and every forceful stride. Tall buildings streak past in blurred motion, the cityscape dissolving into a dreamy sepia gradient. Nostalgic vintage film texture with grain and subtle lens flare enhances the dramatic, high-energy atmosphere. Close-up, eye-level tracking shot with smooth dolly movement."
+        },
+        {
+          sgf:   "./page/chunk_cd/240s/SGF_Vibrant food photography style, a middle-aged chef with a weathered face and focused expression rapidly chopping onions on a wooden board. He wears a crisp white apron and chef's h__idx00048_c19a324e4505-0.mp4",
+          sf:    "./page/chunk_cd/240s/SF_Vibrant food photography style, a middle-aged chef with a weathered face and focused expression rapidly chopping onions on a wooden board. He wears a crisp white apron and chef's h__idx00048_c19a324e4505-0.mp4",
+          biode: "./page/chunk_cd/240s/SF_biode_Vibrant food photography style, a middle-aged chef with a weathered face and focused expression rapidly chopping onions on a wooden board. He wears a crisp white apron and chef's h__idx00048_c19a324e4505-0.mp4",
+          ode:   "./page/chunk_cd/240s/Sf_ode_Vibrant food photography style, a middle-aged chef with a weathered face and focused expression rapidly chopping onions on a wooden board. He wears a crisp white apron and chef's h__idx00048_c19a324e4505-0.mp4",
+          caption: "Vibrant food photography style, a middle-aged chef with a weathered face and focused expression rapidly chopping onions on a wooden board. He wears a crisp white apron and chef's hat, hands moving with precision under warm sunlight streaming through a window. Steam rises from a simmering pot in the background, stainless steel appliances and cluttered countertops filled with ingredients and tools. Medium shot, centered on the chef, capturing dynamic motion and intense concentration in a bustling kitchen environment."
+        },
+      ],
+    };
+
+    function mountCarouselQuad(rootId, list){
+      const root = document.getElementById(rootId);
+      if (!root || !list) return;
+      const frag = document.createDocumentFragment();
+      list.forEach(item => frag.appendChild(makeQuadCard(item)));
+      root.appendChild(frag);
+    }
+    Object.keys(QUAD_DATASETS).forEach(id => mountCarouselQuad(id, QUAD_DATASETS[id]));
+
+    /* ===== Carousel init ===== */
+    function initCarousel(car){
+      const track = car.querySelector('.track');
+      const prev = car.querySelector('.prev');
+      const next = car.querySelector('.next');
+      const dotsC = car.querySelector('.dots');
+      const slides = Array.from(track.children);
+      if (slides.length === 0){
+        // Hide nav/dots if no slides
+        if (prev) prev.style.display='none';
+        if (next) next.style.display='none';
+        return;
+      }
+
+      function setEdgePadding(){
+        const first = slides[0]; if(!first) return;
+        const slideW = first.getBoundingClientRect().width;
+        const pad = Math.max(0, (track.clientWidth - slideW)/2);
+        track.style.paddingLeft = pad + 'px';
+        track.style.paddingRight = pad + 'px';
+      }
+      function centerIndex(idx){
+        const i = Math.max(0, Math.min(idx, slides.length - 1));
+        const s = slides[i];
+        const left = s.offsetLeft - (track.clientWidth - s.clientWidth)/2;
+        track.scrollTo({ left, behavior:'smooth' });
+        // Pause videos in non-centered slides
+        slides.forEach(sl => sl.querySelectorAll('video').forEach(v => v.pause()));
+      }
+      function currentIndex(){
+        const mid = track.scrollLeft + track.clientWidth/2;
+        let idx = 0, min = Infinity;
+        slides.forEach((s,i)=>{
+          const c = Math.abs((s.offsetLeft + s.clientWidth/2) - mid);
+          if (c < min){ min = c; idx = i; }
+        });
+        return idx;
+      }
+      dotsC.innerHTML = '';
+      slides.forEach((_,i)=>{
+        const d=document.createElement('button');
+        d.className='dot'+(i===0?' active':'');
+        d.setAttribute('aria-label','Go to slide '+(i+1));
+        d.type='button';
+        d.onclick=()=>centerIndex(i);
+        dotsC.appendChild(d);
+      });
+      const dots=[...dotsC.children];
+      const updateDots=()=>{
+        const idx = currentIndex();
+        dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
+      };
+      track.addEventListener('scroll', updateDots, {passive:true});
+
+      track.addEventListener('wheel',(e)=>{
+        if (Math.abs(e.deltaX) < Math.abs(e.deltaY)){
+          track.scrollLeft += e.deltaY;
+          e.preventDefault();
+        }
+      }, {passive:false});
+
+      let isDown=false, startX=0, scrollL=0;
+      track.addEventListener('pointerdown', e=>{
+        isDown=true; startX=e.clientX; scrollL=track.scrollLeft; track.setPointerCapture(e.pointerId);
+      });
+      track.addEventListener('pointermove', e=>{
+        if(!isDown) return;
+        track.scrollLeft = scrollL - (e.clientX-startX);
+      });
+      const endDrag=()=>isDown=false;
+      track.addEventListener('pointerup', endDrag);
+      track.addEventListener('pointercancel', endDrag);
+      track.addEventListener('pointerleave', endDrag);
+
+      prev.onclick = ()=> centerIndex(currentIndex() - 1);
+      next.onclick = ()=> centerIndex(currentIndex() + 1);
+
+      setEdgePadding();
+      new ResizeObserver(setEdgePadding).observe(track);
+      centerIndex(0);
+      updateDots();
+
+      // Re-center when the containing panel becomes visible
+      car._recenter = ()=>{ setEdgePadding(); centerIndex(currentIndex()); };
+    }
+    const allCarousels = $$('[data-carousel]');
+    allCarousels.forEach(initCarousel);
+
+    /* ===== Tab switching ===== */
+    $$('.tab-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const group = btn.dataset.group;
+        const target = btn.dataset.target;
+        // Toggle button (scope to the same tabbar so groups don't collide)
+        const tabbar = btn.closest('.tabs');
+        const btnScope = tabbar || document;
+        $$(`.tab-btn[data-group="${group}"]`, btnScope).forEach(b=>b.classList.toggle('active', b===btn));
+        // Panels live as siblings of the tabbar — scope to the nearest .subsec if any, else the section
+        const parent = btn.closest('.subsec') || btn.closest('section');
+        if (!parent) return;
+        $$('.panel', parent).forEach(p=>{
+          const on = (p.id === target);
+          p.classList.toggle('active', on);
+          if (on){
+            // Recenter the newly-visible carousel(s) on next tick
+            requestAnimationFrame(()=>{
+              $$('[data-carousel]', p).forEach(c=> c._recenter && c._recenter());
+            });
+          } else {
+            // Pause videos in hidden panels
+            $$('video', p).forEach(v=>v.pause());
+          }
+        });
+      });
+    });
+
+    document.addEventListener('gesturestart', e => e.preventDefault());
+  </script>
+</body>
+</html>
