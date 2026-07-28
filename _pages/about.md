@@ -46,6 +46,32 @@ My research interests lie in *Computer Vision*, particularly in *image and video
 \* indicates equal contribution
 <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>	
 
+<!--SGF-->
+<tr>
+  <td style="padding:20px;width:30%;max-width:30%" align="center">
+    <img style="width:100%;max-width:100%" src="../images/SGF.jpg" alt="dise">
+  </td>
+  <td width="75%" valign="center">
+    <papertitle>Self Gradient Forcing: Native Long Video Extrapolation</papertitle>
+    <br>
+    <b>Junhao Zhuang</b>, Shiyi Zhang, Yuxuan Bian, Yaowei Li, Yawen Luo, Weiyang Jin, Songchun Zhang, et al.
+    <br>
+    <em>Technical Report</em>
+    <br>
+    <a href="https://arxiv.org/abs/2607.20368">[PDF]</a> 
+    <a href="https://zhuang2002.github.io/SelfGradientForcing/">[Project Page]</a>
+    <a href="https://github.com/zhuang2002/Self_Gradient_Forcing">[Code]</a>
+    <br>
+    <a href="https://github.com/zhuang2002/Self_Gradient_Forcing">
+      <img src="https://img.shields.io/github/stars/zhuang2002/Self_Gradient_Forcing?style=social" />
+    </a>
+    <a href="https://github.com/zhuang2002/Self_Gradient_Forcing/forks">
+      <img src="https://img.shields.io/github/forks/zhuang2002/Self_Gradient_Forcing?style=social" />
+    </a>
+    <p> Self Gradient Forcing (SGF) recovers the missing context-gradient path for self-generated causal memory through a bounded two-pass replay, enabling models trained with only a 5-second window to extrapolate to minute-scale videos with stronger identity, layout, and temporal stability.</p>
+  </td>
+</tr>	
+
 
 <!--Joyai Echo-->
 <tr>
