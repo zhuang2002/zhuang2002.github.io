@@ -24,7 +24,7 @@ I am currently working as a *Research Assistant* at *MMLab, The Chinese Universi
 My research interests lie in *Computer Vision*, particularly in *image and video generation*.
 
 
-[Email: zhuangjh23@tsinghua.org.cn](mailto:zhuangjh23@tsinghua.org.cn) / [GitHub: zhuang2002](https://github.com/zhuang2002)
+[Email](mailto:zhuangjh23@tsinghua.org.cn) / [GitHub](https://github.com/zhuang2002)
 
 ---
 # ✨ News
