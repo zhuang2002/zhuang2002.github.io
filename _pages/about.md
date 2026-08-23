@@ -74,9 +74,9 @@ My research interests lie in *Computer Vision*, particularly in *image and video
     <p>
       An omnimodal world model for generative media that responds to continuous
       navigation while video, environmental sound, music, and speech evolve
-      together. I was responsible for <strong>causal training</strong> and
-      proposed <strong>Short-Horizon and Long-Horizon Audio-Visual
-      Self-Gradient Forcing</strong>.
+      together. I proposed <strong>Short-Horizon and Long-Horizon Audio-Visual
+      Self-Gradient Forcing</strong> and was responsible for EchoWM’s
+      <strong>causal training</strong>.
     </p>
   </td>
 </tr>
