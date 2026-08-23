@@ -31,10 +31,10 @@ world models for games and real-world environments.
 ---
 # ✨ News
 ---
-* <span style="font-size: smaller;">2026-05: Two papers are accepted to [SIGGRAPH Asia 2026](https://asia.siggraph.org/2026/)</span>
-* <span style="font-size: smaller;">2026-05: One paper is accepted to [ECCV 2026](https://eccv.ecva.net/)</span>
+* <span style="font-size: smaller;">2026-07: Two papers are accepted to [SIGGRAPH Asia 2026](https://asia.siggraph.org/2026/)</span>
+* <span style="font-size: smaller;">2026-06: One paper is accepted to [ECCV 2026](https://eccv.ecva.net/)</span>
 * <span style="font-size: smaller;">2026-05: One paper is accepted to [ICML 2026](https://icml.cc/)</span>
-* <span style="font-size: smaller;">2026-05: One paper is accepted to [IEEE TPAMI](https://www.computer.org/csdl/journal/tp)</span>
+* <span style="font-size: smaller;">2026-04: One paper is accepted to [IEEE TPAMI](https://www.computer.org/csdl/journal/tp)</span>
 * <span style="font-size: smaller;">2026-02: One paper is accepted to [CVPR 2026](https://cvpr.thecvf.com/)</span>
 * <span style="font-size: smaller;">2025-09: One paper is accepted to [NeurIPS 2025](https://neurips.cc/)</span>
 * <span style="font-size: smaller;">2025-04: Two papers are accepted to [SIGGRAPH 2025](https://www.siggraph.org/siggraph-events/conferences/)</span>
