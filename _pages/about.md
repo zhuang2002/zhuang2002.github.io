@@ -46,19 +46,58 @@ My research interests lie in *Computer Vision*, particularly in *image and video
 \* indicates equal contribution
 <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>	
 
+<!--EchoWM-->
+<tr>
+  <td style="padding:20px;width:30%;max-width:30%" align="center">
+    <img style="width:100%;max-width:100%"
+         src="../images/EchoWM.png"
+         alt="EchoWM">
+  </td>
+  <td width="75%" valign="center">
+    <papertitle>EchoWM: Open and Enterable Omnimodal World Models</papertitle>
+    <br>
+    Songchun Zhang*, Yaowei Li*, <b>Junhao Zhuang*</b>, Weiyang Jin*,
+    Haoyu Wang, Xin Lu, Shiyi Zhang, Haoran Li, Xiaoxiao Ma, Yumin Li,
+    Yijun Liu, Yaofeng Su, Yanwen Ma, Haoyu Wu, Zihan Su, Yue Ma,
+    Lvmin Zhang, Haoyang Huang, Zeyue Xue, Anyi Rao, Nan Duan
+    <br>
+    <em>Technical Report</em>, 2026
+    <br>
+    <a href="https://github.com/jd-opensource/JoyAI-Echo">[Code]</a>
+    <br>
+    <a href="https://github.com/jd-opensource/JoyAI-Echo">
+      <img src="https://img.shields.io/github/stars/jd-opensource/JoyAI-Echo?style=social" />
+    </a>
+    <a href="https://github.com/jd-opensource/JoyAI-Echo/forks">
+      <img src="https://img.shields.io/github/forks/jd-opensource/JoyAI-Echo?style=social" />
+    </a>
+    <p>
+      An omnimodal world model for generative media that responds to continuous
+      navigation while video, environmental sound, music, and speech evolve
+      together. I was responsible for <strong>causal training</strong> and
+      proposed <strong>Short-Horizon and Long-Horizon Audio-Visual
+      Self-Gradient Forcing</strong>.
+    </p>
+  </td>
+</tr>
+
+
 <!--SGF-->
 <tr>
   <td style="padding:20px;width:30%;max-width:30%" align="center">
-    <img style="width:100%;max-width:100%" src="../images/SGF.jpg" alt="dise">
+    <img style="width:100%;max-width:100%"
+         src="../images/SGF.jpg"
+         alt="Self Gradient Forcing">
   </td>
   <td width="75%" valign="center">
     <papertitle>Self Gradient Forcing: Native Long Video Extrapolation</papertitle>
     <br>
-    <b>Junhao Zhuang</b>, Shiyi Zhang, Yuxuan Bian, Yaowei Li, Yawen Luo, Weiyang Jin, Songchun Zhang, et al.
+    <b>Junhao Zhuang</b>, Shiyi Zhang, Yuxuan Bian, Yaowei Li,
+    Yawen Luo, Weiyang Jin, Songchun Zhang, et al.
     <br>
     <em>Technical Report</em>
     <br>
-    <a href="https://arxiv.org/abs/2607.20368">[PDF]</a> 
+    <a href="https://arxiv.org/abs/2607.20368">[PDF]</a>
     <a href="https://zhuang2002.github.io/SelfGradientForcing/">[Project Page]</a>
     <a href="https://github.com/zhuang2002/Self_Gradient_Forcing">[Code]</a>
     <br>
@@ -68,9 +107,16 @@ My research interests lie in *Computer Vision*, particularly in *image and video
     <a href="https://github.com/zhuang2002/Self_Gradient_Forcing/forks">
       <img src="https://img.shields.io/github/forks/zhuang2002/Self_Gradient_Forcing?style=social" />
     </a>
-    <p> Self Gradient Forcing (SGF) recovers the missing context-gradient path for self-generated causal memory through a bounded two-pass replay, enabling models trained with only a 5-second window to extrapolate to minute-scale videos with stronger identity, layout, and temporal stability.</p>
+    <p>
+      Self Gradient Forcing (SGF) recovers the missing context-gradient path
+      for self-generated causal memory through a bounded two-pass replay,
+      enabling models trained with only a 5-second window to extrapolate to
+      minute-scale videos with stronger identity, layout, and temporal
+      stability. It also supports the causal training of
+      <strong>EchoWM</strong>.
+    </p>
   </td>
-</tr>	
+</tr>
 
 
 <!--Joyai Echo-->
