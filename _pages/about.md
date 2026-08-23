@@ -130,7 +130,7 @@ world models for games and real-world environments.
   <td width="75%" valign="center">
     <papertitle>JoyAI-Echo: Pushing the Frontier of Long Audio-Visual Generation</papertitle>
     <br>
-    Echo Team
+    Haoran Li, Fredreic Li, ..., <b>Junhao Zhuang</b>, ..., Zeyue Xue, Nan Duan
     <br>
     <em>Technical Report</em>
     <br>
