@@ -17,11 +17,14 @@ redirect_from:
   }
 </style>
 
-I am currently a final-year Master's student in Computer Technology at *Tsinghua University*, under the supervision of *Prof. Chun Yuan*. I obtained my Bachelor's degree in Computer Science and Technology from the *Yingcai Honors College at the University of Electronic Science and Technology of China* in 2023, where I was fortunate to be advised by *Prof. Xile Zhao*.  
+I am currently a *Researcher* at *JD Future Academy, JD.com*, as a member of the *Tech Genius Team (TGT)*.
 
-I am currently working as a *Research Assistant* at *MMLab, The Chinese University of Hong Kong (CUHK)*, under the supervision of *Prof. Tianfan Xue*.
+I received my Master's degree in Computer Technology from *Tsinghua University*, under the supervision of *Prof. Chun Yuan*. I obtained my Bachelor's degree in Computer Science and Technology from the *Yingcai Honors College at the University of Electronic Science and Technology of China* in 2023, where I was fortunate to be advised by *Prof. Xile Zhao*.
 
-My research interests lie in *Computer Vision*, particularly in *image and video generation*.
+Previously, I worked as a *Research Assistant* at *MMLab, The Chinese University of Hong Kong (CUHK)*, under the supervision of *Prof. Tianfan Xue*.
+
+My research focuses on large-scale audio-visual generative models and interactive
+world models for games and real-world environments.
 
 
 [Email](mailto:zhuangjh23@tsinghua.org.cn) / [GitHub](https://github.com/zhuang2002)
