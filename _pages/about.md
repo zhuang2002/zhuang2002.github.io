@@ -67,6 +67,7 @@ world models for games and real-world environments.
     <em>Technical Report</em>, 2026
     <br>
     <a href="https://github.com/jd-opensource/JoyAI-Echo">[Code]</a>
+    <a href="https://echo-team-joy-future-academy-jd.github.io/Echo-1.5-Page">[Project Page]</a>
     <br>
     <a href="https://github.com/jd-opensource/JoyAI-Echo">
       <img src="https://img.shields.io/github/stars/jd-opensource/JoyAI-Echo?style=social" />
