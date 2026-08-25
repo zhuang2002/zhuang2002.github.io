@@ -49,6 +49,36 @@ world models for games and real-world environments.
 \* indicates equal contribution
 <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>	
 
+<!--Echo1p5-->
+<tr>
+  <td style="padding:20px;width:30%;max-width:30%" align="center">
+    <img style="width:100%;max-width:100%"
+         src="../images/echo1p5.png"
+         alt="EchoWM">
+  </td>
+  <td width="75%" valign="center">
+    <papertitle>JoyAI-Echo-1.5: Long-Horizon Audio-Visual Generation for Persistent Stories and Interactive Worlds</papertitle>
+    <br>
+    Nan Duan, Haoyang Huang, Weiyang Jin, Haoran Li, Yaowei Li, Yuming Li, Yijun Liu, Xin Lu, Xiaoxiao Ma, Yanwen Ma, Yaofeng Su, Yilang Sun, Haoyu Wang, Zeyue Xue, Songchun Zhang, <b>Junhao Zhuang</b>
+    <br>
+    <em>Technical Report</em>, 2026
+    <br>
+    <a href="https://arxiv.org/abs/2608.23383">[PDF]</a>
+    <a href="https://echo-team-joy-future-academy-jd.github.io/Echo-1.5-Page">[Project Page]</a>
+    <a href="https://github.com/jd-opensource/JoyAI-Echo">[Code]</a>
+    <br>
+    <a href="https://github.com/jd-opensource/JoyAI-Echo">
+      <img src="https://img.shields.io/github/stars/jd-opensource/JoyAI-Echo?style=social" />
+    </a>
+    <a href="https://github.com/jd-opensource/JoyAI-Echo/forks">
+      <img src="https://img.shields.io/github/forks/jd-opensource/JoyAI-Echo?style=social" />
+    </a>
+    <p>
+      JoyAI‑Echo‑1.5: a unified audiovisual generator for identity‑consistent long‑video narratives and controllable interactive worlds.
+    </p>
+  </td>
+</tr>
+
 <!--EchoWM-->
 <tr>
   <td style="padding:20px;width:30%;max-width:30%" align="center">
