@@ -74,7 +74,7 @@ world models for games and real-world environments.
       <img src="https://img.shields.io/github/forks/jd-opensource/JoyAI-Echo?style=social" />
     </a>
     <p>
-      JoyAI‑Echo‑1.5: a unified audiovisual generator for identity‑consistent long‑video narratives and controllable interactive worlds.
+      JoyAI‑Echo‑1.5 is a unified audio‑visual generation system featuring two purpose‑built variants: a long‑video variant with composable cross‑shot memory for sustained identity consistency, and a world‑model variant with geometry‑aware 6‑DoF camera control for interactive viewpoint navigation.
     </p>
   </td>
 </tr>
