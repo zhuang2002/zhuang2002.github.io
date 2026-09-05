@@ -449,7 +449,7 @@ redirect_from:
         <article class="paper">
           <div class="paper-media"><img src="https://zhuang2002.github.io/images/colorflow.png" alt="ColorFlow project preview" loading="lazy"></div>
           <div class="paper-body">
-            <div class="paper-topline"><h3>ColorFlow: Retrieval-Augmented Image Sequence Colorization</h3><span class="venue">arXiv · 2024</span></div>
+            <div class="paper-topline"><h3>ColorFlow: Retrieval-Augmented Image Sequence Colorization</h3><span class="venue">Tech Report · 2024</span></div>
             <p class="authors"><b>Junhao Zhuang*</b>, Xuan Ju*, Zhaoyang Zhang, Yong Liu, Shiyi Zhang, Chun Yuan, Ying Shan</p>
             <p class="paper-desc">ColorFlow is the first model designed for fine-grained ID preservation in image sequence colorization, utilizing contextual information. Given a reference image pool, ColorFlow accurately generates colors for various elements in black and white image sequences, including the hair color and attire of characters, ensuring color consistency with the reference images.</p>
             <div class="paper-links"><a href="https://arxiv.org/abs/2412.11815">Paper</a><a href="/ColorFlow/">Project</a><a href="https://github.com/TencentARC/ColorFlow">Code</a></div>
