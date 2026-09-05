@@ -332,16 +332,6 @@
       border-color:rgba(76,201,240,.30);
       box-shadow:0 0 28px rgba(76,201,240,.07);
     }
-    .adoption-meta{
-      display:inline-flex; align-items:center; gap:7px;
-      margin-bottom:10px; color:var(--brand-1);
-      font-size:.76rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
-    }
-    .adoption-meta::before{
-      content:""; width:7px; height:7px; border-radius:50%;
-      background:linear-gradient(90deg,var(--brand-1),var(--brand-2));
-      box-shadow:0 0 12px rgba(76,201,240,.45);
-    }
     .adoption-card h3{
       margin:0; font:700 1.2rem/1.35 "Space Grotesk",Inter,sans-serif;
       overflow-wrap:anywhere;
@@ -951,7 +941,6 @@
 
       <div class="adoption-grid">
         <article class="adoption-card primary">
-          <div class="adoption-meta">Our work · 2026</div>
           <h3>EchoWM: Open and Enterable Omnimodal World Models</h3>
           <p>
             EchoWM uses <strong>Short-Horizon and Long-Horizon Audio-Visual Self-Gradient Forcing</strong>
@@ -966,10 +955,9 @@
         </article>
 
         <article class="adoption-card">
-          <div class="adoption-meta">Independent adoption · 2026</div>
           <h3>SolarWM: Open Data and Scalable Training for Long-Horizon Video World Models</h3>
           <p>
-            SolarWM independently adopts SGF in Stage&nbsp;2: <strong>DMD via Self-Gradient Forcing</strong> trains
+            SolarWM uses SGF in Stage&nbsp;2: <strong>DMD via Self-Gradient Forcing</strong> trains
             the causal student on its own autoregressive rollouts.
           </p>
           <div class="adoption-links">
