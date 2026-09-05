@@ -107,7 +107,7 @@
     @keyframes fly{from{transform:translate3d(0,0,0)}to{transform:translate3d(140vw,-40vh,0)}}
 
     /* Sections */
-    section{ margin: var(--secGap) 0; }
+    section{ margin: var(--secGap) 0; scroll-margin-top:72px; }
     .section-title{
       display:flex; align-items:center; gap:10px;
       font-family:"Space Grotesk"; font-weight:800;
@@ -318,6 +318,47 @@
       vertical-align: middle;
     }
 
+    /* Explicit downstream use of SGF in recent world models */
+    .adoption-grid{
+      width:100%; max-width:var(--figW); margin:18px auto 0;
+      display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px;
+    }
+    .adoption-card{
+      min-width:0; padding:22px;
+      border:1px solid rgba(255,255,255,.11); border-radius:16px;
+      background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+    }
+    .adoption-card.primary{
+      border-color:rgba(76,201,240,.30);
+      box-shadow:0 0 28px rgba(76,201,240,.07);
+    }
+    .adoption-meta{
+      display:inline-flex; align-items:center; gap:7px;
+      margin-bottom:10px; color:var(--brand-1);
+      font-size:.76rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+    }
+    .adoption-meta::before{
+      content:""; width:7px; height:7px; border-radius:50%;
+      background:linear-gradient(90deg,var(--brand-1),var(--brand-2));
+      box-shadow:0 0 12px rgba(76,201,240,.45);
+    }
+    .adoption-card h3{
+      margin:0; font:700 1.2rem/1.35 "Space Grotesk",Inter,sans-serif;
+      overflow-wrap:anywhere;
+    }
+    .adoption-card p{
+      margin:11px 0 0; color:var(--muted); font-size:.94rem; line-height:1.65;
+    }
+    .adoption-card strong{ color:var(--text); font-weight:800; }
+    .adoption-links{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+    .adoption-links a{
+      display:inline-flex; align-items:center; padding:6px 10px;
+      border:1px solid rgba(255,255,255,.14); border-radius:999px;
+      font-size:.8rem; font-weight:700;
+      background:rgba(255,255,255,.025);
+    }
+    .adoption-links a:hover{ box-shadow:var(--ring); }
+
     /* 4-way quad grid for chunk-wise comparisons */
     .quad-grid{
       display: grid;
@@ -438,6 +479,7 @@
       .topnav nav{
         grid-column:1/-1; order:2; width:100%;
         overflow-x:auto; -webkit-overflow-scrolling:touch;
+        flex-wrap:nowrap;
         scrollbar-width:none;
         justify-content:flex-start; padding: 0 4px;
       }
@@ -449,6 +491,8 @@
       .fig img, .teaser img{ width:100% !important; }
       .pill{ padding:5px 8px; font-size:.78rem; }
       .slide{ flex-basis: 100% !important; max-width:100% !important; }
+      .adoption-grid{ grid-template-columns:1fr; }
+      .adoption-card{ padding:18px; }
     }
     @media (max-width: 420px){
       :root{ --scale: 0.82; }
@@ -480,6 +524,7 @@
         <a class="chip" href="#chunkwise">Chunk-wise</a>
         <a class="chip" href="#framewise">Frame-wise</a>
         <a class="chip" href="#analysis">Analysis</a>
+        <a class="chip" href="#adoption">SGF in Practice</a>
         <a class="chip" href="#bib">BibTeX</a>
       </nav>
       <div class="top-actions"></div>
@@ -896,6 +941,43 @@
             </table>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ================= SGF IN RECENT WORLD MODELS ================= -->
+    <section id="adoption" aria-labelledby="adoption-title">
+      <div class="section-title" id="adoption-title"><span class="dot"></span> SGF in Recent World Models </div>
+      <p class="note">Recent systems that explicitly use Self Gradient Forcing in their causal training pipelines.</p>
+
+      <div class="adoption-grid">
+        <article class="adoption-card primary">
+          <div class="adoption-meta">Our work · 2026</div>
+          <h3>EchoWM: Open and Enterable Omnimodal World Models</h3>
+          <p>
+            EchoWM uses <strong>Short-Horizon and Long-Horizon Audio-Visual Self-Gradient Forcing</strong>
+            on self-generated rollouts, enabling stable long-horizon streaming audio-visual generation with a causal
+            few-step generator.
+          </p>
+          <div class="adoption-links">
+            <a href="https://arxiv.org/abs/2608.23189" target="_blank" rel="noopener">Paper ↗</a>
+            <a href="https://echo-team-joy-future-academy-jd.github.io/Echo-1.5-Page/" target="_blank" rel="noopener">Project ↗</a>
+            <a href="https://github.com/jd-opensource/JoyAI-Echo" target="_blank" rel="noopener">Code ↗</a>
+          </div>
+        </article>
+
+        <article class="adoption-card">
+          <div class="adoption-meta">Independent adoption · 2026</div>
+          <h3>SolarWM: Open Data and Scalable Training for Long-Horizon Video World Models</h3>
+          <p>
+            SolarWM independently adopts SGF in Stage&nbsp;2: <strong>DMD via Self-Gradient Forcing</strong> trains
+            the causal student on its own autoregressive rollouts.
+          </p>
+          <div class="adoption-links">
+            <a href="https://arxiv.org/abs/2609.02886" target="_blank" rel="noopener">Paper ↗</a>
+            <a href="https://junchao-cs.github.io/SolarWM-Web/" target="_blank" rel="noopener">Project ↗</a>
+            <a href="https://github.com/Junchao-cs/SolarWM" target="_blank" rel="noopener">Code ↗</a>
+          </div>
+        </article>
       </div>
     </section>
 
