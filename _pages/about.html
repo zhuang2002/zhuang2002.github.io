@@ -43,6 +43,7 @@ redirect_from:
     }
     a { color: var(--accent); text-decoration: none; }
     a:hover { color: var(--accent-strong); }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
     img { display: block; max-width: 100%; }
     .skip-link { position: fixed; left: 16px; top: -60px; z-index: 100; padding: 10px 14px; background: var(--ink); color: white; border-radius: 8px; }
     .skip-link:focus { top: 12px; }
@@ -147,9 +148,10 @@ redirect_from:
     .news-item { display: grid; grid-template-columns: 98px 1fr; gap: 24px; padding: 15px 0; border-bottom: 1px solid var(--line); }
     .news-date { color: var(--soft); font: 650 12px/1.72 var(--sans); letter-spacing: .04em; }
     .news-item strong { color: var(--ink); }
-    details.news-more { margin-top: 14px; }
-    details.news-more summary { cursor: pointer; color: var(--accent); font-weight: 650; font-size: 13px; }
-    details.news-more[open] summary { margin-bottom: 14px; }
+    .news-scroll { max-height: 320px; overflow-y: auto; scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: #aebdce #f7f8fa; padding-right: 16px; }
+    .news-scroll::-webkit-scrollbar { width: 7px; }
+    .news-scroll::-webkit-scrollbar-track { background: #f7f8fa; }
+    .news-scroll::-webkit-scrollbar-thumb { background: #aebdce; border-radius: 8px; }
 
     .papers { border-top: 1px solid var(--line); }
     .paper {
@@ -202,7 +204,6 @@ redirect_from:
     @media (max-width: 780px) {
       .nav { min-height: 58px; }
       .nav-links { gap: 14px; }
-      .nav-links a:nth-child(4) { display: none; }
       .page { padding-top: 24px; }
       .hero { grid-template-columns: 1fr; gap: 24px; padding: 16px 0 24px; }
       .portrait-wrap { width: 142px; }
@@ -220,7 +221,9 @@ redirect_from:
       body { font-size: 15px; }
       .nav, .page { width: min(100% - 28px, 1040px); }
       .brand { font-size: 15px; }
-      .nav-links a:nth-child(3) { display: none; }
+      .nav { flex-wrap: wrap; gap: 4px; padding: 10px 0; }
+      .nav-links { width: 100%; justify-content: space-between; gap: 12px; }
+      html { scroll-padding-top: 100px; }
       .hero { padding: 22px; border-radius: 16px; }
       .chinese-name { display: block; margin: 10px 0 0; font-size: 19px; }
       .news-item { grid-template-columns: 78px 1fr; gap: 12px; }
@@ -299,24 +302,23 @@ redirect_from:
         <div><span class="section-kicker">Updates</span><h2 id="news-title">News</h2></div>
         <p class="section-note">Recent releases, publications, and research milestones.</p>
       </div>
+      <div class="news-scroll" role="region" aria-label="All news, scroll for earlier updates" tabindex="0">
       <ul class="news-list">
+        <li class="news-item"><span class="news-date">2026 · 08</span><span>Released <a href="https://echo-team-joy-future-academy-jd.github.io/Echo-1.5-Page/wm/" target="_blank" rel="noopener"><strong>EchoWM</strong></a>, an omnimodal world model for interactive audio-visual generation.</span></li>
+        <li class="news-item"><span class="news-date">2026 · 08</span><span>Released <a href="https://echo-team-joy-future-academy-jd.github.io/Echo-1.5-Page/" target="_blank" rel="noopener"><strong>JoyAI-Echo 1.5</strong></a>, a unified audio-visual generation system for persistent stories and interactive worlds.</span></li>
         <li class="news-item"><span class="news-date">2026 · 07</span><span>Two papers accepted to <a href="https://asia.siggraph.org/2026/"><strong>SIGGRAPH Asia 2026</strong></a>.</span></li>
         <li class="news-item"><span class="news-date">2026 · 06</span><span>One paper accepted to <a href="https://eccv.ecva.net/"><strong>ECCV 2026</strong></a>.</span></li>
         <li class="news-item"><span class="news-date">2026 · 05</span><span>Released <a href="https://echo-team-joy-future-academy-jd.github.io/Echo-LongVideo-Page/" target="_blank" rel="noopener"><strong>JoyAI-Echo</strong></a>.</span></li>
         <li class="news-item"><span class="news-date">2026 · 05</span><span>One paper accepted to <a href="https://icml.cc/"><strong>ICML 2026</strong></a>.</span></li>
         <li class="news-item"><span class="news-date">2026 · 04</span><span>One paper accepted to <a href="https://www.computer.org/csdl/journal/tp"><strong>IEEE TPAMI</strong></a>.</span></li>
         <li class="news-item"><span class="news-date">2026 · 02</span><span>One paper accepted to <a href="https://cvpr.thecvf.com/"><strong>CVPR 2026</strong></a>.</span></li>
-      </ul>
-      <details class="news-more">
-        <summary>Earlier news</summary>
-        <ul class="news-list">
           <li class="news-item"><span class="news-date">2025 · 09</span><span>One paper accepted to <a href="https://neurips.cc/"><strong>NeurIPS 2025</strong></a>.</span></li>
           <li class="news-item"><span class="news-date">2025 · 04</span><span>Two papers accepted to <a href="https://www.siggraph.org/siggraph-events/conferences/"><strong>SIGGRAPH 2025</strong></a>.</span></li>
           <li class="news-item"><span class="news-date">2024 · 12</span><span>One paper accepted to <a href="https://2025.ieeeicassp.org/important-dates/"><strong>ICASSP 2025</strong></a>.</span></li>
           <li class="news-item"><span class="news-date">2024 · 07</span><span>One paper accepted to <a href="https://eccv.ecva.net/"><strong>ECCV 2024</strong></a>.</span></li>
           <li class="news-item"><span class="news-date">2022 · 06</span><span>One paper accepted to <a href="https://2022.acmmm.org/"><strong>ACM MM 2022</strong></a>.</span></li>
         </ul>
-      </details>
+      </div>
     </section>
 
     <section id="research" aria-labelledby="research-title">
@@ -364,7 +366,7 @@ redirect_from:
           <div class="paper-body">
             <div class="paper-topline"><h3>JoyAI-Echo: Pushing the Frontier of Long Audio-Visual Generation</h3><span class="venue">Tech Report · 2026</span></div>
             <p class="authors">Haoran Li, Fredreic Li, …, <b>Junhao Zhuang</b>, …, Zeyue Xue, Nan Duan</p>
-            <p class="paper-desc">JoyAI-Echo is an interactive long video generation framework with boosted speed, stable audio-visual consistency and real-time editing, outperforming baseline models.</p>
+            <p class="paper-desc">JoyAI-Echo is an interactive long-form video generation framework that combines faster generation, consistent audio-visual output, and real-time editing, outperforming baseline models.</p>
             <div class="paper-links"><a href="https://www.researchgate.net/publication/405770309_JoyAI-Echo_Pushing_the_Frontier_of_Long_Audio-Visual_Generation">Paper</a><a href="https://echo-team-joy-future-academy-jd.github.io/Echo-LongVideo-Page/">Project</a><a href="https://github.com/jd-opensource/JoyAI-Echo">Code</a></div>
             <div class="repo-stats"><a href="https://github.com/jd-opensource/JoyAI-Echo"><img src="https://img.shields.io/github/stars/jd-opensource/JoyAI-Echo?style=social" alt="GitHub stars for JoyAI-Echo"></a><a href="https://github.com/jd-opensource/JoyAI-Echo/forks"><img src="https://img.shields.io/github/forks/jd-opensource/JoyAI-Echo?style=social" alt="GitHub forks for JoyAI-Echo"></a></div>
           </div>
@@ -397,7 +399,7 @@ redirect_from:
           <div class="paper-body">
             <div class="paper-topline"><h3>Cobra: Efficient Line Art COlorization with BRoAder References</h3><span class="venue">SIGGRAPH · 2025</span></div>
             <p class="authors"><b>Junhao Zhuang</b>, Lingen Li, Xuan Ju, Zhaoyang Zhang, Chun Yuan, Ying Shan</p>
-            <p class="paper-desc">Cobra is a novel efficient long-context fine-grained ID preservation framework for line art colorization, achieving high precision, efficiency, and flexible usability for comic colorization. By effectively integrating extensive contextual references, it transforms black-and-white line art into vibrant illustrations.</p>
+            <p class="paper-desc">Cobra is an efficient long-context framework for line art colorization with fine-grained identity preservation. It combines high precision and efficiency with flexible use in comic colorization. By integrating extensive contextual references, it transforms black-and-white line art into vibrant illustrations.</p>
             <div class="paper-links"><a href="https://arxiv.org/abs/2504.12240">Paper</a><a href="/Cobra/">Project</a><a href="https://github.com/Zhuang2002/Cobra">Code</a></div>
             <div class="repo-stats"><a href="https://github.com/Zhuang2002/Cobra"><img src="https://img.shields.io/github/stars/Zhuang2002/Cobra?style=social" alt="GitHub stars for Cobra"></a><a href="https://github.com/Zhuang2002/Cobra/forks"><img src="https://img.shields.io/github/forks/Zhuang2002/Cobra?style=social" alt="GitHub forks for Cobra"></a></div>
           </div>
@@ -441,7 +443,7 @@ redirect_from:
           <div class="paper-body">
             <div class="paper-topline"><h3>Safe-Sora: Safe Text-to-Video Generation via Graphical Watermarking</h3><span class="venue">NeurIPS · 2025</span></div>
             <p class="authors">Zihan Su, Xuerui Qiu, Hongbin Xu, Tangyu Jiang, <b>Junhao Zhuang</b>, Chun Yuan, Ming Li, Shengfeng He, Fei Richard Yu</p>
-            <p class="paper-desc">Safe-Sora: a framework for embedding graphical watermarks into video generation, achieving state-of-the-art quality, fidelity, and robustness through hierarchical adaptive matching and a 3D wavelet-enhanced Mamba architecture.</p>
+            <p class="paper-desc">Safe-Sora embeds graphical watermarks during video generation, achieving state-of-the-art quality, fidelity, and robustness through hierarchical adaptive matching and a 3D wavelet-enhanced Mamba architecture.</p>
             <div class="paper-links"><a href="https://arxiv.org/pdf/2505.12667">Paper</a><a href="https://sugewud.github.io/Safe-Sora-project/">Project</a><a href="https://github.com/Sugewud/Safe-Sora">Code</a></div>
           </div>
         </article>
@@ -462,7 +464,7 @@ redirect_from:
           <div class="paper-body">
             <div class="paper-topline"><h3>TextureDiffusion: Target Prompt Disentangled Editing for Various Texture Transfer</h3><span class="venue">ICASSP Oral · 2024</span></div>
             <p class="authors">Zihan Su, <b>Junhao Zhuang</b>, Chun Yuan</p>
-            <p class="paper-desc">We proposed TextureDiffusion, a tuning-free image editing method applied to various texture transfer.</p>
+            <p class="paper-desc">We propose TextureDiffusion, a tuning-free image editing method that supports a variety of texture transfer tasks.</p>
             <div class="paper-links"><a href="https://arxiv.org/pdf/2409.09610">Paper</a><a href="https://github.com/THU-CVML/TextureDiffusion">Code</a></div>
           </div>
         </article>
@@ -472,7 +474,7 @@ redirect_from:
           <div class="paper-body">
             <div class="paper-topline"><h3>UConNet: Unsupervised Controllable Network for Image and Video Deraining</h3><span class="venue">ACM MM · 2022</span></div>
             <p class="authors"><b>Junhao Zhuang</b>, Yisi Luo, Xile Zhao, Taixiang Jiang, Bichuan Guo</p>
-            <p class="paper-desc">We propose the UConNet for image and video deraining. Our UConNet learns a relationship between trade-off parameters of the loss function and weightings of feature maps. At the inference stage, the weightings can be adaptively controlled to handle different rain scenarios, resulting in high generalization abilities. Extensive experimental results validate the effectiveness, generalization abilities, and efficiency of UConNet.</p>
+            <p class="paper-desc">We propose UConNet for image and video deraining. UConNet learns the relationship between loss-function trade-off parameters and feature-map weights. At inference time, these weights can be adaptively adjusted to handle different rain conditions, enabling strong generalization. Extensive experiments validate its effectiveness, generalization, and efficiency.</p>
             <div class="paper-links"><a href="https://dl.acm.org/doi/10.1145/3503161.3547772">Paper</a><a href="https://github.com/zhuang2002/UConNet">Code</a></div>
           </div>
         </article>
