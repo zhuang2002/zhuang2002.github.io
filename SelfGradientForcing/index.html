@@ -321,10 +321,30 @@
     /* Explicit downstream use of SGF in recent world models */
     .adoption-grid{
       width:100%; max-width:var(--figW); margin:18px auto 0;
-      display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px;
+      display:grid; grid-auto-flow:column; grid-auto-columns:calc((100% - 16px)/2); gap:16px;
+      overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding-inline:0;
+      padding-bottom:16px; scrollbar-width:thin; scrollbar-color:#586477 #171a20;
+    }
+    .adoption-grid::-webkit-scrollbar{ height:7px; }
+    .adoption-grid::-webkit-scrollbar-track{ background:#171a20; border-radius:8px; }
+    .adoption-grid::-webkit-scrollbar-thumb{ background:#586477; border-radius:8px; }
+    .adoption-controls{
+      max-width:var(--figW); margin:12px auto 0; display:flex;
+      justify-content:flex-end; align-items:center; gap:12px;
+    }
+    .adoption-controls[hidden]{ display:none; }
+    .adoption-controls button{
+      width:40px; height:40px; border:1px solid rgba(255,255,255,.2); border-radius:50%;
+      background:rgba(255,255,255,.04); color:var(--text); font-size:20px; cursor:pointer;
+    }
+    .adoption-controls button:disabled{ opacity:.3; cursor:default; }
+    .adoption-controls button:hover:not(:disabled){ box-shadow:var(--ring); }
+    .adoption-controls span{ color:var(--muted); font-size:.85rem; min-width:64px; text-align:center; }
+    .adoption-grid:focus-visible, .adoption-controls button:focus-visible, .adoption-links a:focus-visible{
+      outline:2px solid var(--accent); outline-offset:3px;
     }
     .adoption-card{
-      min-width:0; padding:22px;
+      min-width:0; padding:22px; scroll-snap-align:start; display:flex; flex-direction:column;
       border:1px solid rgba(255,255,255,.11); border-radius:16px;
       background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
     }
@@ -340,7 +360,7 @@
       margin:11px 0 0; color:var(--muted); font-size:.94rem; line-height:1.65;
     }
     .adoption-card strong{ color:var(--text); font-weight:800; }
-    .adoption-links{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+    .adoption-links{ display:flex; flex-wrap:wrap; gap:8px; margin-top:auto; padding-top:16px; }
     .adoption-links a{
       display:inline-flex; align-items:center; padding:6px 10px;
       border:1px solid rgba(255,255,255,.14); border-radius:999px;
@@ -481,7 +501,7 @@
       .fig img, .teaser img{ width:100% !important; }
       .pill{ padding:5px 8px; font-size:.78rem; }
       .slide{ flex-basis: 100% !important; max-width:100% !important; }
-      .adoption-grid{ grid-template-columns:1fr; }
+      .adoption-grid{ grid-auto-columns:90%; }
       .adoption-card{ padding:18px; }
     }
     @media (max-width: 420px){
@@ -939,7 +959,7 @@
       <div class="section-title" id="adoption-title"><span class="dot"></span> SGF in Recent World Models </div>
       <p class="note">Recent systems that explicitly use Self Gradient Forcing in their causal training pipelines.</p>
 
-      <div class="adoption-grid">
+      <div class="adoption-grid" id="adoption-gallery" role="region" aria-label="World models using SGF; scroll horizontally to explore" tabindex="0">
         <article class="adoption-card primary">
           <h3>EchoWM: Open and Enterable Omnimodal World Models</h3>
           <p>
@@ -966,6 +986,28 @@
             <a href="https://github.com/Junchao-cs/SolarWM" target="_blank" rel="noopener">Code ↗</a>
           </div>
         </article>
+        <article class="adoption-card">
+          <h3>XPACE: Joint World and Action Modeling from Heterogeneous Experience</h3>
+          <p>XPACE uses <strong>chunk-wise Self Gradient Forcing</strong> in Stage III-sim to adapt its simulator to self-generated visual context before synthesizing recovery trajectories for policy improvement.</p>
+          <div class="adoption-links">
+            <a href="https://arxiv.org/abs/2609.17372" target="_blank" rel="noopener">Paper ↗</a>
+            <a href="https://arxiv.org/html/2609.17372v1#S3.SS4.SSS1" target="_blank" rel="noopener">SGF training ↗</a>
+          </div>
+        </article>
+        <article class="adoption-card">
+          <h3>Zing-0.5: Toward Playable Worlds with Real-Time Joint Action and Text Control</h3>
+          <p>Zing-0.5 adapts SGF’s <strong>two-pass rollout and replay</strong> for DMD, separating per-instance generation from packed gradient computation to reduce memory use on long, variable-length samples.</p>
+          <div class="adoption-links">
+            <a href="https://arxiv.org/abs/2609.17909" target="_blank" rel="noopener">Paper ↗</a>
+            <a href="https://zing.loopit.me/" target="_blank" rel="noopener">Project ↗</a>
+            <a href="https://github.com/seedleap/zing-world-model" target="_blank" rel="noopener">Code ↗</a>
+          </div>
+        </article>
+      </div>
+      <div class="adoption-controls" hidden>
+        <button type="button" id="adoption-prev" aria-label="Previous world model" aria-controls="adoption-gallery">←</button>
+        <span id="adoption-position" aria-live="polite" aria-atomic="true"></span>
+        <button type="button" id="adoption-next" aria-label="Next world model" aria-controls="adoption-gallery">→</button>
       </div>
     </section>
 
@@ -1473,6 +1515,40 @@
         });
       });
     });
+
+    /* Independent text-card gallery: retain native touch and trackpad scrolling. */
+    (() => {
+      const track = document.getElementById('adoption-gallery');
+      const cards = Array.from(track.querySelectorAll('.adoption-card'));
+      const prev = document.getElementById('adoption-prev');
+      const next = document.getElementById('adoption-next');
+      const position = document.getElementById('adoption-position');
+      document.querySelector('.adoption-controls').hidden = false;
+      const update = () => {
+        const bounds = track.getBoundingClientRect();
+        const visible = cards.map((card, i) => {
+          const rect = card.getBoundingClientRect();
+          return Math.min(rect.right, bounds.right) - Math.max(rect.left, bounds.left) > rect.width / 2 ? i + 1 : null;
+        }).filter(Boolean);
+        prev.disabled = track.scrollLeft <= 2;
+        next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
+        if (visible.length) position.textContent = (visible.length > 1 ? `${visible[0]}–${visible[visible.length - 1]}` : visible[0]) + ` / ${cards.length}`;
+      };
+      const move = direction => {
+        const step = cards[1].getBoundingClientRect().left - cards[0].getBoundingClientRect().left;
+        track.scrollBy({left:direction * step, behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+      };
+      prev.addEventListener('click', () => move(-1));
+      next.addEventListener('click', () => move(1));
+      track.addEventListener('keydown', event => {
+        if (event.target !== track || !['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+        event.preventDefault();
+        move(event.key === 'ArrowLeft' ? -1 : 1);
+      });
+      track.addEventListener('scroll', update, {passive:true});
+      new ResizeObserver(update).observe(track);
+      update();
+    })();
 
     document.addEventListener('gesturestart', e => e.preventDefault());
   </script>
