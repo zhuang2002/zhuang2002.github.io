@@ -312,6 +312,7 @@ redirect_from:
       </div>
       <div class="news-scroll" role="region" aria-label="All news, scroll for earlier updates" tabindex="0">
       <ul class="news-list">
+        <li class="news-item"><span class="news-date">2026 · 10</span><span>Released <a href="https://zihan-su.github.io/self-gradient-forcing-plus" target="_blank" rel="noopener"><strong>SGF+</strong></a>, decoupling context-writing and denoising gradients for autoregressive video generation, with continuous rollouts of up to 24 hours from 5-second training windows.</span></li>
         <li class="news-item"><span class="news-date">2026 · 09</span><span>One paper accepted to <a href="https://neurips.cc/"><strong>NeurIPS 2026</strong></a>.</span></li>
         <li class="news-item"><span class="news-date">2026 · 08</span><span>Released <a href="https://echo-team-joy-future-academy-jd.github.io/Echo-1.5-Page/wm/" target="_blank" rel="noopener"><strong>EchoWM</strong></a>, an omnimodal world model for interactive audio-visual generation.</span></li>
         <li class="news-item"><span class="news-date">2026 · 08</span><span>Released <a href="https://echo-team-joy-future-academy-jd.github.io/Echo-1.5-Page/" target="_blank" rel="noopener"><strong>JoyAI-Echo 1.5</strong></a>, a unified audio-visual generation system for persistent stories and interactive worlds.</span></li>
@@ -335,8 +336,19 @@ redirect_from:
         <div><span class="section-kicker">Selected work</span><h2 id="research-title">Research</h2></div>
         <p class="section-note">Research spanning persistent audio-visual worlds, long-form video generation, visual editing, and restoration.</p>
       </div>
-      <p class="equal-note">* indicates equal contribution.</p>
+      <p class="equal-note">* indicates equal contribution. † indicates corresponding author.</p>
       <div class="papers">
+        <article class="paper">
+          <div class="paper-media"><img src="https://zhuang2002.github.io/images/homepage-thumbnails/SGF-plus.jpg" alt="SGF+ project overview" loading="lazy"></div>
+          <div class="paper-body">
+            <div class="paper-topline"><h3>SGF+: Decoupling Gradient Flows for Autoregressive Video Generation</h3><span class="venue">Tech Report · 2026</span></div>
+            <p class="authors">Zihan Su*, <b>Junhao Zhuang*†</b>, Yaowei Li, Siwen Lu, Haoran Li, Lingen Li, Haoyu Wu, Weiyang Jin, Songchun Zhang, Haoyang Huang, Chun Yuan†, Zeyue Xue, Nan Duan</p>
+            <p class="paper-desc">SGF+ separates context-writing and denoising parameters to resolve conflicting gradient updates in autoregressive video generation. It improves visual quality and long-horizon consistency in both framewise and chunkwise generation, enabling continuous rollouts of up to <strong>24 hours from only 5-second training windows</strong>.</p>
+            <div class="paper-links"><a href="https://arxiv.org/abs/2610.10429">arXiv</a><a href="https://zihan-su.github.io/self-gradient-forcing-plus">Project</a><a href="https://github.com/Zihan-Su/Self_Gradient_Forcing_Plus">Code</a><a href="https://huggingface.co/papers/2610.10429">HF Paper</a></div>
+            <div class="repo-stats"><a href="https://github.com/Zihan-Su/Self_Gradient_Forcing_Plus"><img src="https://img.shields.io/github/stars/Zihan-Su/Self_Gradient_Forcing_Plus?style=social" alt="GitHub stars for SGF+"></a><a href="https://github.com/Zihan-Su/Self_Gradient_Forcing_Plus/forks"><img src="https://img.shields.io/github/forks/Zihan-Su/Self_Gradient_Forcing_Plus?style=social" alt="GitHub forks for SGF+"></a></div>
+          </div>
+        </article>
+
         <article class="paper">
           <div class="paper-media"><img src="https://zhuang2002.github.io/images/homepage-thumbnails/echo1p5.jpg" alt="JoyAI-Echo-1.5 project preview" loading="lazy"></div>
           <div class="paper-body">
