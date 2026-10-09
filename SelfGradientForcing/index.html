@@ -101,6 +101,26 @@
       padding: 0 16px;
     }
 
+    /* Follow-up work */
+    .new-work{
+      display:flex; align-items:center; gap:16px;
+      width:100%; max-width:920px; margin:22px auto 0; padding:16px 20px;
+      border:1px solid rgba(76,201,240,.28); border-radius:14px;
+      background:linear-gradient(110deg,rgba(76,201,240,.08),rgba(183,108,255,.08));
+      text-align:left;
+    }
+    .new-work-copy{flex:1; min-width:0}
+    .new-work-label{display:block; margin-bottom:6px; color:var(--brand-1); font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase}
+    .new-work-title{display:block; color:var(--text); font-size:16px; font-weight:700; line-height:1.45}
+    .new-work-desc{display:block; margin-top:6px; color:var(--muted); font-size:13px; line-height:1.6}
+    .new-work-arrow{flex:0 0 auto; color:var(--brand-1); font-size:24px}
+    .new-work:hover{border-color:var(--brand-1); background:linear-gradient(110deg,rgba(76,201,240,.13),rgba(183,108,255,.13))}
+    .new-work:focus-visible{outline:2px solid var(--brand-1); outline-offset:4px}
+    @media(max-width:600px){
+      .new-work{gap:10px; padding:14px 16px}
+      .new-work-title{font-size:15px}
+    }
+
     /* Sparks */
     .sparks{position:absolute;inset:0;pointer-events:none;opacity:.7}
     .spark{position:absolute;width:2px;height:2px;background:radial-gradient(circle,var(--accent),transparent 70%);border-radius:50%;animation:fly 6s linear infinite}
@@ -584,6 +604,14 @@
           </span>
         </div>
       </div>
+      <a class="new-work" href="https://zihan-su.github.io/self-gradient-forcing-plus/" target="_blank" rel="noopener noreferrer">
+        <span class="new-work-copy">
+          <span class="new-work-label">Our new work · SGF+</span>
+          <span class="new-work-title">SGF+: Decoupling Gradient Flows for Autoregressive Video Generation</span>
+          <span class="new-work-desc">Separating context writing and denoising, enabling up to 24-hour rollouts from only 5s training windows.</span>
+        </span>
+        <span class="new-work-arrow" aria-hidden="true">↗</span>
+      </a>
     </header>
 
     <!-- Teaser -->
