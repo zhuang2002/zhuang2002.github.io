@@ -338,7 +338,7 @@
       vertical-align: middle;
     }
 
-    /* Explicit downstream use of SGF in recent world models */
+    /* Explicit downstream use of SGF */
     .adoption-grid{
       width:100%; max-width:var(--figW); margin:18px auto 0;
       display:grid; grid-auto-flow:column; grid-auto-columns:calc((100% - 16px)/2); gap:16px;
@@ -982,12 +982,12 @@
       </div>
     </section>
 
-    <!-- ================= SGF IN RECENT WORLD MODELS ================= -->
+    <!-- ================= SGF IN PRACTICE ================= -->
     <section id="adoption" aria-labelledby="adoption-title">
-      <div class="section-title" id="adoption-title"><span class="dot"></span> SGF in Recent World Models </div>
+      <div class="section-title" id="adoption-title"><span class="dot"></span> SGF in Practice </div>
       <p class="note">Recent systems that explicitly use Self Gradient Forcing in their causal training pipelines.</p>
 
-      <div class="adoption-grid" id="adoption-gallery" role="region" aria-label="World models using SGF; scroll horizontally to explore" tabindex="0">
+      <div class="adoption-grid" id="adoption-gallery" role="region" aria-label="Systems using SGF; scroll horizontally to explore" tabindex="0">
         <article class="adoption-card primary">
           <h3>EchoWM: Open and Enterable Omnimodal World Models</h3>
           <p>
@@ -1038,11 +1038,20 @@
             <a href="https://github.com/leoisufa/EditWorld" target="_blank" rel="noopener">Code ↗</a>
           </div>
         </article>
+        <article class="adoption-card">
+          <h3>EdenLive: Real-Time Generative Rendering from Any Visual Reference</h3>
+          <p>EdenLive follows <strong>Self Gradient Forcing's rollout–replay formulation</strong> for few-step distillation, replaying detached autoregressive rollouts in a differentiable teacher-forcing pass to train its streaming generative renderer.</p>
+          <div class="adoption-links">
+            <a href="https://assets.vast-eden.ai/assets/edenlive/EdenLive-tech-report.pdf#page=11" target="_blank" rel="noopener">Technical Report ↗</a>
+            <a href="https://vast-eden.ai/?p=edenlive" target="_blank" rel="noopener">Project ↗</a>
+            <a href="https://github.com/VAST-AI-Research/EdenLive" target="_blank" rel="noopener">Code ↗</a>
+          </div>
+        </article>
       </div>
       <div class="adoption-controls" hidden>
-        <button type="button" id="adoption-prev" aria-label="Previous world model" aria-controls="adoption-gallery">←</button>
+        <button type="button" id="adoption-prev" aria-label="Previous system" aria-controls="adoption-gallery">←</button>
         <span id="adoption-position" aria-live="polite" aria-atomic="true"></span>
-        <button type="button" id="adoption-next" aria-label="Next world model" aria-controls="adoption-gallery">→</button>
+        <button type="button" id="adoption-next" aria-label="Next system" aria-controls="adoption-gallery">→</button>
       </div>
     </section>
 
