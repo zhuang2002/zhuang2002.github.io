@@ -986,9 +986,9 @@
     <!-- ================= SGF IN PRACTICE ================= -->
     <section id="adoption" aria-labelledby="adoption-title">
       <div class="section-title" id="adoption-title"><span class="dot"></span> SGF in Practice </div>
-      <p class="note">Recent systems that explicitly use Self Gradient Forcing in their causal training pipelines.</p>
+      <p class="note">Recent systems that explicitly use or adapt Self Gradient Forcing in their causal training pipelines.</p>
 
-      <div class="adoption-grid" id="adoption-gallery" role="region" aria-label="Systems using SGF; scroll horizontally to explore" tabindex="0">
+      <div class="adoption-grid" id="adoption-gallery" role="region" aria-label="Systems using or adapting SGF; scroll horizontally to explore" tabindex="0">
         <article class="adoption-card primary">
           <h3>EchoWM: Open and Enterable Omnimodal World Models</h3>
           <p>
@@ -1073,6 +1073,15 @@
           <div class="adoption-links">
             <a href="https://arxiv.org/abs/2611.27336" target="_blank" rel="noopener">Paper ↗</a>
             <a href="https://zing.loopit.me/" target="_blank" rel="noopener">Project ↗</a>
+          </div>
+        </article>
+        <article class="adoption-card">
+          <h3>AgentGarten: Code Worlds for Evolving Agents</h3>
+          <p>AgentGarten adapts <strong>Self Gradient Forcing's two-pass rollout–replay design</strong> in Adversarial Forcing to distill its real-time neural renderer. Its blockwise SDPA replay matches the rollout's execution while allowing later losses to backpropagate through history K/V.</p>
+          <div class="adoption-links">
+            <a href="https://arxiv.org/html/2610.12374v2#S3.SS4.SSS2" target="_blank" rel="noopener">Paper ↗</a>
+            <a href="https://mirros-lab.github.io/agent-garten/" target="_blank" rel="noopener">Project ↗</a>
+            <a href="https://github.com/MirroS-Lab/AgentGarten" target="_blank" rel="noopener">Code ↗</a>
           </div>
         </article>
       </div>
